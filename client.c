@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-
 int main(int argc, char *argv[]) {
 
   /* parametres : IP, numéro port serveur, numéro port perso)*/
@@ -51,7 +50,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
   
-  printf("[-] Client: création de la socket d'entrée OK\n");
+  printf("[+] Client: création de la socket d'entrée OK\n");
  
   
   /* nommage socket
@@ -65,7 +64,7 @@ int main(int argc, char *argv[]) {
   address_entree.sin_addr.s_addr = INADDR_ANY;
   address_entree.sin_port = htons(atoi(argv[3]));
   
-  int binding = bind(socket_entree,(struct sockaddr*) &address_entree, sizeof(address_entree)); 
+  int binding = bind(socket_entree,(struct sockaddr*) &address_entree, sizeof(struct sockaddr_in)); 
   if(binding < 0){
     perror("[-] Client: erreur binding");
     close(socket_entree);
@@ -76,8 +75,8 @@ int main(int argc, char *argv[]) {
   printf("[+] Client: ma socket d'entrée se trouve à l'@ %s:%hu\n", 
           inet_ntoa(address_entree.sin_addr), htons(address_entree.sin_port));
 
-  printf("[+] Client: Je tente la connexion avec le serveur @ %s:%d\n",
-        inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));
+  printf("[+] Client: Je tente la connexion avec le serveur @ %s:%hu\n",
+        inet_ntoa(server_address.sin_addr), htons(server_address.sin_port));
   
   int conn = connect(server_socket, 
                     (struct sockaddr*) &server_address, 
@@ -90,10 +89,6 @@ int main(int argc, char *argv[]) {
   }
   printf("[+] Client: demande de connexion avec server reussie\n");
   
-  /* saisie port socket voisin. */
-
-  int taille = (int) sizeof(inet_ntoa(address_entree.sin_addr))+1+sizeof(argv[3]);
-
 
   /*envoi message port*/
   int snd = send(server_socket, &address_entree, sizeof(struct sockaddr_in), 0);
@@ -159,15 +154,16 @@ int main(int argc, char *argv[]) {
   printf("[+] Client: je suis en écoute\n");
 
 
-  int connection_voisin =  connect(socket_sortie, 
+  /*  int connection_voisin =  connect(socket_sortie, 
                             (struct sockaddr *) &addresse_sortie, 
                             lgAdr2);
-
-  if (connection_voisin < 0) {
-    perror("[-] Client: connexion failed");
+  */
+  
+  while(connect(socket_sortie, (struct sockaddr *) &addresse_sortie, lgAdr2) < 0) {
+    perror("[-] Client: connexion failed");  
   }
 
-  printf("[+] Client: demande de connexion effectuée avec succès\n");
+  printf("[+] Client: demande de connexion effectuée avec succès: %s:%d\n", inet_ntoa(addresse_sortie.sin_addr), ntohs(addresse_sortie.sin_port));
 
 	  
   struct sockaddr_in adress_voisin ; // obtenir adresse client accepté
@@ -182,25 +178,28 @@ int main(int argc, char *argv[]) {
     perror("[-] Client: connexion réfusé");
   }
 
-  printf("[+] Client: accepted connexion from voisin\n");
+  printf("[+] Client: accepted connexion from voisin: %s:%d\n", inet_ntoa(adress_voisin.sin_addr), ntohs(adress_voisin.sin_port));
 
-  int say_hello = send(socket_sortie, "Hello from your neighbour!", 27, 0);
-
+  char hello[5] = "Hello";
+  exit(0);
+  
+  int say_hello = send(socket_sortie, hello, sizeof(hello), 0);
+    
   if (say_hello < 0){
-    perror("[-] Client: problem sending message - ");
+    perror("[-] Client: problem sending message");
     exit(1);
   }
 
   char *msg;
 
-  int rcv_hello = recv(socket_entree, msg, 27, 0);
+  int rcv_hello = recv(accept_voisin, &msg, sizeof(hello), 0);
 
   if (rcv_hello < 0) {
-    perror("[-] Client: problem receiving message - ");
+    perror("[-] Client: problem receiving message ");
     exit(1);
   }
 
-  printf("[+] Client: received %d bytes from voisin", rcv);
+  printf("[+] Client: received %d bytes from voisin", rcv_hello);
   printf("[+] Client: message reveiced is %s", msg);
   //fermeture socket server à la fin
 	

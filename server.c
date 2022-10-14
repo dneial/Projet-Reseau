@@ -30,7 +30,7 @@ void afficheTab(int *tab,int size)
 
 void distribute_addresses(int *sockets, struct sockaddr_in *addresses, int size){
   int j;
-	for(int i=0; i<size; i++){
+  for(int i=0; i<size; i++){
     j = (i + 1) % size;
     char *ip = inet_ntoa(addresses[j].sin_addr);
     int port = htons(addresses[j].sin_port);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
   struct sockaddr_in server;
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = INADDR_ANY;
-  server.sin_port = htons(atoi(argv[1])) ;
+  server.sin_port = htons(atoi(argv[1]));
 
   int binding = bind(server_socket, (struct sockaddr*) &server, sizeof(server));
 
@@ -86,105 +86,106 @@ int main(int argc, char *argv[]){
 
   printf("[+] Server: connecté @ %s:%d\n", inet_ntoa(server.sin_addr), ntohs(server.sin_port));
 
-/* socket nommée -> ecoute
-   dédie socket à réception demandes connexion
-   & limiter file demandes connexions */
+  /* socket nommée -> ecoute
+     dédie socket à réception demandes connexion
+     & limiter file demandes connexions */
   
-int ecoute = listen(server_socket, NB_CLIENTS);
+  int ecoute = listen(server_socket, NB_CLIENTS);
 
-if (ecoute < 0){
-  printf("[-] Server: Erreur mise en écoute\n");
-  close(server_socket);
-  exit(1);
- } 
+  if (ecoute < 0){
+    printf("[-] Server: Erreur mise en écoute\n");
+    close(server_socket);
+    exit(1);
+  } 
  
-printf("[+] Server: mise en écoute : ok\n");
+  printf("[+] Server: mise en écoute : ok\n");
 
-/* attendre et traiter demande connexion client. 
-   serveur accepte demande = creation nouvelle socket
-   connectée au client à utiliser pour
-   communiquer avec lui.*/
+  /* attendre et traiter demande connexion client. 
+     serveur accepte demande = creation nouvelle socket
+     connectée au client à utiliser pour
+     communiquer avec lui.*/
 
-//tableau des adresses des sockets clients ici
-struct sockaddr_in client_sockets[NB_CLIENTS];
+  //tableau des adresses des sockets clients ici
+  struct sockaddr_in client_sockets[NB_CLIENTS];
 
-int cptClient = 0;
+  int cptClient = 0;
 
-while(cptClient < NB_CLIENTS){
+  while(cptClient < NB_CLIENTS){
 
-  printf("[+] Server: j'attends la demande d'un client\n");
-
-	  
-  struct sockaddr_in adC ; // obtenir adresse client accepté
-  socklen_t lgC = sizeof (struct sockaddr_in);
-
-  int dsCv = accept(server_socket,(struct sockaddr *) &adC, &lgC);
-  if (dsCv < 0){
-    perror ( "[-] Server: probleme accept");
-    close(server_socket);
-    exit(1);
-  }
-
-  //on stocke la socket pour pouvoir recommuniquer avec le client plus tard
-  tab_sockets[cptClient] = dsCv;
-	  
-  /* affichage adresse socket client accepté :
-     adresse IP et numéro de port de structure adC. 
-     Attention conversions format réseau -> format hôte.
-     fonction inet_ntoa(..) pour l'IP. */
-
-
-  // char* ipserv = inet_ntoa(adC.sin_addr);
-  // int port = htons(server.sin_port);
-  // printf("Server: le client %s:%d est connecté  \n", ipserv, port);
+    printf("[+] Server: j'attends la demande d'un client\n");
 
 	  
-  //Recevoir msg du client avec l'adresse de socket d'entrée
+    struct sockaddr_in adC ; // obtenir adresse client accepté
+    socklen_t lgC = sizeof (struct sockaddr_in);
 
-  /* réception message */
+    int dsCv = accept(server_socket,(struct sockaddr *) &adC, &lgC);
+    if (dsCv < 0){
+      perror ( "[-] Server: probleme accept");
+      close(server_socket);
+      exit(1);
+    }
+
+    //on stocke la socket pour pouvoir recommuniquer avec le client plus tard
+    tab_sockets[cptClient] = dsCv;
+	  
+    /* affichage adresse socket client accepté :
+       adresse IP et numéro de port de structure adC. 
+       Attention conversions format réseau -> format hôte.
+       fonction inet_ntoa(..) pour l'IP. */
+
+
+    // char* ipserv = inet_ntoa(adC.sin_addr);
+    // int port = htons(server.sin_port);
+    // printf("Server: le client %s:%d est connecté  \n", ipserv, port);
+
+	  
+    //Recevoir msg du client avec l'adresse de socket d'entrée
+
+    /* réception message */
 	 
-  struct sockaddr_in addr_client;
+    struct sockaddr_in addr_client;
 
-  int rcv = recv(dsCv, &addr_client, sizeof(struct sockaddr),0);
+    int rcv = recv(dsCv, &addr_client, sizeof(struct sockaddr),0);
 
-  if (dsCv < 0){ 
-    perror ( "[-] Server: probleme reception\n");
-    close(dsCv);
-    close(server_socket);
-    exit(1);
-  }
-  else if (dsCv == 0) {
+    if (dsCv < 0){ 
+      perror ( "[-] Server: probleme reception\n");
+      close(dsCv);
+      close(server_socket);
+      exit(1);
+    }
+    else if (dsCv == 0) {
       printf("[-] Server: socket fermée  lors de la récéption du message\n");
       close(dsCv);
       close(server_socket);
       exit(1);
     }
 	  
-  printf("[+] Server: j'ai recu %d octets \n", rcv);
-  printf("[+] Server: received adress from client %d: %s:%d\n", cptClient, inet_ntoa(addr_client.sin_addr), 
-                                                                         ntohs(addr_client.sin_port));
-  client_sockets[cptClient] = addr_client;
+    printf("[+] Server: j'ai recu %d octets \n", rcv);
+    printf("[+] Server: received adress from client %d: %s:%d\n", cptClient, inet_ntoa(addr_client.sin_addr), 
+	   ntohs(addr_client.sin_port));
+    client_sockets[cptClient] = addr_client;
 
-  //incrémentation nb clients enregistrés
-  cptClient++;
+    //incrémentation nb clients enregistrés
+    cptClient++;
 
-  printf("[+] Server: fin du premier échange avec le client %i \n", cptClient);
- }
+    printf("[+] Server: fin du premier échange avec le client %i \n", cptClient);
+  }
 
-printf("[+] Server: tous les clients sont prêts\n");
+  printf("[+] Server: tous les clients sont prêts\n");
 
 
-for(int i=0; i<NB_CLIENTS; i++){
-  char *ip = inet_ntoa(client_sockets[i].sin_addr);
-  int port = ntohs(client_sockets[i].sin_port);
-  printf("Client #%d socket: %s:%d\n", i+1, ip, port);
-}
+  for(int i=0; i<NB_CLIENTS; i++){
+    char *ip = inet_ntoa(client_sockets[i].sin_addr);
+    int port = ntohs(client_sockets[i].sin_port);
+    printf("Client #%d socket: %s:%d\n", i+1, ip, port);
+  }
 
-distribute_addresses(tab_sockets, client_sockets, NB_CLIENTS);
-close_sockets(tab_sockets, NB_CLIENTS);
+  distribute_addresses(tab_sockets, client_sockets, NB_CLIENTS);
+  close_sockets(tab_sockets, NB_CLIENTS);
 
   
-/*fermeture socket demandes */
-close(server_socket);
-printf("[+] Server: je termine\n");
+  /*fermeture socket demandes */
+  close(server_socket);
+  close_sockets(tab_sockets, NB_CLIENTS);
+  printf("[+] Server: je termine\n");
 }
