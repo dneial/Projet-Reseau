@@ -62,7 +62,18 @@ void read_edge_info(FILE *file, struct Edge *edge){
 
 }
 
-
+int** create_matrix(FILE *file, int nb_edges, int nb_vertices){
+  int *values = calloc(nb_edges*nb_edges, sizeof(int));
+  int **matrix = malloc(nb_edges*sizeof(int*));
+  struct Edge e;
+  
+  for(int i=0; i<nb_vertices; i++){
+    read_edge_info(file, &e);
+    values[e.v2-1] = 1;
+    matrix[i] = values + e.v1-1;
+  }
+  return matrix;
+}
 
 
 
@@ -77,43 +88,30 @@ int main(int argc, char *argv[]){
 
   FILE *f = fopen(FILENAME, "r");
   struct Graph graph;
-  struct Edge e1;
-  // read headers 
-  
-  read_headers(f);
-  read_graph_info(f, &graph);
-  
-  printf("Graph:\n%d vertices and %d edges\n", graph.vertices, graph.edges);
 
+  // read headers 
+  read_headers(f);
+
+  read_graph_info(f, &graph);
+  printf("Graph: %d vertices and %d edges\n", graph.vertices, graph.edges);
+
+  int **m = create_matrix(f, graph.edges, graph.vertices);
+  printf("%d\n", m[0][0]);
+  exit(0);
   int matrix[graph.vertices][graph.vertices];
 
   for(int i = 0; i<graph.vertices; i++){
     memset(matrix[i], 0, graph.vertices); 
   }
-  printf("size of matrice: %ld\n", sizeof(matrix[0]));
+  
   
   struct Edge e;
-  for(int i=1; i<=12412; i++){  
+  for(int i=1; i<=graph.edges; i++){  
     read_edge_info(f, &e);
         
-    printf("Edge: %d -> %d\n", e.v1, e.v2);
-    matrix[e.v1][e.v2] = 1;
+    matrix[e.v1-1][e.v2-1] = 1;
     
   }
-
-  //print_matrix(matrix);
-  
-  
-
-  
-
-  //for(int i=0; i<graph.edges; i++){
-  //  int v1, v2, j;
-  //  char edge[3][10];
-    
-
-
-  //}
   
    exit(0);
 }
