@@ -21,7 +21,7 @@ struct Edge {
 char read_headers(FILE *file){
   char *lines;
   size_t n;
-
+  
   char next = fgetc(file);
 
   while(next != 'p'){
@@ -33,28 +33,20 @@ char read_headers(FILE *file){
 }
 
 
-int read_graph_info(FILE *file, struct Graph *graph){
-  char tokens[NB_TOKENS][SIZE_TOKENS];
-  
-  int j;
-  char c;
+void read_graph_info(FILE *file, struct Graph *graph){
+  char *graph_info;
+  size_t n;
 
-  
-  for(int i=0; i<NB_TOKENS; i++){
-    j = 0;
-    memset(tokens[i], 0, SIZE_TOKENS);
-    c = fgetc(file);
-    while (c != SEPARATOR){
-      tokens[i][j++] = c;
-      c = fgetc(file);
-    }
-  }
-  
-  int vertices = atoi(tokens[2]);
-  int edges = atoi(tokens[3]);
+  getdelim(&graph_info, &n, 32, file);
 
-  graph->vertices = vertices;
-  graph->edges = edges;
+  getdelim(&graph_info, &n, 32, file);
+
+  getdelim(&graph_info, &n, 32, file);
+  graph->vertices = atoi(graph_info);
+ 
+  
+  getdelim(&graph_info, &n, 32, file);
+  graph->edges = atoi(graph_info);
 
 }
 
@@ -67,6 +59,7 @@ void read_edge_info(FILE *file, struct Edge *edge){
 
   getdelim(&edge_info, &n, 32, file);
   edge->v2 = atoi(edge_info);
+
 }
 
 
@@ -89,20 +82,26 @@ int main(int argc, char *argv[]){
   
   read_headers(f);
   read_graph_info(f, &graph);
-
+  
   printf("Graph:\n%d vertices and %d edges\n", graph.vertices, graph.edges);
+
   int matrix[graph.vertices][graph.vertices];
 
-  for(int i=1; i<=5; i++){
-    struct Edge e;
+  for(int i = 0; i<graph.vertices; i++){
+    memset(matrix[i], 0, graph.vertices); 
+  }
+  printf("size of matrice: %ld\n", sizeof(matrix[0]));
+  
+  struct Edge e;
+  for(int i=1; i<=12412; i++){  
     read_edge_info(f, &e);
+        
     printf("Edge: %d -> %d\n", e.v1, e.v2);
     matrix[e.v1][e.v2] = 1;
     
-    //    matrix[e1.v1][e1.v2] = 1;
   }
 
-  print_matrix(matrix);
+  //print_matrix(matrix);
   
   
 

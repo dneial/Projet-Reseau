@@ -5,7 +5,7 @@
 # nom de l'executable
 #BIN=runPeriod
 
-BIN=bin/client  bin/serveur
+BIN=bin/client  bin/serveur  bin/read_graph
 #BIN=bin/serveur
 
 # liste des fichiers sources 
