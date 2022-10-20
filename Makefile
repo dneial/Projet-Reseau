@@ -11,6 +11,7 @@ BIN=bin/client  bin/serveur
 # liste des fichiers sources 
 SRCS0=server.c
 SRCS1=client.c
+SRCS2=read_graph.c
 
 default: $(BIN)
 
@@ -25,6 +26,9 @@ bin/serveur: $(SRCS0:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+
 
 bin/client: $(SRCS1:%.c=obj/%.o)
+	gcc -lpthread -o $@ $+
+
+bin/read_graph: $(SRCS2:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+
 
 clean:

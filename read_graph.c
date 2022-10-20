@@ -62,10 +62,11 @@ void read_edge_info(FILE *file, struct Edge *edge){
   char *edge_info;
   size_t n;
 
-  getline(&edge_info, &n, file);
-  
+  getdelim(&edge_info, &n, 32, file);
+  edge->v1 = atoi(edge_info);
 
-  printf("%s", edge_info);
+  getdelim(&edge_info, &n, 32, file);
+  edge->v2 = atoi(edge_info);
 }
 
 
@@ -95,10 +96,13 @@ int main(int argc, char *argv[]){
   for(int i=1; i<=5; i++){
     struct Edge e;
     read_edge_info(f, &e);
-    if(fgetc(f) != 'e') break;
-    fgetc(f);
+    printf("Edge: %d -> %d\n", e.v1, e.v2);
+    matrix[e.v1][e.v2] = 1;
+    
     //    matrix[e1.v1][e1.v2] = 1;
   }
+
+  print_matrix(matrix);
   
   
 
