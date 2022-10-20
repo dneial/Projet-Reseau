@@ -2,15 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-#define EOL '\n'
-#define SEPARATOR ' '
-#define NB_TOKENS 4
-#define SIZE_TOKENS 32
-
 struct Graph {
-  int vertices;
-  int edges;
+  int sommets;
+  int aretes;
 };
 
 struct Edge {
@@ -18,10 +12,10 @@ struct Edge {
   int v2;
 };
 
-char read_headers(FILE *file){
+void read_headers(FILE *file){
   char *lines;
   size_t n;
-  
+
   char next = fgetc(file);
 
   while(next != 'p'){
@@ -29,7 +23,7 @@ char read_headers(FILE *file){
     next = fgetc(file);
     printf("%s", lines);
   }
-  
+
 }
 
 
@@ -42,11 +36,11 @@ void read_graph_info(FILE *file, struct Graph *graph){
   getdelim(&graph_info, &n, 32, file);
 
   getdelim(&graph_info, &n, 32, file);
-  graph->vertices = atoi(graph_info);
- 
-  
+  graph->sommets = atoi(graph_info);
+
+
   getdelim(&graph_info, &n, 32, file);
-  graph->edges = atoi(graph_info);
+  graph->aretes = atoi(graph_info);
 
 }
 
@@ -62,19 +56,24 @@ void read_edge_info(FILE *file, struct Edge *edge){
 
 }
 
-int** create_matrix(FILE *file, int nb_edges, int nb_vertices){
-  int *values = calloc(nb_edges*nb_edges, sizeof(int));
-  int **matrix = malloc(nb_edges*sizeof(int*));
-  struct Edge e;
-  
-  for(int i=0; i<nb_vertices; i++){
-    read_edge_info(file, &e);
-    values[e.v2-1] = 1;
-    matrix[i] = values + e.v1-1;
+int ** create_matrix(int nb_sommets){
+  int *values = calloc(nb_sommets*nb_sommets, sizeof(int));
+  int **matrix = malloc(nb_sommets*sizeof(int*));
+
+  for(int i=0; i<nb_sommets; i++){
+    matrix[i] = values + i*nb_sommets;
   }
+
   return matrix;
 }
 
+void fill_matrix(FILE *f, int nb_aretes, int nb_sommets, int m[nb_sommets][nb_sommets]){
+  struct Edge e;
+  for(int i=0; i<nb_aretes; i++){
+    read_edge_info(f, &e);
+    m[e.v1-1][e.v2-1] = 1;
+  }
+}
 
 
 int main(int argc, char *argv[]){
@@ -82,36 +81,52 @@ int main(int argc, char *argv[]){
     printf("Usage: %s <graph_file>\n", argv[0]);
     exit(1);
   }
-  
+
   const char *FILENAME = argv[1];
   printf("Reading %s...\n", FILENAME);
 
   FILE *f = fopen(FILENAME, "r");
   struct Graph graph;
 
-  // read headers 
+  // read headers
   read_headers(f);
 
   read_graph_info(f, &graph);
-  printf("Graph: %d vertices and %d edges\n", graph.vertices, graph.edges);
+  printf("Graph: %d sommets and %d aretes\n", graph.sommets, graph.aretes);
 
-  int **m = create_matrix(f, graph.edges, graph.vertices);
-  printf("%d\n", m[0][0]);
-  exit(0);
-  int matrix[graph.vertices][graph.vertices];
+  int matrix[graph.sommets][graph.sommets];
+  struct Edge aretes[graph.aretes];
 
-  for(int i = 0; i<graph.vertices; i++){
-    memset(matrix[i], 0, graph.vertices); 
+
+
+  for(int i = 0; i<graph.sommets; i++){
+    memset(matrix[i], 0, graph.sommets);
   }
-  
-  
+
   struct Edge e;
-  for(int i=1; i<=graph.edges; i++){  
+  for(int i=0; i<graph.aretes; i++){
     read_edge_info(f, &e);
-        
+    aretes[i] = e;
     matrix[e.v1-1][e.v2-1] = 1;
-    
   }
-  
-   exit(0);
+
+  // check
+  int cpt = 0;
+  for(int i=0; i<graph.sommets; i++){
+    for(int j=0; j<graph.sommets; j++) {
+      if(matrix[i][j]) cpt++;
+  /*
+      for(int a=0; a<graph.aretes; a++){
+        if(aretes[a].v1 != i+1 || aretes[a].v2 != j+1)
+          if(matrix[i][j]) printf("wrong!\n");
+      }
+    }
+  */
+
+    }
+  }
+
+  printf("ok? %s\n", cpt == graph.aretes ? "yes" : "no");
+  exit(0);
+
 }
