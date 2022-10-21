@@ -15,7 +15,7 @@ struct Graph {
 
 
 
-void read_headers(FILE *file){
+void read_headers(FILE *file, int print_flag){
   char *lines;
   size_t n;
 
@@ -24,7 +24,7 @@ void read_headers(FILE *file){
   while(next != 'p'){
     getline(&lines, &n, file);
     next = fgetc(file);
-    printf("%s", lines);
+    if(print_flag) printf("%s", lines);
   }
 
 }

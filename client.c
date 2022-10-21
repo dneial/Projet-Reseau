@@ -9,6 +9,41 @@
 #include <fcntl.h>
 #include <errno.h>
 
+
+void create_out_sockets(int *tab_sockets, int nb_sockets){
+    int socket;
+    for(int i=0; i<nb_sockets; i++){
+        socket = socket(AF_INET, SOCK_STREAM, 0)
+        if (socket == -1){
+            printf("[-] Client : pb creation socket sortie\n");
+            exit(1);
+        };
+        tab_sockets[i] = socket;
+    }
+}
+
+void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+    int socket;
+    struct sockaddr_in addr;
+
+    for(int i=0; i<nb_sockets; i++) {
+        socket = socket(AF_INET, SOCK_STREAM, 0)
+        if (socket == -1) {
+            printf("[-] Client : pb creation socket sortie\n");
+            exit(1);
+        };
+        addr.sin_family = AF_INET;
+        addr.s_addr = INADDR_ANY;
+        addr.sin_port = 0;
+        if (bind(socket, (struct sockaddr *) &addr, sizeof(struct sockaddr_in) < 0)) {
+            perror("[-] Client: erreur binding");
+            close(socket);
+            exit(1);
+        }
+        addresses[i] = addr;
+    }
+}
+
 int main(int argc, char *argv[]) {
 
   /* parametres : IP, numéro port serveur, numéro port perso)*/
