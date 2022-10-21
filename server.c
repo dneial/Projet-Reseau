@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include "read_graph.c"
 //#include "test/strtok.c"
 
 // Rôle du serveur : accepter la demande de connexion d'un client,
@@ -39,6 +40,16 @@ void distribute_addresses(int *sockets, struct sockaddr_in *addresses, int size)
   }
 }
 
+void distribute_addresses2(int *sockets, struct sockaddr_in *addresses, struct Graph *graph){
+  for(int i=0; i<graph->aretes; i++){
+    int s1 = graph->e[i].v1 - 1;
+    int s2 = graph->e[i].v2 - 1;
+    char *ip = inet_ntoa(addresses[s2].sin_addr);
+    int port = htons(addresses[s2].sin_port);
+    printf("Server: j'envoi à %d, l'@ %s:%d\n", s1, ip, port);
+    send(sockets[s1], addresses + s2, sizeof(struct sockaddr_in), 0);
+  }
+}
 
 int main(int argc, char *argv[]){
   

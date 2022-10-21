@@ -2,15 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Graph {
-  int sommets;
-  int aretes;
-};
-
 struct Edge {
   int v1;
   int v2;
 };
+
+struct Graph {
+  int sommets;
+  int aretes;
+  struct Edge *e;
+};
+
+
 
 void read_headers(FILE *file){
   char *lines;
@@ -76,6 +79,17 @@ void fill_matrix(FILE *f, int nb_aretes, int nb_sommets, int m[nb_sommets][nb_so
 }
 
 
+void read_graph(FILE *f, struct Graph *graph){
+
+  struct Edge e;
+  for(int i=0; i<graph->aretes; i++){
+    read_edge_info(f, &e);
+    graph->e[i] = e;
+  }
+
+}
+
+/*
 int main(int argc, char *argv[]){
   if(argc != 2){
     printf("Usage: %s <graph_file>\n", argv[0]);
@@ -88,45 +102,15 @@ int main(int argc, char *argv[]){
   FILE *f = fopen(FILENAME, "r");
   struct Graph graph;
 
-  // read headers
   read_headers(f);
-
   read_graph_info(f, &graph);
+  struct Edge aretes[graph.aretes];
+  graph.e = aretes; 
+
+  read_graph(f, (struct Graph *) &graph);
   printf("Graph: %d sommets and %d aretes\n", graph.sommets, graph.aretes);
 
-  int matrix[graph.sommets][graph.sommets];
-  struct Edge aretes[graph.aretes];
-
-
-
-  for(int i = 0; i<graph.sommets; i++){
-    memset(matrix[i], 0, graph.sommets);
-  }
-
-  struct Edge e;
-  for(int i=0; i<graph.aretes; i++){
-    read_edge_info(f, &e);
-    aretes[i] = e;
-    matrix[e.v1-1][e.v2-1] = 1;
-  }
-
-  // check
-  int cpt = 0;
-  for(int i=0; i<graph.sommets; i++){
-    for(int j=0; j<graph.sommets; j++) {
-      if(matrix[i][j]) cpt++;
-  /*
-      for(int a=0; a<graph.aretes; a++){
-        if(aretes[a].v1 != i+1 || aretes[a].v2 != j+1)
-          if(matrix[i][j]) printf("wrong!\n");
-      }
-    }
-  */
-
-    }
-  }
-
-  printf("ok? %s\n", cpt == graph.aretes ? "yes" : "no");
   exit(0);
 
 }
+*/
