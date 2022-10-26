@@ -1,0 +1,8 @@
+1. Server: read graph
+2. Client: launch x clients where x is the number of sommets in graph
+3. Server: wait for all x clients to connect
+4. Server: for each clients, tell them the number of out sockets and in sockets
+5. Client: create x out sockets and x in sockets
+6. Client: send addresses of each in sockets to the server
+7. Server: save addresses of each in sockets in a matrix of size nb of clients x nb of clients
+8. Server: use the adjacency matrix to send the addresses of each in sockets to each client

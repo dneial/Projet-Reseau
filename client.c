@@ -11,7 +11,7 @@
 
 
 void create_out_sockets(int *tab_sockets, int nb_sockets){
-    int socket;
+/*    int socket;
     for(int i=0; i<nb_sockets; i++){
         socket = socket(AF_INET, SOCK_STREAM, 0)
         if (socket == -1){
@@ -19,11 +19,11 @@ void create_out_sockets(int *tab_sockets, int nb_sockets){
             exit(1);
         };
         tab_sockets[i] = socket;
-    }
+    }*/
 }
 
 void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
-    int socket;
+    /*int socket;
     struct sockaddr_in addr;
 
     for(int i=0; i<nb_sockets; i++) {
@@ -41,7 +41,7 @@ void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_s
             exit(1);
         }
         addresses[i] = addr;
-    }
+    }*/
 }
 
 int main(int argc, char *argv[]) {

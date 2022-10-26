@@ -10,7 +10,7 @@ struct Edge {
 struct Graph {
   int sommets;
   int aretes;
-  struct Edge *e;
+  int **matrix;
 };
 
 
@@ -59,37 +59,25 @@ void read_edge_info(FILE *file, struct Edge *edge){
 
 }
 
-int ** create_matrix(int nb_sommets){
-  int *values = calloc(nb_sommets*nb_sommets, sizeof(int));
-  int **matrix = malloc(nb_sommets*sizeof(int*));
-
-  for(int i=0; i<nb_sommets; i++){
-    matrix[i] = values + i*nb_sommets;
-  }
-
-  return matrix;
-}
-
-void fill_matrix(FILE *f, int nb_aretes, int nb_sommets, int m[nb_sommets][nb_sommets]){
-  struct Edge e;
-  for(int i=0; i<nb_aretes; i++){
-    read_edge_info(f, &e);
-    m[e.v1-1][e.v2-1] = 1;
-  }
+void create_matrix(struct Graph *graph){
+    int nb_sommets = graph->sommets;
+    graph->matrix = (int **)malloc(nb_sommets * sizeof(int *));
+    for(int i = 0; i < nb_sommets; i++) {
+        graph->matrix[i] = (int *) malloc(nb_sommets * sizeof(int));
+    }
 }
 
 
-void read_graph(FILE *f, struct Graph *graph){
-
+void read_graph(FILE *file, struct Graph *graph){
   struct Edge e;
   for(int i=0; i<graph->aretes; i++){
-    read_edge_info(f, &e);
-    graph->e[i] = e;
+    read_edge_info(file, &e);
+    if(!graph->matrix[e.v2-1][e.v1-1]) graph->matrix[e.v1-1][e.v2-1] = 1;
   }
 
 }
-
 /*
+
 int main(int argc, char *argv[]){
   if(argc != 2){
     printf("Usage: %s <graph_file>\n", argv[0]);
@@ -102,14 +90,24 @@ int main(int argc, char *argv[]){
   FILE *f = fopen(FILENAME, "r");
   struct Graph graph;
 
-  read_headers(f);
+
+  read_headers(f, 0);
   read_graph_info(f, &graph);
-  struct Edge aretes[graph.aretes];
-  graph.e = aretes; 
 
-  read_graph(f, (struct Graph *) &graph);
+
+  // ??? ça fait rien mais si je le commente j'ai segmentation fault
+  int matrix[graph.aretes];
+
+  create_matrix(&graph);
+  read_graph(f, &graph);
+
   printf("Graph: %d sommets and %d aretes\n", graph.sommets, graph.aretes);
-
+  for(int i=0; i<graph.sommets; i++){
+      for(int j=0; j<graph.sommets; j++){
+          printf("%d ", graph.matrix[i][j]);
+      }
+      printf("\n");
+  }
   exit(0);
 
 }

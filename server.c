@@ -13,6 +13,11 @@
 // recevoir une chaîne de caractères, afficher cette chaîne et
 // renvoyer au client le nombre d'octets reçus par le serveur.
 
+struct Client {
+    int socket;
+    struct sockaddr_in *addr;
+};
+
 void close_sockets(int *tab, int size)
 {
   for (int i = 0; i < size; i++)
@@ -40,16 +45,29 @@ void distribute_addresses(int *sockets, struct sockaddr_in *addresses, int size)
   }
 }
 
-void distribute_addresses2(int *sockets, struct sockaddr_in *addresses, struct Graph *graph){
-    printf("je suis à d2\n");
-  for(int i=0; i<graph->aretes; i++){
-    int s1 = graph->e[i].v1 - 1;
-    int s2 = graph->e[i].v2 - 1;
-    char *ip = inet_ntoa(addresses[s2].sin_addr);
-    int port = htons(addresses[s2].sin_port);
-    printf("Server: j'envoi à %d, l'@ %s:%d\n", s1+1, ip, port);
-    send(sockets[s1], addresses + s2, sizeof(struct sockaddr_in), 0);
+void inform_nb_of_connections(struct Client *clients, struct Graph *graph){
+    int size = graph->sommets;
+    int cpt = 0;
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size; j++){
+            if(graph->matrix[j][i]) cpt++;
+        }
+        send(clients[i].socket, &cpt, sizeof(int), 0);
   }
+}
+
+void distribute_addresses2(int *sockets, struct sockaddr_in *addresses, struct Graph *graph){
+    for(int i=0; i<graph->sommets; i++){
+
+        for(int j=0; j<graph->sommets; j++){
+            if(graph->matrix[i][j] == 1){
+                char *ip = inet_ntoa(addresses[j].sin_addr);
+                int port = htons(addresses[j].sin_port);
+                printf("Server: j'envoi à %d, l'@ %s:%d\n", i+1, ip, port);
+                send(sockets[i], addresses + j, sizeof(struct sockaddr_in), 0);
+            }
+        }
+    }
 }
 
 int main(int argc, char *argv[]){
@@ -61,7 +79,8 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-
+    // Lire le fichier décrivant la configuration du reseau
+    // Enregistrer sous la forme de la structure Graph
     const char *FILENAME = argv[2];
     printf("Reading %s...\n", FILENAME);
 
@@ -71,16 +90,18 @@ int main(int argc, char *argv[]){
     read_headers(f, 0);
     read_graph_info(f, &graph);
 
+    int matrix[graph.aretes];
 
-    struct Edge aretes[graph.aretes];
-    graph.e = aretes;
+    create_matrix(&graph);
+    read_graph(f, &graph);
 
-    read_graph(f, (struct Graph *) &graph);
     printf("Graph: %d sommets and %d aretes\n", graph.sommets, graph.aretes);
 
 
     //nombre de clients à relier
     const int NB_CLIENTS = graph.sommets;
+    struct Client clients[NB_CLIENTS];
+
     int tab_sockets[NB_CLIENTS];
 
   /* creation socket permet recevoir demandes connexion.*/
@@ -155,8 +176,9 @@ int main(int argc, char *argv[]){
     }
 
     //on stocke la socket pour pouvoir recommuniquer avec le client plus tard
+    clients[cptClient].socket = dsCv;
     tab_sockets[cptClient] = dsCv;
-	  
+
     /* affichage adresse socket client accepté :
        adresse IP et numéro de port de structure adC. 
        Attention conversions format réseau -> format hôte.
@@ -210,7 +232,8 @@ int main(int argc, char *argv[]){
   }
 
 //  distribute_addresses(tab_sockets, client_sockets, NB_CLIENTS);
-  distribute_addresses2(tab_sockets, client_sockets, &graph);
+  //distribute_addresses2(tab_sockets, client_sockets, &graph);
+    inform_nb_of_connections(clients, &graph);
   close_sockets(tab_sockets, NB_CLIENTS);
 
   
