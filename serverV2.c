@@ -15,6 +15,8 @@
 
 struct Client {
     int socket;
+    int in;
+    int out;
     struct sockaddr_in *addr;
 };
 
@@ -62,19 +64,34 @@ int get_nb_of_in_connections(int client_index, struct Graph *graph){
     }
     return cpt;
 }
+void select_address(struct Client *c, struct sockaddr_in *addr){
+    for(int i; i<c->in; i++){
+        if(c->addr[i]){
+            addr = c->addr[i];
+            c->addr[i] = NULL;
+        }
+    }
+}
 
-void distribute_addresses2(int *sockets, struct sockaddr_in *addresses, struct Graph *graph){
+
+void distribute_addresses2(struct Client *clients, struct Graph *graph){
+    struct Client sender;
+    struct Client receiver;
+    struct sockaddr_in addr;
     for(int i=0; i<graph->sommets; i++){
         for(int j=0; j<graph->sommets; j++){
-            if(graph->matrix[i][j] == 1){
-                char *ip = inet_ntoa(addresses[j].sin_addr);
-                int port = htons(addresses[j].sin_port);
-                printf("Server: j'envoi à %d, l'@ %s:%d\n", i+1, ip, port);
-                send(sockets[i], addresses + j, sizeof(struct sockaddr_in), 0);
+            if(graph->matrix[i][j]){
+                sender = clients[i];
+                receiver = clients[j];
+                select_address(&sender, &addr);
+                printf("[+] Server: j'envoi à %d, l'@ d'une des sockets de %d \n", i+1, j+1);
+                send(sender.socket, addr, sizeof(struct sockaddr_in), 0);
             }
         }
     }
 }
+
+
 
 void load_graph(FILE *file, struct Graph *graph){
     read_headers(file, 0);
@@ -84,7 +101,6 @@ void load_graph(FILE *file, struct Graph *graph){
 
     create_matrix(graph);
     read_graph(file, graph);
-
 }
 
 void write_port(int port){
@@ -218,6 +234,10 @@ int main(int argc, char *argv[]){
         in_out[0] = in;
         in_out[1] = out;
 
+        clients[cptClient].in = in;
+        clients[cptClient].out = out;
+
+
         int sent = send(dsCv, in_out, sizeof(int) * 2, 0);
         cptClient++;
 
@@ -267,6 +287,8 @@ int main(int argc, char *argv[]){
     }
 
     printf("[+] Server: tous les clients sont prêts\n");
+    distribute_addresses2(clients, &graph);
+
     exit(0);
 
 
@@ -277,7 +299,6 @@ int main(int argc, char *argv[]){
     }
 
 //  distribute_addresses(tab_sockets, client_sockets, NB_CLIENTS);
-    //distribute_addresses2(tab_sockets, client_sockets, &graph);
 
 
     /*fermeture socket demandes */

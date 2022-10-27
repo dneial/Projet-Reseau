@@ -124,16 +124,20 @@ int main(int argc, char *argv[]) {
 
     printf("NB de in_sockets: %d\nNB de out_sockets: %d\n", in_out[0], in_out[1]);
 
-    int in_sockets[in_out[0]];
-    struct sockaddr_in in_addresses[in_out[0]];
-    create_in_sockets(in_sockets, in_addresses, in_out[0]);
+    int in = in_out[0];
+    int out = in_out[1];
+
+
+    int in_sockets[in];
+    struct sockaddr_in in_addresses[in];
+    create_in_sockets(in_sockets, in_addresses, in);
     printf("[+] Client: creation des sockets in OK\n");
 
 
 
-    int out_sockets[in_out[1]];
-    struct sockaddr_in out_addresses[in_out[1]];
-    create_out_sockets(out_sockets, in_out[1]);
+    int out_sockets[out];
+    struct sockaddr_in out_addresses[out];
+    create_out_sockets(out_sockets, out);
     printf("[+] Client: creation des sockets out OK\n");
 
 
@@ -145,6 +149,11 @@ int main(int argc, char *argv[]) {
     }
     printf("[+] Client: envoi des adresses_in OK\n");
 
+    /* receive out addresses from server and assign them to out sockets */
+    int rcv;
+    for(int i=0; i<out; i++){
+        rcv = recv(server_socket, &out_addresses[i], sizeof(struct sockaddr_in), 0);
+    }
 
     exit(0);
 /*
