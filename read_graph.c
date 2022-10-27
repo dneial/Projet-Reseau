@@ -65,8 +65,8 @@ void create_matrix(struct Graph *graph){
     for(int i = 0; i < nb_sommets; i++) {
         graph->matrix[i] = (int *) malloc(nb_sommets * sizeof(int));
     }
-}
 
+}
 
 void read_graph(FILE *file, struct Graph *graph){
   struct Edge e;
@@ -75,6 +75,16 @@ void read_graph(FILE *file, struct Graph *graph){
     if(!graph->matrix[e.v2-1][e.v1-1]) graph->matrix[e.v1-1][e.v2-1] = 1;
   }
 
+}
+
+void print_matrix(struct Graph *graph){
+  int nb_sommets = graph->sommets;
+  for(int i=0; i<nb_sommets; i++){
+    for(int j=0; j<nb_sommets; j++){
+      printf("%d ", graph->matrix[i][j]);
+    }
+    printf("\n");
+  }
 }
 /*
 

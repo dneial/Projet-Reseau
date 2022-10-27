@@ -36,16 +36,6 @@ void afficheTab(int *tab,int size)
     }
 }
 
-void distribute_addresses(int *sockets, struct sockaddr_in *addresses, int size){
-    int j;
-    for(int i=0; i<size; i++){
-        j = (i + 1) % size;
-        char *ip = inet_ntoa(addresses[j].sin_addr);
-        int port = htons(addresses[j].sin_port);
-        printf("Server: j'envoi à %d, l'@ %s:%d\n", i+1, ip, port);
-        send(sockets[i], addresses + j, sizeof(struct sockaddr_in), 0);
-    }
-}
 
 int get_nb_of_out_connections(int client_index, struct Graph *graph){
     int size = graph->sommets;
@@ -64,28 +54,28 @@ int get_nb_of_in_connections(int client_index, struct Graph *graph){
     }
     return cpt;
 }
+
 void select_address(struct Client *c, struct sockaddr_in *addr){
-    for(int i; i<c->in; i++){
-        if(c->addr[i]){
-            addr = c->addr[i];
-            c->addr[i] = NULL;
-        }
+    int nb = c->in--;
+    for(int i; i<nb; i++){
+        addr = &c->addr[i];
+        printf("[+] Server: selected %d\n", addr->sin_port );
     }
 }
 
 
-void distribute_addresses2(struct Client *clients, struct Graph *graph){
+void distribute_addresses(struct Client *clients, struct Graph *graph){
     struct Client sender;
     struct Client receiver;
     struct sockaddr_in addr;
+
     for(int i=0; i<graph->sommets; i++){
         for(int j=0; j<graph->sommets; j++){
             if(graph->matrix[i][j]){
                 sender = clients[i];
                 receiver = clients[j];
-                select_address(&sender, &addr);
-                printf("[+] Server: j'envoi à %d, l'@ d'une des sockets de %d \n", i+1, j+1);
-                send(sender.socket, addr, sizeof(struct sockaddr_in), 0);
+                printf("[+] Server: sending address of %d to %d: %d\n", sender.socket, receiver.socket, sender.addr[0].sin_port);
+                send(receiver.socket, &addr, sizeof(struct sockaddr_in), 0);
             }
         }
     }
@@ -108,6 +98,17 @@ void write_port(int port){
     fprintf(f, "%d", port);
     fclose(f);
 }
+void print_clients_info(struct Client *clients, int size){
+    for(int i=0; i<size; i++){
+        printf("[+] Server: client %d\n"
+               "    Socket #%d\n"
+               "    In: %d\n"
+               "    Out: %d\n", i, clients[i].socket, clients[i].in, clients[i].out);
+        for(int j=0; j<clients[i].in; j++){
+            printf("    Address #%d: %d\n", j, ntohs(clients[i].addr[j].sin_port));
+        }
+    }
+}
 
 int main(int argc, char *argv[]){
 
@@ -127,6 +128,8 @@ int main(int argc, char *argv[]){
     struct Graph graph;
     load_graph(f, &graph);
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);
+
+    print_matrix(&graph);
 
     //nombre de clients à relier
     const int NB_CLIENTS = graph.sommets;
@@ -237,73 +240,37 @@ int main(int argc, char *argv[]){
         clients[cptClient].in = in;
         clients[cptClient].out = out;
 
+        struct sockaddr_in client_in[in];
 
         int sent = send(dsCv, in_out, sizeof(int) * 2, 0);
-        cptClient++;
-
 
         // rcv adresses des sockets d'entrée du client i
 
-        struct sockaddr_in client_in[in];
-
-        int rcv = recv(dsCv, client_in, sizeof(struct sockaddr_in)*in, 0);
-
-        printf("recieved %d bytes\n", rcv);
-        if(rcv > 0)
-            printf("recieved %s:%d\n", inet_ntoa(client_in[0].sin_addr), ntohs(client_in[0].sin_port));
-
-        clients[cptClient].addr = client_in;
-
-/* réception message */
-
-/*
-        struct sockaddr_in addr_client;
-
-        int rcv = recv(dsCv, &addr_client, sizeof(struct sockaddr),0);
-
-        if (dsCv < 0){
-            perror ( "[-] Server: probleme reception\n");
-            close(dsCv);
-            close(server_socket);
-            exit(1);
-        }
-        else if (dsCv == 0) {
-            printf("[-] Server: socket fermée  lors de la récéption du message\n");
-            close(dsCv);
-            close(server_socket);
-            exit(1);
+        if(in > 0){
+            printf("[+] Server: about to receive %d addresses from %d\n", in, cptClient+1);
+            int received = recv(dsCv, client_in, sizeof(struct sockaddr_in) * in, 0);
+            if(received>0) printf("[+] Server: received %d addresses from %d\n", in, cptClient+1);
+            clients[cptClient].addr = client_in;
         }
 
-        printf("[+] Server: j'ai recu %d octets \n", rcv);
-        printf("[+] Server: received adress from client %d: %s:%d\n", cptClient, inet_ntoa(addr_client.sin_addr),
-               ntohs(addr_client.sin_port));
-        client_sockets[cptClient] = addr_client;
-
-        //incrémentation nb clients enregistrés
+        for(int i=0; i<in; i++){
+            printf("[+} Server: Received %s:%d\n", inet_ntoa(clients[cptClient].addr[i].sin_addr),
+                   ntohs(clients[cptClient].addr[i].sin_port));
+        }
+        printf("[+] Server: fin du premier échange avec le client %i \n", cptClient+1);
         cptClient++;
-
-        printf("[+] Server: fin du premier échange avec le client %i \n", cptClient);
-*/
     }
 
     printf("[+] Server: tous les clients sont prêts\n");
-    distribute_addresses2(clients, &graph);
-
+    print_clients_info(clients, NB_CLIENTS);
     exit(0);
-
-
-    for(int i=0; i<NB_CLIENTS; i++){
-        char *ip = inet_ntoa(client_sockets[i].sin_addr);
-        int port = ntohs(client_sockets[i].sin_port);
-        printf("Client #%d socket: %s:%d\n", i+1, ip, port);
-    }
-
-//  distribute_addresses(tab_sockets, client_sockets, NB_CLIENTS);
-
+    distribute_addresses(clients, &graph);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);
     printf("[+] Server: je termine\n");
+
+    return 0;
 }
 //
 // Created by daniel on 10/26/22.

@@ -23,6 +23,25 @@ void create_out_sockets(int *tab_sockets, int nb_sockets){
     }
 }
 
+void mise_en_ecoute(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+    struct sockaddr_in addr;
+    socklen_t len = sizeof(struct sockaddr_in);
+
+    for(int i=0; i<nb_sockets; i++){
+        if (listen(tab_sockets[i], 1) < 0){
+            perror("[-] Client: erreur listen");
+            close(tab_sockets[i]);
+            exit(1);
+        }
+        if (getsockname(tab_sockets[i], (struct sockaddr *) &addr, &len) == -1)
+            perror("[-] Client: getsockname failed.\n");
+        else{
+            printf("[+] Client: socket %d @ port %d\n", i+1, ntohs(addr.sin_port));
+            addresses[i] = addr;
+        }
+    }
+}
+
 void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
     int in_socket;
     struct sockaddr_in addr;
@@ -39,23 +58,46 @@ void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_s
         addr.sin_addr.s_addr = INADDR_ANY;
         addr.sin_port = 0;
 
-        socklen_t len = sizeof(struct sockaddr_in);
-
         if (bind(in_socket, (struct sockaddr *) &addr, sizeof(struct sockaddr_in)) < 0) {
             perror("[-] Client: erreur binding");
             close(in_socket);
             exit(1);
         }
-        if (getsockname(in_socket, (struct sockaddr *) &addr, &len) == -1)
-            perror("[-] Client: getsockname failed.\n");
-        else
-            addresses[i] = addr;
+    }
+    printf("[+] Client : sockets d'entrée créées\n");
+    mise_en_ecoute(tab_sockets, addresses, nb_sockets);
+}
+
+
+
+void establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+    for(int i=0; i<nb_sockets; i++){
+        printf("[+] Client: je me connecte à %d\n", i+1);
+        while (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0){
+            perror("[-] Client: erreur connect. Retrying...\n");
+        }
+        printf("[+] Client: connecté à %s:%d\n", inet_ntoa(addresses[i].sin_addr),
+                ntohs(addresses[i].sin_port));
+    }
+}
+
+void accept_connections(int *tab_sockets, int *com_sockets, int nb_sockets){
+    struct sockaddr_in adC ; // obtenir adresse client accepté
+    socklen_t lgC = sizeof (struct sockaddr_in);
+    for(int i=0; i<nb_sockets; i++){
+        int dsCv = accept(tab_sockets[i],(struct sockaddr *) &adC, &lgC);
+        if (dsCv < 0){
+            perror ( "[-] Client: probleme accept");
+            close(tab_sockets[i]);
+            exit(1);
+        }
+        com_sockets[i] = dsCv;
+        printf("[+] Client: accepté connexion de %s:%d\n", inet_ntoa(adC.sin_addr),
+               ntohs(adC.sin_port));
     }
 }
 
 int main(int argc, char *argv[]) {
-
-    /* parametres : IP, numéro port serveur, numéro port perso)*/
 
     if (argc != 1){
         printf("[-] Utilisation: %s \n", argv[0]);
@@ -108,7 +150,7 @@ int main(int argc, char *argv[]) {
 
     int in_out[2];
 
-    int rcv = recv(server_socket, in_out, sizeof(struct sockaddr_in), 0);
+    int rcv = recv(server_socket, in_out, sizeof(int)*2, 0);
 
     if (server_socket < 0){
         perror ( "[-] Client: probleme de reception");
@@ -141,7 +183,7 @@ int main(int argc, char *argv[]) {
     printf("[+] Client: creation des sockets out OK\n");
 
 
-    int send_in = send(server_socket, in_addresses, sizeof(struct sockaddr_in) * in_out[0], 0);
+    int send_in = send(server_socket, in_addresses, sizeof(struct sockaddr_in) * in, 0);
     if (send_in < 0){
         perror("[-] Client: probleme d'envoi des adresses in");
         close(server_socket);
@@ -150,12 +192,21 @@ int main(int argc, char *argv[]) {
     printf("[+] Client: envoi des adresses_in OK\n");
 
     /* receive out addresses from server and assign them to out sockets */
-    int rcv;
+    int rcv_add;
     for(int i=0; i<out; i++){
-        rcv = recv(server_socket, &out_addresses[i], sizeof(struct sockaddr_in), 0);
+        rcv_add = recv(server_socket, &out_addresses[i], sizeof(struct sockaddr_in), 0);
     }
-
+    for(int i=0; i<out; i++){
+        printf("out_addresses[%d]: %s:%d\n", i, inet_ntoa(out_addresses[i].sin_addr),
+               ntohs(out_addresses[i].sin_port));
+    }
     exit(0);
+
+    establish_connections(out_sockets, out_addresses, out);
+
+    int communication_sockets[in];
+    accept_connections(in_sockets, communication_sockets, in);
+
 /*
     //socket demande connexion
     int socket_sortie = socket(AF_INET, SOCK_STREAM, 0);
