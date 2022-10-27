@@ -1,13 +1,10 @@
 #include <stdio.h>
-#include <sys/types.h>
-#include <netdb.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include "read_graph.c"
-//#include "test/strtok.c"
 
 // Rôle du serveur : accepter la demande de connexion d'un client,
 // recevoir une chaîne de caractères, afficher cette chaîne et
@@ -90,6 +87,12 @@ void load_graph(FILE *file, struct Graph *graph){
 
 }
 
+void write_port(int port){
+    FILE *f = fopen(PORT_FILE, "w");
+    fprintf(f, "%d", port);
+    fclose(f);
+}
+
 int main(int argc, char *argv[]){
 
     // paramètre = num port socket d'écoute
@@ -165,10 +168,8 @@ int main(int argc, char *argv[]){
         printf("[+] Server: mise en écoute @%s:%d\n", inet_ntoa(server.sin_addr),
                                                               ntohs(server.sin_port));
 
-    // write server port to file
-    FILE *f2 = fopen(PORT_FILE, "w");
-    fprintf(f2, "%d ", ntohs(server.sin_port));
-    fclose(f2);
+    write_port(ntohs(server.sin_port));
+
 
     /* attendre et traiter demande connexion client.
        serveur accepte demande = creation nouvelle socket
@@ -219,11 +220,23 @@ int main(int argc, char *argv[]){
 
         int sent = send(dsCv, in_out, sizeof(int) * 2, 0);
         cptClient++;
+
+
+        // rcv adresses des sockets d'entrée du client i
+
+        struct sockaddr_in client_in[in];
+
+        int rcv = recv(dsCv, client_in, sizeof(struct sockaddr_in)*in, 0);
+
+        printf("recieved %d bytes\n", rcv);
+        if(rcv > 0)
+            printf("recieved %s:%d\n", inet_ntoa(client_in[0].sin_addr), ntohs(client_in[0].sin_port));
+
+        clients[cptClient].addr = client_in;
+
+/* réception message */
+
 /*
-        */
-/* réception message *//*
-
-
         struct sockaddr_in addr_client;
 
         int rcv = recv(dsCv, &addr_client, sizeof(struct sockaddr),0);

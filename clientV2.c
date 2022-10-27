@@ -39,12 +39,17 @@ void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_s
         addr.sin_addr.s_addr = INADDR_ANY;
         addr.sin_port = 0;
 
+        socklen_t len = sizeof(struct sockaddr_in);
+
         if (bind(in_socket, (struct sockaddr *) &addr, sizeof(struct sockaddr_in)) < 0) {
             perror("[-] Client: erreur binding");
             close(in_socket);
             exit(1);
         }
-        addresses[i] = addr;
+        if (getsockname(in_socket, (struct sockaddr *) &addr, &len) == -1)
+            perror("[-] Client: getsockname failed.\n");
+        else
+            addresses[i] = addr;
     }
 }
 
@@ -117,7 +122,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    printf("[+] Client: j'ai recu %d octets \n", rcv);
     printf("NB de in_sockets: %d\nNB de out_sockets: %d\n", in_out[0], in_out[1]);
 
     int in_sockets[in_out[0]];
@@ -131,6 +135,15 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in out_addresses[in_out[1]];
     create_out_sockets(out_sockets, in_out[1]);
     printf("[+] Client: creation des sockets out OK\n");
+
+
+    int send_in = send(server_socket, in_addresses, sizeof(struct sockaddr_in) * in_out[0], 0);
+    if (send_in < 0){
+        perror("[-] Client: probleme d'envoi des adresses in");
+        close(server_socket);
+        exit(1);
+    }
+    printf("[+] Client: envoi des adresses_in OK\n");
 
 
     exit(0);
