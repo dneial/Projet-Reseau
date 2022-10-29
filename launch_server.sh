@@ -1,15 +1,15 @@
 #!/bin/bash
 if [ $# -ne 2 ]
 then
-    echo "Indiquer le port et le nombre de clients"
+    echo "Indiquer le ficher de graphe"
 else
     echo "[+] Compiling"
     make
     port=$1
-    nb_clients=$2
-    echo "[+] Launching server @ address 0:$port, waiting for $nb_clients clients"
+    graphe=$2
+    echo "[+] Launching server"
     echo ""
-    gnome-terminal --tab -- ./bin/serveur $port $nb_clients
+    gnome-terminal --tab -- ./bin/serveur $port $graphe
     echo "[+] Launching clients"
-    ./launch_clients.sh $port $nb_clients 
+    ./launch_clients.sh
 fi

@@ -192,10 +192,14 @@ int main(int argc, char *argv[]) {
     printf("[+] Client: envoi des adresses_in OK\n");
 
     /* receive out addresses from server and assign them to out sockets */
-    int rcv_add;
-    for(int i=0; i<out; i++){
-        rcv_add = recv(server_socket, &out_addresses[i], sizeof(struct sockaddr_in), 0);
+
+    int rcv_add = recv(server_socket, &out_addresses, sizeof(struct sockaddr_in), 0);
+    if (rcv_add < 0){
+        perror("[-] Client: probleme de reception des adresses out");
+        close(server_socket);
+        exit(1);
     }
+    printf("[+] Client: reception des adresses out OK\n");
     for(int i=0; i<out; i++){
         printf("out_addresses[%d]: %s:%d\n", i, inet_ntoa(out_addresses[i].sin_addr),
                ntohs(out_addresses[i].sin_port));
