@@ -79,12 +79,14 @@ void read_graph(FILE *file, struct Graph *graph){
 
 void print_matrix(struct Graph *graph){
   int nb_sommets = graph->sommets;
+  printf("------\n");
   for(int i=0; i<nb_sommets; i++){
     for(int j=0; j<nb_sommets; j++){
       printf("%d ", graph->matrix[i][j]);
     }
     printf("\n");
   }
+  printf("------\n");
 }
 /*
 

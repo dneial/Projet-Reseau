@@ -11,7 +11,7 @@
 // renvoyer au client le nombre d'octets reçus par le serveur.
 
 #define PORT_FILE "server_port.txt"
-
+#define NB_OF_CLIENTS_FILE "clients.txt"
 
 struct Client {
     int socket;
@@ -65,18 +65,21 @@ void select_address(struct Client *c, struct sockaddr_in *addr){
 
 
 void distribute_addresses(struct Client *clients, struct Graph *graph){
-    struct Client sender;
-    struct Client receiver;
-    struct sockaddr_in addr;
+    struct Client *source;
+    struct Client *destination;
+    struct sockaddr_in *addr;
+    int a_offset;
 
     for(int i=0; i<graph->sommets; i++){
         for(int j=0; j<graph->sommets; j++){
             if(graph->matrix[i][j]){
-                sender = clients[i];
-                receiver = clients[j];
-                printf("[+] Server: sending address of %d to %d: %s:%d\n", sender.socket, receiver.socket,
-                                                                                  sender.addr[0].sin_port);
-                send(receiver.socket, &addr, sizeof(struct sockaddr_in), 0);
+                source = &clients[j];
+                destination = &clients[i];
+                a_offset = source->in - 1;
+                source->in--;
+                printf("[+] Server: sending address of %d to %d: %d\n", j+1, i+1,
+                       ntohs(source->addr[a_offset].sin_port));
+                send(destination->socket, source->addr + a_offset, sizeof(struct sockaddr_in), 0);
             }
         }
     }
@@ -99,6 +102,13 @@ void write_port(int port){
     fprintf(f, "%d", port);
     fclose(f);
 }
+
+void write_clients(int nb_clients){
+    FILE *f = fopen(NB_OF_CLIENTS_FILE, "w");
+    fprintf(f, "%d", nb_clients);
+    fclose(f);
+}
+
 void print_clients_info(struct Client *clients, int size){
     for(int i=0; i<size; i++){
         printf("[+] Server: client %d\n"
@@ -197,7 +207,7 @@ int main(int argc, char *argv[]){
                                                               ntohs(server.sin_port));
 
     write_port(ntohs(server.sin_port));
-
+    write_clients(graph.sommets);
 
     /* attendre et traiter demande connexion client.
        serveur accepte demande = creation nouvelle socket
@@ -210,7 +220,6 @@ int main(int argc, char *argv[]){
     int cptClient = 0;
 
     while(cptClient < NB_CLIENTS){
-
         printf("[+] Server: j'attends la demande d'un client\n");
 
 
@@ -272,6 +281,7 @@ int main(int argc, char *argv[]){
                    ntohs(clients[cptClient].addr[i].sin_port));
         }
         printf("[+] Server: fin du premier échange avec le client %i \n", cptClient+1);
+        printf("-----------------\n");
         cptClient++;
     }
 

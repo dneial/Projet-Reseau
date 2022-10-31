@@ -97,6 +97,45 @@ void accept_connections(int *tab_sockets, int *com_sockets, int nb_sockets){
     }
 }
 
+void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *msg){
+    for(int i=0; i<nb_sockets; i++){
+        printf("[+] Client: sending msg to: %s:%d\n", inet_ntoa(addr[i].sin_addr),
+                                                           ntohs(addr[i].sin_port));
+        int sent = send(tab_sockets[i], msg, sizeof(msg), 0);
+        if (sent < 0){
+            perror("[-] Client: problem sending message");
+            exit(1);
+        }
+    }
+}
+
+void receive_msg(int socket_descriptor){
+    char *msg;
+    int rcv = recv(socket_descriptor, msg, 5, 0);
+    if(rcv < 0){
+        perror("[-] Client: problem receiving message");
+        exit(1);
+    }
+    printf("[+] Client: received msg from neighbour: %s", msg);
+}
+
+
+
+int read_server_port(){
+    FILE *f = fopen(PORT_FILE, "r");
+    if(f == NULL) {
+        printf("File not found: %s\n", PORT_FILE);
+        exit(1);
+    }
+    char *line = malloc(sizeof(char)*5);
+    size_t n;
+    getline(&line, &n, f);
+    fclose(f);
+    int port = atoi(line);
+    free(line);
+    return port;
+}
+
 int main(int argc, char *argv[]) {
 
     if (argc != 1){
@@ -105,16 +144,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Creation socket Pour Server*/
-    FILE *f = fopen(PORT_FILE, "r");
-
-    char *line = malloc(5 * sizeof(char));
-    size_t n;
-
-    getline(&line, &n, f);
-    fclose(f);
-
-    int server_port = atoi(line);
-    free(line);
+    int server_port = read_server_port();
     printf("found port: %d\n", server_port);
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -194,7 +224,8 @@ int main(int argc, char *argv[]) {
     /* receive out addresses from server and assign them to out sockets */
 
     int rcv_add = recv(server_socket, &out_addresses, sizeof(struct sockaddr_in), 0);
-    if (rcv_add < 0){
+    if (rcv_add < 0){        perror("[-] Client: probleme de reception des adresses out");
+
         perror("[-] Client: probleme de reception des adresses out");
         close(server_socket);
         exit(1);
@@ -204,12 +235,22 @@ int main(int argc, char *argv[]) {
         printf("out_addresses[%d]: %s:%d\n", i, inet_ntoa(out_addresses[i].sin_addr),
                ntohs(out_addresses[i].sin_port));
     }
-    exit(0);
 
     establish_connections(out_sockets, out_addresses, out);
 
     int communication_sockets[in];
     accept_connections(in_sockets, communication_sockets, in);
+
+
+    char msg[5] = "hello";
+    send_msg(out_sockets, out_addresses, out, (char *) msg);
+
+
+    for(int i=0; i<in; i++){
+        receive_msg(communication_sockets[i]);
+    }
+
+    exit(0);
 
 /*
     //socket demande connexion

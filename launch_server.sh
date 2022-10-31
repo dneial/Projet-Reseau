@@ -1,15 +1,17 @@
 #!/bin/bash
-if [ $# -ne 2 ]
+if [ $# -ne 1 ]
 then
     echo "Indiquer le ficher de graphe"
 else
     echo "[+] Compiling"
-    make
-    port=$1
-    graphe=$2
+    graphe=$1
+    file="./server_port.txt"
     echo "[+] Launching server"
     echo ""
-    gnome-terminal --tab -- ./bin/serveur $port $graphe
+    gnome-terminal --tab -- ./s "$graphe"
     echo "[+] Launching clients"
-    ./launch_clients.sh
+    while IFS= read -r line;
+    do
+      echo "line: $line";
+    done < "$file"
 fi
