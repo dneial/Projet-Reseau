@@ -57,6 +57,8 @@ void read_edge_info(FILE *file, struct Edge *edge){
   getdelim(&edge_info, &n, 32, file);
   edge->v2 = atoi(edge_info);
 
+  printf("read edge ok\n");
+
 }
 
 void create_matrix(struct Graph *graph){
@@ -69,12 +71,11 @@ void create_matrix(struct Graph *graph){
 }
 
 void read_graph(FILE *file, struct Graph *graph){
-  struct Edge e;
-  for(int i=0; i<graph->aretes; i++){
-    read_edge_info(file, &e);
-    if(!graph->matrix[e.v2-1][e.v1-1]) graph->matrix[e.v1-1][e.v2-1] = 1;
-  }
-
+    struct Edge e;
+    for(int i=0; i<graph->aretes; i++){
+        read_edge_info(file, &e);
+        if(!graph->matrix[e.v2-1][e.v1-1]) graph->matrix[e.v1-1][e.v2-1] = 1;
+    }
 }
 
 void print_matrix(struct Graph *graph){

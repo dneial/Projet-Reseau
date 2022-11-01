@@ -23,13 +23,13 @@ obj/%.o: %.c
 	gcc -Wall -Iinclude -c $< -o $@
 
 bin/serveur: $(SRCS0:%.c=obj/%.o)
-	gcc -lpthread -o $@ $+
+	gcc -lpthread -o $@ $+ -g
 
 bin/client: $(SRCS1:%.c=obj/%.o)
-	gcc -lpthread -o $@ $+
+	gcc -lpthread -o $@ $+ -g
 
 bin/read_graph: $(SRCS2:%.c=obj/%.o)
-	gcc -lpthread -o $@ $+
+	gcc -lpthread -o $@ $+ -g
 
 clean:
 	rm -f $(BIN) obj/*.o *~

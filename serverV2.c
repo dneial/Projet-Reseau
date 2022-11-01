@@ -148,7 +148,6 @@ int main(int argc, char *argv[]){
         perror("File not found");
         exit(1);
     }
-
     struct Graph graph;
     load_graph(f, &graph);
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);

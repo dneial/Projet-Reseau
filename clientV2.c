@@ -104,14 +104,12 @@ void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *
     }
 
     for(int i=0; i<nb_sockets; i++){
-        printf("[+] Client: sending msg to: %s:%d\n", inet_ntoa(addr[i].sin_addr),
-                                                           ntohs(addr[i].sin_port));
-        int sent = send(tab_sockets[i], msg, msg_size, 0);
-        if (sent < 0){
-            perror("[-] Client: problem sending message");
-            exit(1);
+        while (send(tab_sockets[i], msg, msg_size, 0) < 0){
+            perror("[-] Client: problem sending message.");
+            printf("[-] Client: retrying...\n");
         }
-        printf("[+] Client: sent %d bytes\n", sent);
+        printf("[+] Client: msg sent to: %s:%d\n", inet_ntoa(addr[i].sin_addr),
+                                                   ntohs(addr[i].sin_port));
     }
 }
 
@@ -240,14 +238,24 @@ int main(int argc, char *argv[]) {
 
     /* receive out addresses from server and assign them to out sockets */
 
-    int rcv_add = recv(server_socket, &out_addresses, sizeof(struct sockaddr_in), 0);
-    if (rcv_add < 0){        perror("[-] Client: probleme de reception des adresses out");
-
-        perror("[-] Client: probleme de reception des adresses out");
-        close(server_socket);
-        exit(1);
+    struct sockaddr_in out_add;
+    for(int i=0; i<out; i++){
+        int rcv = recv(server_socket, &out_add, sizeof(struct sockaddr_in), 0);
+        if (rcv < 0){
+            perror ( "[-] Client: probleme de reception");
+            close(server_socket);
+            exit(1);
+        }
+        else if (rcv == 0)
+        {
+            printf("[-] Client: socket server fermée\n");
+            close(server_socket);
+            exit(1);
+        }
+        out_addresses[i] = out_add;
     }
     printf("[+] Client: reception des adresses out OK\n");
+
     for(int i=0; i<out; i++){
         printf("out_addresses[%d]: %s:%d\n", i, inet_ntoa(out_addresses[i].sin_addr),
                ntohs(out_addresses[i].sin_port));
@@ -273,85 +281,8 @@ int main(int argc, char *argv[]) {
     close_sockets(out_sockets, out);
     close_sockets(communication_sockets, in);
 
-    exit(0);
+    close(server_socket);
 
-/*
-    //socket demande connexion
-    int socket_sortie = socket(AF_INET, SOCK_STREAM, 0);
+    printf("[+] Client: je termine\n");
 
-    if (socket_sortie == -1){
-        printf("[-] Client : pb creation socket sortie\n");
-        exit(1);
-    }
-    printf("[+] Client: creation de la socket sortie OK\n");
-
-
-    //CRÉATION SOCKET ENVOI
-    int lgAdr2 = sizeof(struct sockaddr_in);
-
-    printf("[+] Client: mon voisin se trouve à %s:%d\n", inet_ntoa(addresse_sortie.sin_addr), ntohs(addresse_sortie.sin_port));
-
-    //MISE EN ECOUTE POUR ENTRÉE
-    int ecoute = listen(socket_entree, 1);
-    if (ecoute < 0){
-        printf("[-] Client: problème mise en écoute\n");
-        close(socket_entree);
-        exit(1);
-    }
-
-    printf("[+] Client: je suis en écoute\n");
-
-
-    *//*  int connection_voisin =  connect(socket_sortie,
-                              (struct sockaddr *) &addresse_sortie,
-                              lgAdr2);
-    *//*
-
-    while(connect(socket_sortie, (struct sockaddr *) &addresse_sortie, lgAdr2) < 0) {
-        perror("[-] Client: connexion failed");
-    }
-
-    printf("[+] Client: demande de connexion effectuée avec succès: %s:%d\n", inet_ntoa(addresse_sortie.sin_addr), ntohs(addresse_sortie.sin_port));
-
-
-    struct sockaddr_in adress_voisin ; // obtenir adresse client accepté
-    socklen_t lgV = sizeof (struct sockaddr_in);
-
-
-    int accept_voisin = accept(socket_entree,
-                               (struct sockaddr *) &adress_voisin,
-                               &lgV);
-
-    if (accept_voisin < 0){
-        perror("[-] Client: connexion réfusé");
-    }
-
-    printf("[+] Client: accepted connexion from voisin: %s:%d\n", inet_ntoa(adress_voisin.sin_addr), ntohs(adress_voisin.sin_port));
-
-    char hello[5] = "Hello";
-    exit(0);
-
-    int say_hello = send(socket_sortie, hello, sizeof(hello), 0);
-
-    if (say_hello < 0){
-        perror("[-] Client: problem sending message");
-        exit(1);
-    }
-
-    char *msg;
-
-    int rcv_hello = recv(accept_voisin, &msg, sizeof(hello), 0);
-
-    if (rcv_hello < 0) {
-        perror("[-] Client: problem receiving message ");
-        exit(1);
-    }
-
-    printf("[+] Client: received %d bytes from voisin", rcv_hello);
-    printf("[+] Client: message reveiced is %s", msg);
-    //fermeture socket server à la fin
-
-    close (server_socket);
-    close (socket_entree);
-    printf("[+] Client: je termine\n");*/
 }
