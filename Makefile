@@ -9,8 +9,8 @@ BIN=bin/client  bin/serveur
 #BIN=bin/serveur
 
 # liste des fichiers sources 
-SRCS0=server.c
-SRCS1=client.c
+SRCS0=serverV2.c
+SRCS1=clientV2.c
 SRCS2=read_graph.c
 
 default: $(BIN)

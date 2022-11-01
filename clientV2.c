@@ -92,31 +92,38 @@ void accept_connections(int *tab_sockets, int *com_sockets, int nb_sockets){
             exit(1);
         }
         com_sockets[i] = dsCv;
-        printf("[+] Client: accepté connexion de %s:%d\n", inet_ntoa(adC.sin_addr),
+        printf("[+] Client: accepté connexion de %d @ %s:%d\n", dsCv, inet_ntoa(adC.sin_addr),
                ntohs(adC.sin_port));
     }
 }
 
-void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *msg){
+void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *msg, size_t msg_size){
+    if(nb_sockets > 0){
+        printf("[+] Client: msg à envoyer : %s\n", msg);
+        printf("[+] Client: taille du msg à envoyer : %ld\n", msg_size);
+    }
+
     for(int i=0; i<nb_sockets; i++){
         printf("[+] Client: sending msg to: %s:%d\n", inet_ntoa(addr[i].sin_addr),
                                                            ntohs(addr[i].sin_port));
-        int sent = send(tab_sockets[i], msg, sizeof(msg), 0);
+        int sent = send(tab_sockets[i], msg, msg_size, 0);
         if (sent < 0){
             perror("[-] Client: problem sending message");
             exit(1);
         }
+        printf("[+] Client: sent %d bytes\n", sent);
     }
 }
 
-void receive_msg(int socket_descriptor){
-    char *msg;
-    int rcv = recv(socket_descriptor, msg, 5, 0);
+void receive_msg(int socket_descriptor, size_t msg_size){
+    char *msg = malloc(msg_size);
+    int rcv = recv(socket_descriptor, msg, msg_size, 0);
     if(rcv < 0){
         perror("[-] Client: problem receiving message");
         exit(1);
     }
-    printf("[+] Client: received msg from neighbour: %s", msg);
+    printf("[+] Client: received msg from neighbour: %s\n", msg);
+    free(msg);
 }
 
 
@@ -135,6 +142,16 @@ int read_server_port(){
     free(line);
     return port;
 }
+
+
+void close_sockets(int *sockets, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        close(sockets[i]);
+    }
+}
+
 
 int main(int argc, char *argv[]) {
 
@@ -243,12 +260,18 @@ int main(int argc, char *argv[]) {
 
 
     char msg[5] = "hello";
-    send_msg(out_sockets, out_addresses, out, (char *) msg);
+
+    send_msg(out_sockets, out_addresses, out, msg, sizeof(msg));
 
 
     for(int i=0; i<in; i++){
-        receive_msg(communication_sockets[i]);
+        receive_msg(communication_sockets[i], sizeof(msg));
     }
+
+
+    close_sockets(in_sockets, in);
+    close_sockets(out_sockets, out);
+    close_sockets(communication_sockets, in);
 
     exit(0);
 

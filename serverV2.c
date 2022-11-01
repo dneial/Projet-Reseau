@@ -144,11 +144,16 @@ int main(int argc, char *argv[]){
     printf("Reading %s...\n", FILENAME);
 
     FILE *f = fopen(FILENAME, "r");
+    if(f == NULL) {
+        perror("File not found");
+        exit(1);
+    }
+
     struct Graph graph;
     load_graph(f, &graph);
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);
-
     print_matrix(&graph);
+
 
     //nombre de clients à relier
     const int NB_CLIENTS = graph.sommets;
@@ -288,10 +293,10 @@ int main(int argc, char *argv[]){
     printf("[+] Server: tous les clients sont prêts\n");
     print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
-    exit(0);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);
+    close(server_socket);
     printf("[+] Server: je termine\n");
 
     return 0;

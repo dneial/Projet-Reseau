@@ -4,14 +4,16 @@ then
     echo "Indiquer le ficher de graphe"
 else
     echo "[+] Compiling"
+    make
     graphe=$1
-    file="./server_port.txt"
+    file="bin/serveur"
+    port_file="./server_port.txt"
     echo "[+] Launching server"
     echo ""
-    gnome-terminal --tab -- ./s "$graphe"
+    gnome-terminal --tab -- "$file" "$graphe"
     echo "[+] Launching clients"
     while IFS= read -r line;
     do
       echo "line: $line";
-    done < "$file"
+    done < "$port_file"
 fi
