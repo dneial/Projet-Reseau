@@ -57,7 +57,6 @@ void read_edge_info(FILE *file, struct Edge *edge){
   getdelim(&edge_info, &n, 32, file);
   edge->v2 = atoi(edge_info);
 
-  printf("read edge ok\n");
 
 }
 
