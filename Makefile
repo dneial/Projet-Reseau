@@ -5,12 +5,12 @@
 # nom de l'executable
 #BIN=runPeriod
 
-BIN=bin/client  bin/serveur
+BIN=bin/noeud  bin/serveur
 #BIN=bin/serveur
 
 # liste des fichiers sources 
 SRCS0=serverV2.c
-SRCS1=clientV2.c
+SRCS1=noeud.c
 SRCS2=read_graph.c
 
 default: $(BIN)
@@ -25,7 +25,7 @@ obj/%.o: %.c
 bin/serveur: $(SRCS0:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+ -g
 
-bin/client: $(SRCS1:%.c=obj/%.o)
+bin/noeud: $(SRCS1:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+ -g
 
 bin/read_graph: $(SRCS2:%.c=obj/%.o)

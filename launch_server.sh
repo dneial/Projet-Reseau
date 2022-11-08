@@ -11,7 +11,7 @@ else
     echo "[+] Launching server"
     echo ""
     gnome-terminal --tab -- "$file" "$graphe"
-    echo "[+] Launching clients"
+    echo "[+] Launching noeuds"
     while IFS= read -r line;
     do
       echo "line: $line";

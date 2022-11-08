@@ -72,11 +72,11 @@ void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_s
 
 void establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
     for(int i=0; i<nb_sockets; i++){
-        printf("[+] Client: je me connecte à %d\n", i+1);
+        printf("[+] Noeud: je me connecte à %d\n", i+1);
         while (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0){
-            perror("[-] Client: erreur connect. Retrying...\n");
+            perror("[-] Noeud: erreur connect. Retrying...\n");
         }
-        printf("[+] Client: connecté à %s:%d\n", inet_ntoa(addresses[i].sin_addr),
+        printf("[+] Noeud: connecté à %s:%d\n", inet_ntoa(addresses[i].sin_addr),
                 ntohs(addresses[i].sin_port));
     }
 }
@@ -87,28 +87,28 @@ void accept_connections(int *tab_sockets, int *com_sockets, int nb_sockets){
     for(int i=0; i<nb_sockets; i++){
         int dsCv = accept(tab_sockets[i],(struct sockaddr *) &adC, &lgC);
         if (dsCv < 0){
-            perror ( "[-] Client: probleme accept");
+            perror ( "[-] Noeud: probleme accept");
             close(tab_sockets[i]);
             exit(1);
         }
         com_sockets[i] = dsCv;
-        printf("[+] Client: accepté connexion de %d @ %s:%d\n", dsCv, inet_ntoa(adC.sin_addr),
+        printf("[+] Noeud: accepté connexion de %d @ %s:%d\n", dsCv, inet_ntoa(adC.sin_addr),
                ntohs(adC.sin_port));
     }
 }
 
 void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *msg, size_t msg_size){
     if(nb_sockets > 0){
-        printf("[+] Client: msg à envoyer : %s\n", msg);
-        printf("[+] Client: taille du msg à envoyer : %ld\n", msg_size);
+        printf("[+] Noeud: msg à envoyer : %s\n", msg);
+        printf("[+] Noeud: taille du msg à envoyer : %ld\n", msg_size);
     }
 
     for(int i=0; i<nb_sockets; i++){
         while (send(tab_sockets[i], msg, msg_size, 0) < 0){
-            perror("[-] Client: problem sending message.");
-            printf("[-] Client: retrying...\n");
+            perror("[-] Noeud: problem sending message.");
+            printf("[-] Noeud: retrying...\n");
         }
-        printf("[+] Client: msg sent to: %s:%d\n", inet_ntoa(addr[i].sin_addr),
+        printf("[+] Noeud: msg sent to: %s:%d\n", inet_ntoa(addr[i].sin_addr),
                                                    ntohs(addr[i].sin_port));
     }
 }
@@ -117,10 +117,10 @@ void receive_msg(int socket_descriptor, size_t msg_size){
     char *msg = malloc(msg_size);
     int rcv = recv(socket_descriptor, msg, msg_size, 0);
     if(rcv < 0){
-        perror("[-] Client: problem receiving message");
+        perror("[-] Noeud: problem receiving message");
         exit(1);
     }
-    printf("[+] Client: received msg from neighbour: %s\n", msg);
+    printf("[+] Noeud: received msg from neighbour: %s\n", msg);
     free(msg);
 }
 
@@ -197,23 +197,20 @@ int main(int argc, char *argv[]) {
 
     int rcv = recv(server_socket, in_out, sizeof(int)*2, 0);
 
-    if (server_socket < 0){
+    if (rcv < 0){
         perror ( "[-] Client: probleme de reception");
         close(server_socket);
         exit(1);
     }
-    else if (server_socket == 0)
+    else if (rcv == 0)
     {
         printf("[-] Client: socket server fermée\n");
         close(server_socket);
         exit(1);
     }
 
-    printf("NB de in_sockets: %d\nNB de out_sockets: %d\n", in_out[0], in_out[1]);
-
     int in = in_out[0];
     int out = in_out[1];
-
 
     int in_sockets[in];
     struct sockaddr_in in_addresses[in];
@@ -283,6 +280,6 @@ int main(int argc, char *argv[]) {
 
     close(server_socket);
 
-    printf("[+] Client: je termine\n");
+    printf("[+] Noeud: je termine\n");
 
 }
