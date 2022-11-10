@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "read_graph.c"
+#include "tcp_communication.c"
 
 // Rôle du serveur : accepter la demande de connexion d'un client,
 // recevoir une chaîne de caractères, afficher cette chaîne et
@@ -66,7 +67,7 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
                 destination = &clients[i];
                 printf("[+] Server: sending address of %d to %d: %d\n", j+1, i+1,
                        ntohs(source->addr.sin_port));
-                send(destination->socket, &source->addr, sizeof(struct sockaddr_in), 0);
+                send_tcp(destination->socket, &source->addr, sizeof(struct sockaddr_in));
             }
         }
     }
@@ -240,7 +241,7 @@ int main(int argc, char *argv[]){
         clients[cptClient].in = in;
         clients[cptClient].out = out;
 
-        int sent = send(dsCv, in_out, sizeof(int) * 2, 0);
+        int sent = send_tcp(dsCv, in_out, sizeof(int) * 2);
 
         // rcv adresses des sockets d'entrée du client i
 

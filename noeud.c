@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include "tcp_communication.c"
 
 #define PORT_FILE "server_port.txt"
 
@@ -102,7 +103,7 @@ void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *
     }
 
     for(int i=0; i<nb_sockets; i++){
-        while (send(tab_sockets[i], msg, msg_size, 0) < 0){
+        while (send_tcp(tab_sockets[i], msg, msg_size) < 0){
             perror("[-] Noeud: problem sending message.");
             printf("[-] Noeud: retrying...\n");
         }
@@ -113,7 +114,7 @@ void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *
 
 void receive_msg(int socket_descriptor, size_t msg_size){
     char *msg = malloc(msg_size);
-    int rcv = recv(socket_descriptor, msg, msg_size, 0);
+    int rcv = receive_tcp(socket_descriptor, msg, msg_size);
     if(rcv < 0){
         perror("[-] Noeud: problem receiving message");
         exit(1);
@@ -193,7 +194,7 @@ int main(int argc, char *argv[]) {
 
     int in_out[2];
 
-    int rcv = recv(server_socket, in_out, sizeof(int)*2, 0);
+    int rcv = receive_tcp(server_socket, in_out, sizeof(int)*2);
 
     if (rcv < 0){
         perror ( "[-] Client: probleme de reception");
@@ -220,7 +221,7 @@ int main(int argc, char *argv[]) {
     printf("[+] Client: creation des sockets out OK\n");
 
     if(in > 0){
-        int send_in = send(server_socket, &in_addresse, sizeof(struct sockaddr_in), 0);
+        int send_in = send_tcp(server_socket, &in_addresse, sizeof(struct sockaddr_in));
         if (send_in < 0){
             perror("[-] Client: probleme d'envoi des adresses in");
             close(server_socket);
@@ -233,7 +234,7 @@ int main(int argc, char *argv[]) {
 
     struct sockaddr_in out_add;
     for(int i=0; i<out; i++){
-        int rcv = recv(server_socket, &out_add, sizeof(struct sockaddr_in), 0);
+        int rcv = receive_tcp(server_socket, &out_add, sizeof(struct sockaddr_in));
         if (rcv < 0){
             perror ( "[-] Client: probleme de reception");
             close(server_socket);
