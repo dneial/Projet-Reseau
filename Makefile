@@ -9,7 +9,7 @@ BIN=bin/noeud  bin/serveur
 #BIN=bin/serveur
 
 # liste des fichiers sources 
-SRCS0=serverV2.c
+SRCS0=server.c
 SRCS1=noeud.c
 SRCS2=read_graph.c
 
