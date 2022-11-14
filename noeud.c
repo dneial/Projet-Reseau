@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include "tcp_communication.c"
 
 #define PORT_FILE "server_port.txt"
 
@@ -23,49 +24,47 @@ void create_out_sockets(int *tab_sockets, int nb_sockets){
     }
 }
 
-void mise_en_ecoute(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
-    struct sockaddr_in addr;
+int mise_en_ecoute(int socket, struct sockaddr_in *addresse){
+
     socklen_t len = sizeof(struct sockaddr_in);
 
-    for(int i=0; i<nb_sockets; i++){
-        if (listen(tab_sockets[i], 1) < 0){
-            perror("[-] Client: erreur listen");
-            close(tab_sockets[i]);
-            exit(1);
-        }
-        if (getsockname(tab_sockets[i], (struct sockaddr *) &addr, &len) == -1)
-            perror("[-] Client: getsockname failed.\n");
-        else{
-            printf("[+] Client: socket %d @ port %d\n", i+1, ntohs(addr.sin_port));
-            addresses[i] = addr;
-        }
+    if (listen(socket, 1) < 0){
+        perror("[-] Client: erreur listen");
+        close(socket);
+        exit(1);
     }
+    if (getsockname(socket, (struct sockaddr *) addresse, &len) == -1)
+        perror("[-] Client: getsockname failed.\n");
+    else{
+        printf("[+] Client: socket %d @ port %d\n", socket, ntohs(addresse->sin_port));
+    }
+
+    return 0;
 }
 
-void create_in_sockets(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+int create_in_socket(struct sockaddr_in *addresse){
     int in_socket;
     struct sockaddr_in addr;
 
-    for(int i=0; i<nb_sockets; i++) {
-        in_socket = socket(AF_INET, SOCK_STREAM, 0);
-        if (in_socket == -1) {
-            printf("[-] Client : pb creation socket sortie\n");
-            exit(1);
-        };
-        tab_sockets[i] = in_socket;
+    in_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (in_socket == -1) {
+        printf("[-] Client : pb creation socket sortie\n");
+        exit(1);
+    };
 
-        addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = INADDR_ANY;
-        addr.sin_port = 0;
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = 0;
 
-        if (bind(in_socket, (struct sockaddr *) &addr, sizeof(struct sockaddr_in)) < 0) {
-            perror("[-] Client: erreur binding");
-            close(in_socket);
-            exit(1);
-        }
+    if (bind(in_socket, (struct sockaddr *) &addr, sizeof(struct sockaddr_in)) < 0) {
+        perror("[-] Client: erreur binding");
+        close(in_socket);
+        exit(1);
     }
-    printf("[+] Client : sockets d'entrée créées\n");
-    mise_en_ecoute(tab_sockets, addresses, nb_sockets);
+
+    printf("[+] Client: creation de la socket d'écoute in OK\n");
+    mise_en_ecoute(in_socket, addresse);
+    return in_socket;
 }
 
 
@@ -81,14 +80,14 @@ void establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int 
     }
 }
 
-void accept_connections(int *tab_sockets, int *com_sockets, int nb_sockets){
+void accept_connections(int socket, int *com_sockets, int nb_sockets){
     struct sockaddr_in adC ; // obtenir adresse client accepté
     socklen_t lgC = sizeof (struct sockaddr_in);
     for(int i=0; i<nb_sockets; i++){
-        int dsCv = accept(tab_sockets[i],(struct sockaddr *) &adC, &lgC);
+        int dsCv = accept(socket,(struct sockaddr *) &adC, &lgC);
         if (dsCv < 0){
             perror ( "[-] Noeud: probleme accept");
-            close(tab_sockets[i]);
+            close(socket);
             exit(1);
         }
         com_sockets[i] = dsCv;
@@ -104,7 +103,7 @@ void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *
     }
 
     for(int i=0; i<nb_sockets; i++){
-        while (send(tab_sockets[i], msg, msg_size, 0) < 0){
+        while (send_tcp(tab_sockets[i], msg, msg_size) < 0){
             perror("[-] Noeud: problem sending message.");
             printf("[-] Noeud: retrying...\n");
         }
@@ -115,7 +114,7 @@ void send_msg(int *tab_sockets, struct sockaddr_in *addr, int nb_sockets, char *
 
 void receive_msg(int socket_descriptor, size_t msg_size){
     char *msg = malloc(msg_size);
-    int rcv = recv(socket_descriptor, msg, msg_size, 0);
+    int rcv = receive_tcp(socket_descriptor, msg, msg_size);
     if(rcv < 0){
         perror("[-] Noeud: problem receiving message");
         exit(1);
@@ -195,7 +194,7 @@ int main(int argc, char *argv[]) {
 
     int in_out[2];
 
-    int rcv = recv(server_socket, in_out, sizeof(int)*2, 0);
+    int rcv = receive_tcp(server_socket, in_out, sizeof(int)*2);
 
     if (rcv < 0){
         perror ( "[-] Client: probleme de reception");
@@ -212,32 +211,30 @@ int main(int argc, char *argv[]) {
     int in = in_out[0];
     int out = in_out[1];
 
-    int in_sockets[in];
-    struct sockaddr_in in_addresses[in];
-    create_in_sockets(in_sockets, in_addresses, in);
-    printf("[+] Client: creation des sockets in OK\n");
-
-
+    struct sockaddr_in in_addresse;
+    int in_socket = -1;
+    if(in > 0) in_socket = create_in_socket(&in_addresse);
 
     int out_sockets[out];
     struct sockaddr_in out_addresses[out];
     create_out_sockets(out_sockets, out);
     printf("[+] Client: creation des sockets out OK\n");
 
-
-    int send_in = send(server_socket, in_addresses, sizeof(struct sockaddr_in) * in, 0);
-    if (send_in < 0){
-        perror("[-] Client: probleme d'envoi des adresses in");
-        close(server_socket);
-        exit(1);
+    if(in > 0){
+        int send_in = send_tcp(server_socket, &in_addresse, sizeof(struct sockaddr_in));
+        if (send_in < 0){
+            perror("[-] Client: probleme d'envoi des adresses in");
+            close(server_socket);
+            exit(1);
+        }
+        printf("[+] Client: envoi des adresses_in OK\n");
     }
-    printf("[+] Client: envoi des adresses_in OK\n");
 
     /* receive out addresses from server and assign them to out sockets */
 
     struct sockaddr_in out_add;
     for(int i=0; i<out; i++){
-        int rcv = recv(server_socket, &out_add, sizeof(struct sockaddr_in), 0);
+        int rcv = receive_tcp(server_socket, &out_add, sizeof(struct sockaddr_in));
         if (rcv < 0){
             perror ( "[-] Client: probleme de reception");
             close(server_socket);
@@ -261,7 +258,7 @@ int main(int argc, char *argv[]) {
     establish_connections(out_sockets, out_addresses, out);
 
     int communication_sockets[in];
-    accept_connections(in_sockets, communication_sockets, in);
+    accept_connections(in_socket, communication_sockets, in);
 
 
     char msg[5] = "hello";
@@ -274,11 +271,11 @@ int main(int argc, char *argv[]) {
     }
 
 
-    close_sockets(in_sockets, in);
     close_sockets(out_sockets, out);
     close_sockets(communication_sockets, in);
 
     close(server_socket);
+    close(in_socket);
 
     printf("[+] Noeud: je termine\n");
 
