@@ -249,7 +249,7 @@ int main(int argc, char *argv[]){
 
         if(in > 0){
             printf("[+] Server: about to receive %d addresses from client %d\n", in, cptClient+1);
-            int received = recv(dsCv, &c_in, sizeof(struct sockaddr_in), 0);
+            int received = receive_tcp(dsCv, &c_in, sizeof(struct sockaddr_in));
             if(received>0) {
                 printf("[+] Server: adresse from %d: %d\n", cptClient+1, ntohs(c_in.sin_port));
                 clients[cptClient].addr = c_in;
