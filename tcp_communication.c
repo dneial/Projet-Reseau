@@ -1,10 +1,8 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 #include <sys/socket.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "tcp_communication.h"
 
 
 int receive_tcp(int socket, void *buffer, size_t buffer_size){

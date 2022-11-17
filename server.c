@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include "read_graph.c"
-#include "tcp_communication.c"
+#include "read_graph.h"
+#include "tcp_communication.h"
 
 
 #define PORT_FILE "server_port.txt"

@@ -19,7 +19,7 @@ default: $(BIN)
 #~ regles pour l'executable
 ########################################
 
-obj/%.o: %.c
+obj/%.o: %.c %.h
 	gcc -Wall -Iinclude -c $< -o $@
 
 bin/serveur: $(SRCS0:%.c=obj/%.o)

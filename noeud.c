@@ -69,20 +69,22 @@ int create_in_socket(struct sockaddr_in *addresse, int in){
 
 
 
-void establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+int establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+    int connections = 0;
     for(int i=0; i<nb_sockets; i++){
         printf("[+] Noeud: je me connecte à %d\n", i+1);
         while (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0){
             perror("[-] Noeud: erreur connect. Retrying...\n");
         }
-        printf("[+] Noeud: connecté à %s:%d\n", inet_ntoa(addresses[i].sin_addr),
-                ntohs(addresses[i].sin_port));
+        connections++;
     }
+    return connections;
 }
 
-void accept_connections(int socket, int *com_sockets, int nb_sockets){
+int accept_connections(int socket, int *com_sockets, int nb_sockets){
     struct sockaddr_in adC ; // obtenir adresse client accepté
     socklen_t lgC = sizeof (struct sockaddr_in);
+    int accepted = 0;
     for(int i=0; i<nb_sockets; i++){
         int dsCv = accept(socket,(struct sockaddr *) &adC, &lgC);
         if (dsCv < 0){
@@ -90,10 +92,13 @@ void accept_connections(int socket, int *com_sockets, int nb_sockets){
             close(socket);
             exit(1);
         }
-        com_sockets[i] = dsCv;
-        printf("[+] Noeud: accepté connexion de %d @ %s:%d\n", dsCv, inet_ntoa(adC.sin_addr),
-               ntohs(adC.sin_port));
+        else {
+            com_sockets[i] = dsCv;
+            accepted++;
+        }
     }
+
+    return accepted;
 }
 
 int send_msg(int *tab_sockets, int nb_sockets, char *msg, size_t msg_size){
@@ -255,10 +260,12 @@ int main(int argc, char *argv[]) {
     }
     printf("[+] Client: reception des adresses out OK\n");
 
-    establish_connections(out_sockets, out_addresses, out);
+    int connections = establish_connections(out_sockets, out_addresses, out);
+    printf("[+] Client: %d connexions sortantes établies\n", connections);
 
     int communication_sockets[in];
-    accept_connections(in_socket, communication_sockets, in);
+    int accepted = accept_connections(in_socket, communication_sockets, in);
+    printf("[+] Client: %d connexions entrantes acceptées\n", accepted);
 
 
     char msg[5] = "hello";

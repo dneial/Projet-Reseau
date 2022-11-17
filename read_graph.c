@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "read_graph.h"
 
 struct Edge {
   int v1;
