@@ -5,7 +5,7 @@
 # nom de l'executable
 #BIN=runPeriod
 
-BIN=bin/noeud  bin/serveur
+BIN=bin/serveur
 #BIN=bin/serveur
 
 # liste des fichiers sources 
@@ -13,13 +13,16 @@ SRCS0=server.c
 SRCS1=noeud.c
 SRCS2=read_graph.c
 
+SERVER_DEPS=read_graph.h tcp_communication.h
+NOEUD_DEPS=tcp_communication.h
+
 default: $(BIN)
 
 ########################################
 #~ regles pour l'executable
 ########################################
 
-obj/%.o: %.c %.h
+obj/%.o: %.c $(SERVER_DEPS)
 	gcc -Wall -Iinclude -c $< -o $@
 
 bin/serveur: $(SRCS0:%.c=obj/%.o)
