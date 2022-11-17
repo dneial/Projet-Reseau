@@ -69,6 +69,14 @@ void create_matrix(struct Graph *graph){
 
 }
 
+void free_matrix(struct Graph *graph){
+    int nb_sommets = graph->sommets;
+    for(int i = 0; i < nb_sommets; i++) {
+        free(graph->matrix[i]);
+    }
+    free(graph->matrix);
+}
+
 void read_graph(FILE *file, struct Graph *graph){
     struct Edge e;
     for(int i=0; i<graph->aretes; i++){
@@ -88,39 +96,3 @@ void print_matrix(struct Graph *graph){
   }
   printf("------\n");
 }
-/*
-
-int main(int argc, char *argv[]){
-  if(argc != 2){
-    printf("Usage: %s <graph_file>\n", argv[0]);
-    exit(1);
-  }
-
-  const char *FILENAME = argv[1];
-  printf("Reading %s...\n", FILENAME);
-
-  FILE *f = fopen(FILENAME, "r");
-  struct Graph graph;
-
-
-  read_headers(f, 0);
-  read_graph_info(f, &graph);
-
-
-  // ??? ça fait rien mais si je le commente j'ai segmentation fault
-  int matrix[graph.aretes];
-
-  create_matrix(&graph);
-  read_graph(f, &graph);
-
-  printf("Graph: %d sommets and %d aretes\n", graph.sommets, graph.aretes);
-  for(int i=0; i<graph.sommets; i++){
-      for(int j=0; j<graph.sommets; j++){
-          printf("%d ", graph.matrix[i][j]);
-      }
-      printf("\n");
-  }
-  exit(0);
-
-}
-*/

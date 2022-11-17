@@ -1,2 +1,3 @@
 obj
-server_port.txt
+*.txt
+*.out

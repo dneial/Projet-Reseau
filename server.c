@@ -7,9 +7,6 @@
 #include "read_graph.c"
 #include "tcp_communication.c"
 
-// Rôle du serveur : accepter la demande de connexion d'un client,
-// recevoir une chaîne de caractères, afficher cette chaîne et
-// renvoyer au client le nombre d'octets reçus par le serveur.
 
 #define PORT_FILE "server_port.txt"
 #define NB_OF_CLIENTS_FILE "clients.txt"
@@ -76,13 +73,17 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
 
 
 void load_graph(FILE *file, struct Graph *graph){
+
     read_headers(file, 0);
     read_graph_info(file, graph);
 
-    int matrix[graph->aretes];
+    // why god why ?
+    int wtf[graph->aretes];
+
 
     create_matrix(graph);
     read_graph(file, graph);
+
 }
 
 void write_port(int port){
@@ -110,7 +111,6 @@ void print_clients_info(struct Client *clients, int size) {
 
 
 int main(int argc, char *argv[]){
-
     // paramètre = num port socket d'écoute
 
     if (argc != 2){
@@ -131,8 +131,7 @@ int main(int argc, char *argv[]){
     struct Graph graph;
     load_graph(f, &graph);
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);
-    print_matrix(&graph);
-
+    fclose(f);
 
     //nombre de clients à relier
     const int NB_CLIENTS = graph.sommets;
@@ -242,7 +241,10 @@ int main(int argc, char *argv[]){
         clients[cptClient].out = out;
 
         int sent = send_tcp(dsCv, in_out, sizeof(int) * 2);
-
+        if(sent < 0){
+            perror("[-] Server: error sending number of voisins");
+            exit(1);
+        }
         // rcv adresses des sockets d'entrée du client i
 
         struct sockaddr_in c_in;
@@ -272,6 +274,8 @@ int main(int argc, char *argv[]){
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);
     close(server_socket);
+    free_matrix(&graph);
+
     printf("[+] Server: je termine\n");
 
     return 0;
