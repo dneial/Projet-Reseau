@@ -28,7 +28,7 @@ int mise_en_ecoute(int socket, struct sockaddr_in *addresse){
 
     socklen_t len = sizeof(struct sockaddr_in);
 
-    if (listen(socket, 1) < 0){
+    if (listen(socket, 150) < 0){
         perror("[-] Client: erreur listen");
         close(socket);
         exit(1);
