@@ -1,10 +1,10 @@
 //
 // Created by daniel on 10/26/22.
 //
-#include <stdio.h>
+//#include <stdio.h>
+//#include <sys/socket.h>
+//#include <stdlib.h>
 #include <unistd.h>
-#include <sys/socket.h>
-#include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
 #include "tcp_communication.c"
@@ -66,8 +66,6 @@ int create_in_socket(struct sockaddr_in *addresse, int in){
     mise_en_ecoute(in_socket, addresse, in);
     return in_socket;
 }
-
-
 
 int establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
     int connections = 0;
@@ -133,8 +131,6 @@ int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
     return received;
 }
 
-
-
 int read_server_port(){
     FILE *f = fopen(PORT_FILE, "r");
     if(f == NULL) {
@@ -150,7 +146,6 @@ int read_server_port(){
     return port;
 }
 
-
 void close_sockets(int *sockets, int size)
 {
     for (int i = 0; i < size; i++)
@@ -159,16 +154,88 @@ void close_sockets(int *sockets, int size)
     }
 }
 
-
 int main(int argc, char *argv[]) {
 
-    if (argc != 1){
-        printf("[-] Utilisation: %s \n", argv[0]);
+    if (argc > 5){
+        printf("[-] Utilisation: %s [-v|--verbose] [-n|--network <IP> <PORT>]\n", argv[0]);
         exit(0);
     }
 
+    int verbose = 0;
+    int network = 0;
+    char server_ip[16];
+    int server_port;
+
+    if (argc > 1){
+        if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--verbose") == 0){
+            printf("[+] Client: verbose mode\n");
+            verbose = 1;
+
+            if (argc > 2){
+                if (strcmp(argv[2], "-n") == 0 || strcmp(argv[2], "--network") == 0){
+                    printf("[+] Client: network mode\n");
+                    if (argc == 5){
+                        network = 1;
+                        //tester si format valide normalement
+                        strcpy(server_ip, argv[3]);
+                        server_port = atoi(argv[4]);
+                    }
+                    else{
+                        printf("[-] Client: missing arguments for network mode\n");
+                        printf("[-] Utilisation: %s [-v|--verbose] [-n|--network <IP> <PORT>]\n", argv[0]);
+                        exit(1);
+                    }
+                }
+            }
+        }
+
+        else if (strcmp(argv[1], "-n") == 0 || strcmp(argv[1], "--network") == 0){
+            printf("[+] Client: network mode\n");
+            if (argc > 3){
+                network = 1;
+                //tester si format valide normalement
+                strcpy(server_ip, argv[2]);
+                server_port = atoi(argv[3]);
+            }
+            else{
+                printf("[-] Client: missing arguments for network mode\n");
+                printf("[-] Utilisation: %s [-v|--verbose] [-n|--network <IP> <PORT>]\n", argv[0]);
+                exit(1);
+            }
+            network = 1;
+
+            if (strcmp(argv[2], "-v") == 0 || strcmp(argv[2], "--verbose") == 0){
+                printf("[+] Client: verbose mode\n");
+                verbose = 1;
+            }
+        }
+        else{
+            printf("[-] Client: unknown option %s\n", argv[1]);
+            exit(1);
+        }
+    }
+
     /* Creation socket Pour Server*/
-    int server_port = read_server_port();
+
+    if (!network)
+    {
+        strcpy(server_ip, "0.0.0.0");
+        server_port = read_server_port();
+    }
+//    else
+//    {
+//        do
+//        {
+//            printf("[+] Client: Entrez l'adresse IP du serveur:\n");
+//            scanf("%s", server_ip);
+//        } while (strlen(server_ip) > 15);
+//
+//        do
+//        {
+//            printf("[+] Client: Entrez le port du serveur:\n");
+//            scanf("%d", &server_port);
+//        } while (server_port < 1024 || server_port > 65535);
+//    }
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -182,7 +249,7 @@ int main(int argc, char *argv[]) {
 
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
-    inet_pton(AF_INET, "0.0.0.0", &(server_address.sin_addr));
+    inet_pton(AF_INET, server_ip, &(server_address.sin_addr));
     server_address.sin_port = htons(server_port);
 
     socklen_t lgAdr = sizeof(struct sockaddr_in);

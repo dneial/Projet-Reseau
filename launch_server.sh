@@ -1,13 +1,22 @@
 #!/bin/bash
-if [ $# -ne 1 ]
+if [ $# -lt 1 ]
 then
-    echo "Indiquer le ficher de graphe"
+#    echo "Indiquer le ficher de graphe"
+    echo "[-] Utilisation: %s <GRAPH FILE> [-v|--verbose] [-n|--network]"
 else
     echo "[1] Compiling"
     make
     graphe=$1
+    ARG1=${2:-}
+    ARG2=${3:-}
     file="bin/serveur"
-    echo "[2] Launching server"
     echo ""
-    gnome-terminal --tab -- "$file" "$graphe"
+    if [ "$ARG1" = "-n" ] || [ "$ARG1" = "--network" ]
+    then
+        echo "[3] Launching server in network mode"
+        gnome-terminal --tab -- "$file" "$graphe" "$ARG1" "$ARG2"
+    else
+        echo "[3] Launching server "
+        gnome-terminal --tab -- "$file" "$graphe"
+    fi
 fi

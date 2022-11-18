@@ -1,8 +1,8 @@
-#include <stdio.h>
+//#include <stdio.h>
+//#include <sys/socket.h>
+//#include <stdlib.h>
 #include <arpa/inet.h>
-#include <sys/socket.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <string.h>
 #include "read_graph.h"
 #include "tcp_communication.h"
@@ -79,6 +79,7 @@ void load_graph(FILE *file, struct Graph *graph){
 
     // why god why ?
     int wtf[graph->aretes];
+    printf("[+] Server: wtf = %d\n", wtf[0]);
 
 
     create_matrix(graph);
@@ -112,10 +113,46 @@ void print_clients_info(struct Client *clients, int size) {
 
 int main(int argc, char *argv[]){
     // paramètre = num port socket d'écoute
+    // argv[1] = fichier contenant le graphe
+    // argv[2] = option : -v pour afficher les infos des clients
+    //                    -n pour afficher l'adresse et le port du serveur à fournir aux clients
 
-    if (argc != 2){
-        printf("[-] Utilisation: %s <GRAPH FILE>\n", argv[0]);
+    if (argc < 2){
+        printf("[-] Utilisation: %s <GRAPH FILE> [-v|--verbose] [-n|--network]   \n", argv[0]);
         exit(1);
+    }
+
+    int verbose = 0;
+    int network = 0;
+
+    if (argc > 2){
+        if (strcmp(argv[2], "-v") == 0 || strcmp(argv[2], "--verbose") == 0){
+            printf("[+] Server: verbose mode\n");
+            verbose = 1;
+
+            if (argc > 3){
+                if (strcmp(argv[3], "-n") == 0 || strcmp(argv[3], "--network") == 0){
+                    printf("[+] Server: network mode\n");
+                    network = 1;
+                }
+            }
+        }
+
+        else if (strcmp(argv[2], "-n") == 0 || strcmp(argv[2], "--network") == 0){
+            printf("[+] Server: network mode\n");
+            network = 1;
+
+            if (argc > 3){
+                if (strcmp(argv[3], "-v") == 0 || strcmp(argv[3], "--verbose") == 0){
+                    printf("[+] Server: verbose mode\n");
+                    verbose = 1;
+                }
+            }
+        }
+        else{
+            printf("[-] Server: unknown option %s\n", argv[2]);
+            exit(1);
+        }
     }
 
     // Lire le fichier décrivant la configuration du reseau
@@ -189,8 +226,21 @@ int main(int argc, char *argv[]){
         printf("[+] Server: mise en écoute @%s:%d\n", inet_ntoa(server.sin_addr),
                                                               ntohs(server.sin_port));
 
-    write_port(ntohs(server.sin_port));
-    write_clients(graph.sommets);
+    if (!network)
+    {
+        write_port(ntohs(server.sin_port));
+        write_clients(graph.sommets);
+    }
+    else
+    {
+        char servAddr[INET_ADDRSTRLEN];
+        inet_ntop( AF_INET, &server.sin_addr, servAddr, sizeof( servAddr ));
+
+        printf("\n[+] Server: veuillez renseignez les informations suivantes au processus client:\n");
+        printf("[+] Server: Addresse = %s\n", servAddr );
+        printf("[+] Server: Port = %d\n", ntohs(server.sin_port));
+        printf("[+] Server: nb clients = %d\n\n", graph.sommets);
+    }
 
     /* attendre et traiter demande connexion client.
        serveur accepte demande = creation nouvelle socket
