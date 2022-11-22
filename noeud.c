@@ -44,7 +44,7 @@ int mise_en_ecoute(int socket, struct sockaddr_in *addresse, int in){
 
 int create_in_socket(struct sockaddr_in *addresse, int in){
     int in_socket;
-    struct sockaddr_in addr;
+//    struct sockaddr_in addr;
 
     in_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (in_socket == -1) {
@@ -52,11 +52,11 @@ int create_in_socket(struct sockaddr_in *addresse, int in){
         exit(1);
     };
 
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = 0;
+    addresse->sin_family = AF_INET;
+    addresse->sin_addr.s_addr = INADDR_ANY;
+    addresse->sin_port = 0;
 
-    if (bind(in_socket, (struct sockaddr *) &addr, sizeof(struct sockaddr_in)) < 0) {
+    if (bind(in_socket, (struct sockaddr *) addresse, sizeof(struct sockaddr_in)) < 0) {
         perror("[-] Client: erreur binding");
         close(in_socket);
         exit(1);
