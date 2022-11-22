@@ -71,8 +71,9 @@ int establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int n
     int connections = 0;
     for(int i=0; i<nb_sockets; i++){
         printf("[+] Noeud: je me connecte à %d\n", i+1);
-        while (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0){
+        if (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0) {
             perror("[-] Noeud: erreur connect. Retrying...\n");
+            exit(1);
         }
         connections++;
     }
