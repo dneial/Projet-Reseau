@@ -4,7 +4,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-#include <net/if.h>
 #include "read_graph.h"
 #include "tcp_communication.h"
 
@@ -200,9 +199,6 @@ int main(int argc, char *argv[]){
     memset(&server, 0, sizeof(server));
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-
-    struct ifreq ifr;
-    //strncopy(ifr.ifr_name, "eth0", IFNAMSIZ);
 
     socklen_t lenServer = sizeof (struct sockaddr_in);
 
