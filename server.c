@@ -271,6 +271,8 @@ int main(int argc, char *argv[]){
             close(server_socket);
             exit(1);
         }
+        printf("[+] Server: connexion acceptée from %s:%d\n", inet_ntoa(adC.sin_addr),
+                                                              ntohs(adC.sin_port));
 
         //on stocke la socket pour pouvoir recommuniquer avec le client plus tard
         clients[cptClient].socket = dsCv;
@@ -279,11 +281,6 @@ int main(int argc, char *argv[]){
            adresse IP et numéro de port de structure adC.
            Attention conversions format réseau -> format hôte.
            fonction inet_ntoa(..) pour l'IP. */
-
-
-        // char* ipserv = inet_ntoa(adC.sin_addr);
-        // int port = htons(server.sin_port);
-        // printf("Server: le client %s:%d est connecté  \n", ipserv, port);
 
 
         //Envoyer msg au client indiquant le nombre de sockets d'entrée et de sortie.
@@ -310,7 +307,8 @@ int main(int argc, char *argv[]){
             printf("[+] Server: about to receive %d addresses from client %d\n", in, cptClient+1);
             int received = receive_tcp(dsCv, &c_in, sizeof(struct sockaddr_in));
             if(received>0) {
-                printf("[+] Server: adresse from %d: %d\n", cptClient+1, ntohs(c_in.sin_port));
+                c_in.sin_addr = adC.sin_addr;
+                printf("[+] Server: adresse from %d: %s:%d\n", cptClient+1, inet_ntoa(c_in.sin_addr),ntohs(c_in.sin_port));
                 clients[cptClient].addr = c_in;
             }
             else{

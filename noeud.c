@@ -223,20 +223,6 @@ int main(int argc, char *argv[]) {
         strcpy(server_ip, "0.0.0.0");
         server_port = read_server_port();
     }
-//    else
-//    {
-//        do
-//        {
-//            printf("[+] Client: Entrez l'adresse IP du serveur:\n");
-//            scanf("%s", server_ip);
-//        } while (strlen(server_ip) > 15);
-//
-//        do
-//        {
-//            printf("[+] Client: Entrez le port du serveur:\n");
-//            scanf("%d", &server_port);
-//        } while (server_port < 1024 || server_port > 65535);
-//    }
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
