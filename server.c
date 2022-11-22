@@ -62,7 +62,8 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
             if(graph->matrix[i][j]){
                 source = &clients[j];
                 destination = &clients[i];
-                printf("[+] Server: sending address of %d to %d: %d\n", j+1, i+1,
+                printf("[+] Server: sending address of %d to %d: %s:%d\n", j+1, i+1,
+                       inet_ntoa(source->addr.sin_addr),
                        ntohs(source->addr.sin_port));
                 send_tcp(destination->socket, &source->addr, sizeof(struct sockaddr_in));
             }
@@ -176,7 +177,7 @@ int main(int argc, char *argv[]){
 
 
     /* creation socket permet recevoir demandes connexion.*/
-    int server_socket = socket(PF_INET, SOCK_STREAM, 0);
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
     if (server_socket == -1){
         perror("[-] Server: probleme creation socket");
@@ -237,7 +238,7 @@ int main(int argc, char *argv[]){
         inet_ntop( AF_INET, &server.sin_addr, servAddr, sizeof( servAddr ));
 
         printf("\n[+] Server: veuillez renseignez les informations suivantes au processus client:\n");
-        printf("[+] Server: Addresse = %s\n", servAddr );
+        printf("[+] Server: Addresse = %s\n", servAddr);
         printf("[+] Server: Port = %d\n", ntohs(server.sin_port));
         printf("[+] Server: nb clients = %d\n\n", graph.sommets);
     }

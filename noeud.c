@@ -36,7 +36,7 @@ int mise_en_ecoute(int socket, struct sockaddr_in *addresse, int in){
     if (getsockname(socket, (struct sockaddr *) addresse, &len) == -1)
         perror("[-] Client: getsockname failed.\n");
     else{
-        printf("[+] Client: socket %d @ port %d\n", socket, ntohs(addresse->sin_port));
+        printf("[+] Client: socket %d @ ip:port %s:%d\n", socket, inet_ntoa(addresse->sin_addr),ntohs(addresse->sin_port));
     }
 
     return 0;
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]) {
 
             if (argc > 2){
                 if (strcmp(argv[2], "-n") == 0 || strcmp(argv[2], "--network") == 0){
-                    printf("[+] Client: network mode\n");
+                    printf("[+] Client: Network mode\n");
                     if (argc == 5){
                         network = 1;
                         //tester si format valide normalement

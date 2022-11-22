@@ -11,11 +11,10 @@ BIN=bin/serveur bin/noeud
 # liste des fichiers sources 
 SRCS0=server.c
 SRCS1=noeud.c
-SRCS2=tcp_communication.c
-SRCS3=read_graph.c
+SRCS2=read_graph.c
 
-SERVER_DEPS=read_graph.o tcp_communication.o
-NOEUD_DEPS=tcp_communication.o
+SERVER_DEPS=read_graph.h tcp_communication.h
+NOEUD_DEPS=tcp_communication.h
 
 default: $(BIN)
 
@@ -32,12 +31,8 @@ bin/serveur: $(SRCS0:%.c=obj/%.o)
 bin/noeud: $(SRCS1:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+ -g
 
-#bin/serveur: $(SRCS0:%.c=obj/%.o) $(SRCS2:%.c=obj/%.o) $(SRCS3:%.c=obj/%.o)
-#	gcc -lpthread -o $@ $+ -g
-#
-#bin/noeud: $(SRCS1:%.c=obj/%.o) $(SRCS3:%.c=obj/%.o)
-#	gcc -lpthread -o $@ $+ -g
-
+bin/read_graph: $(SRCS2:%.c=obj/%.o)
+	gcc -lpthread -o $@ $+ -g
 
 clean:
 	rm -f $(BIN) obj/*.o *~
