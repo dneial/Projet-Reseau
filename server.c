@@ -1,6 +1,3 @@
-//#include <stdio.h>
-//#include <sys/socket.h>
-//#include <stdlib.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
@@ -78,12 +75,10 @@ void load_graph(FILE *file, struct Graph *graph){
     read_headers(file, 0);
     read_graph_info(file, graph);
 
-    printf("[+] Server: debug %d\n", 0);
+    printf("[+] Server: l%dading graph\n", 0);
 
     // why god why ?
-    int wtf[graph->aretes];
-    printf("[+] Server: wtf = %d\n", wtf[0]);
-
+    int tableau_bizarre_qui_segv_si_pas_utilise[graph->aretes];
 
     create_matrix(graph);
     read_graph(file, graph);
@@ -121,12 +116,13 @@ int main(int argc, char *argv[]){
     //                    -n pour afficher l'adresse et le port du serveur à fournir aux clients
 
     if (argc < 2){
-        printf("[-] Utilisation: %s <GRAPH FILE> [-v|--verbose] [-n|--network]   \n", argv[0]);
+        printf("[-] Utilisation: %s <GRAPH_FILE> [-v|--verbose] [-n|--network <adresse_IP>]\n", argv[0]);
         exit(1);
     }
 
     int verbose = 0;
     int network = 0;
+    char servAddr[INET_ADDRSTRLEN] = "0.0.0.0";
 
     if (argc > 2){
         if (strcmp(argv[2], "-v") == 0 || strcmp(argv[2], "--verbose") == 0){
@@ -137,6 +133,8 @@ int main(int argc, char *argv[]){
                 if (strcmp(argv[3], "-n") == 0 || strcmp(argv[3], "--network") == 0){
                     printf("[+] Server: network mode\n");
                     network = 1;
+                    strcpy(servAddr, argv[argc-1]);
+                    printf("%s\n", servAddr);
                 }
             }
         }
@@ -144,6 +142,7 @@ int main(int argc, char *argv[]){
         else if (strcmp(argv[2], "-n") == 0 || strcmp(argv[2], "--network") == 0){
             printf("[+] Server: network mode\n");
             network = 1;
+            strcpy(servAddr, argv[argc-1]);
 
             if (argc > 3){
                 if (strcmp(argv[3], "-v") == 0 || strcmp(argv[3], "--verbose") == 0){
@@ -226,7 +225,7 @@ int main(int argc, char *argv[]){
     if (getsockname(server_socket, (struct sockaddr *)&server, &lenServer) == -1)
         perror("[-] Server: getsockname failed.\n");
     else
-        printf("[+] Server: mise en écoute @%s:%d\n", inet_ntoa(server.sin_addr),
+        printf("[+] Server: mise en écoute @%s:%d\n", servAddr,
                                                               ntohs(server.sin_port));
 
     if (!network)
@@ -236,9 +235,6 @@ int main(int argc, char *argv[]){
     }
     else
     {
-        char servAddr[INET_ADDRSTRLEN];
-        inet_ntop( AF_INET, &server.sin_addr, servAddr, sizeof( servAddr ));
-
         printf("\n[+] Server: veuillez renseignez les informations suivantes au processus client:\n");
         printf("[+] Server: Addresse = %s\n", servAddr);
         printf("[+] Server: Port = %d\n", ntohs(server.sin_port));

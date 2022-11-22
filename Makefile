@@ -13,9 +13,6 @@ SRCS0=server.c
 SRCS1=noeud.c
 SRCS2=read_graph.c
 
-SERVER_DEPS=read_graph.h tcp_communication.h
-NOEUD_DEPS=tcp_communication.h
-
 default: $(BIN)
 
 ########################################
@@ -29,9 +26,6 @@ bin/serveur: $(SRCS0:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+ -g
 
 bin/noeud: $(SRCS1:%.c=obj/%.o)
-	gcc -lpthread -o $@ $+ -g
-
-bin/read_graph: $(SRCS2:%.c=obj/%.o)
 	gcc -lpthread -o $@ $+ -g
 
 clean:
