@@ -78,6 +78,8 @@ void load_graph(FILE *file, struct Graph *graph){
     read_headers(file, 0);
     read_graph_info(file, graph);
 
+    printf("[+] Server: debug %d\n", 0);
+
     // why god why ?
     int wtf[graph->aretes];
     printf("[+] Server: wtf = %d\n", wtf[0]);
