@@ -143,6 +143,7 @@ int main(int argc, char *argv[]){
             printf("[+] Server: network mode\n");
             network = 1;
             strcpy(servAddr, argv[argc-1]);
+//            printf("\n serveur addresse : %s\n", servAddr);
 
             if (argc > 3){
                 if (strcmp(argv[3], "-v") == 0 || strcmp(argv[3], "--verbose") == 0){
@@ -209,8 +210,6 @@ int main(int argc, char *argv[]){
         exit(1);
     }
 
-    printf("[+] Server: connecté\n");
-
     /* socket nommée -> ecoute
        dédie socket à réception demandes connexion
        & limiter file demandes connexions */
@@ -225,7 +224,7 @@ int main(int argc, char *argv[]){
     if (getsockname(server_socket, (struct sockaddr *)&server, &lenServer) == -1)
         perror("[-] Server: getsockname failed.\n");
     else
-        printf("[+] Server: mise en écoute @%s:%d\n", servAddr,
+        printf("[+] Server: mise en écoute @%s: %d\n", servAddr,
                                                               ntohs(server.sin_port));
 
     if (!network)

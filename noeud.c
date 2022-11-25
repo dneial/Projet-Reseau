@@ -315,14 +315,14 @@ int main(int argc, char *argv[]) {
     printf("[+] Client: reception des adresses out OK\n");
 
     int connections = establish_connections(out_sockets, out_addresses, out);
-    printf("[+] Client: %d connexions sortantes établies\n", connections);
+    printf("[+] Noeud: %d connexions sortantes établies\n", connections);
 
     int communication_sockets[in];
     int accepted = accept_connections(in_socket, communication_sockets, in);
-    printf("[+] Client: %d connexions entrantes acceptées\n", accepted);
+    printf("[+] Noeud: %d connexions entrantes acceptées\n", accepted);
 
 
-    char msg[5] = "hello";
+    char msg[6] = "hello\0";
 
     int envoyes = send_msg(out_sockets,out, msg, sizeof(msg));
     printf("[+] Noeud: j'ai envoyé %d messages (sur %d voisins sortants)\n", envoyes, out);
@@ -344,3 +344,4 @@ int main(int argc, char *argv[]) {
 
 
 }
+
