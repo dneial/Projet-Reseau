@@ -170,6 +170,7 @@ int main(int argc, char *argv[]){
     }
     struct Graph graph;
     load_graph(f, &graph);
+    print_matrix(&graph);
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);
     fclose(f);
 
@@ -278,14 +279,15 @@ int main(int argc, char *argv[]){
         int out = get_nb_of_out_connections(cptClient, &graph);
         int in = get_nb_of_in_connections(cptClient, &graph);
 
-        int in_out[2];
+        int in_out[3];
         in_out[0] = in;
         in_out[1] = out;
+        in_out[2] = cptClient+1;
 
         clients[cptClient].in = in;
         clients[cptClient].out = out;
 
-        int sent = send_tcp(dsCv, in_out, sizeof(int) * 2);
+        int sent = send_tcp(dsCv, in_out, sizeof(int) * 3);
         if(sent < 0){
             perror("[-] Server: error sending number of voisins");
             exit(1);

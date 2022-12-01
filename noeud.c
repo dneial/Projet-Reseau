@@ -10,7 +10,7 @@
 #include "tcp_communication.c"
 
 #define PORT_FILE "server_port.txt"
-
+int INDICE= 0;
 
 void create_out_sockets(int *tab_sockets, int nb_sockets){
     int out_socket;
@@ -36,13 +36,13 @@ int mise_en_ecoute(int socket, struct sockaddr_in *addresse, int in){
     if (getsockname(socket, (struct sockaddr *) addresse, &len) == -1)
         perror("[-] Client: getsockname failed.\n");
     else{
-        printf("[+] Client: socket %d @ ip:port %s:%d\n", socket, inet_ntoa(addresse->sin_addr),ntohs(addresse->sin_port));
+        printf("\n[+] Client : socket @%s:%d\n\n", inet_ntoa(addresse->sin_addr),ntohs(addresse->sin_port));
     }
 
     return 0;
 }
 
-int create_in_socket(struct sockaddr_in *addresse, int in){
+int create_in_socket(struct sockaddr_in *addresse){
     int in_socket;
 //    struct sockaddr_in addr;
 
@@ -63,20 +63,20 @@ int create_in_socket(struct sockaddr_in *addresse, int in){
     }
 
     printf("[+] Client: creation de la socket d'écoute in OK\n");
-    mise_en_ecoute(in_socket, addresse, in);
     return in_socket;
 }
 
 int establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
     int connections = 0;
     for(int i=0; i<nb_sockets; i++){
-        printf("[+] Noeud: je me connecte à %d\n", i+1);
+        printf("\n[+] Noeud %d: je me connecte à %d\n",INDICE,  ntohs(addresses[i].sin_port));
         if (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0) {
-            perror("[-] Noeud: erreur connect. Retrying...\n");
+            perror("[-] Noeud : erreur connect. Retrying...\n");
             exit(1);
         }
         connections++;
     }
+    printf("\n");
     return connections;
 }
 
@@ -87,7 +87,7 @@ int accept_connections(int socket, int *com_sockets, int nb_sockets){
     for(int i=0; i<nb_sockets; i++){
         int dsCv = accept(socket,(struct sockaddr *) &adC, &lgC);
         if (dsCv < 0){
-            perror ( "[-] Noeud: probleme accept");
+            perror ( "[-] Noeud : probleme accept");
             close(socket);
             exit(1);
         }
@@ -102,14 +102,14 @@ int accept_connections(int socket, int *com_sockets, int nb_sockets){
 
 int send_msg(int *tab_sockets, int nb_sockets, char *msg, size_t msg_size){
     if(nb_sockets > 0){
-        printf("[+] Noeud: msg à envoyer : %s\n", msg);
-        printf("[+] Noeud: taille du msg à envoyer : %ld\n", msg_size);
+        printf("[+] Noeud %d: msg à envoyer : %s\n", INDICE, msg);
+        printf("[+] Noeud %d: taille du msg à envoyer : %ld\n", INDICE, msg_size);
     }
     int sent = 0;
     for(int i=0; i<nb_sockets; i++){
         int s = send_tcp(tab_sockets[i], msg, msg_size);
         if(s < 0){
-            perror("[-] Noeud: problem sending message.");
+            perror("[-] Noeud : problem sending message.");
         }
         else sent++;
     }
@@ -123,7 +123,7 @@ int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
     for(int i =0; i < nb_sockets; i++){
         int rcv = receive_tcp(tab_sockets[i], msg, msg_size);
         if(rcv < 0){
-            perror("[-] Noeud: problem receiving message");
+            perror("[-] Noeud : problem receiving message");
             exit(1);
         } else received++;
     }
@@ -255,9 +255,9 @@ int main(int argc, char *argv[]) {
     }
     printf("[+] Client: demande de connexion avec server reussie\n");
 
-    int in_out[2];
+    int in_out[3];
 
-    int rcv = receive_tcp(server_socket, in_out, sizeof(int)*2);
+    int rcv = receive_tcp(server_socket, in_out, sizeof(int)*3);
 
     if (rcv < 0){
         perror ( "[-] Client: probleme de reception");
@@ -274,10 +274,14 @@ int main(int argc, char *argv[]) {
 
     int in = in_out[0];
     int out = in_out[1];
+    INDICE = in_out[2];
 
     struct sockaddr_in in_addresse;
     int in_socket = -1;
-    if(in > 0) in_socket = create_in_socket(&in_addresse, in);
+    if(in > 0){
+        in_socket = create_in_socket(&in_addresse);
+        mise_en_ecoute(in_socket, &in_addresse, in);
+    }
 
     int out_sockets[out];
     struct sockaddr_in out_addresses[out];
@@ -315,24 +319,24 @@ int main(int argc, char *argv[]) {
     printf("[+] Client: reception des adresses out OK\n");
 
     int connections = establish_connections(out_sockets, out_addresses, out);
-    printf("[+] Noeud: %d connexions sortantes établies\n", connections);
+    printf("[+] Noeud %d: %d connexions sortantes établies\n", INDICE, connections);
 
     int communication_sockets[in];
     int accepted = accept_connections(in_socket, communication_sockets, in);
-    printf("[+] Noeud: %d connexions entrantes acceptées\n", accepted);
+    printf("[+] Noeud %d: %d connexions entrantes acceptées\n", INDICE, accepted);
 
 
     char msg[6] = "hello\0";
 
     int envoyes = send_msg(out_sockets,out, msg, sizeof(msg));
-    printf("[+] Noeud: j'ai envoyé %d messages (sur %d voisins sortants)\n", envoyes, out);
+    printf("[+] Noeud %d: j'ai envoyé %d messages (sur %d voisins sortants)\n", INDICE, envoyes, out);
 
     int recus = receive_msg(communication_sockets, in, sizeof(msg));
-    printf("[+] Noeud: j'ai reçu %d messages (sur %d voisins entrants)\n", recus, in);
+    printf("[+] Noeud %d: j'ai reçu %d messages (sur %d voisins entrants)\n", INDICE, recus, in);
 
 
 
-    printf("[+] Noeud: je termine\n");
+    printf("[+] Noeud %d: je termine\n", INDICE);
 
     sleep(180);
 

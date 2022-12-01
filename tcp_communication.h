@@ -10,9 +10,9 @@
 
 int receive_tcp(int socket, void *buffer, size_t buffer_size){
     int current_size = buffer_size;
-    printf("DEBUG : pré received \n");
+//    printf("DEBUG : pré received \n");
     int received = recv(socket, buffer, current_size, 0);
-    printf("DEBUG : received %d bytes\n", received);
+//    printf("DEBUG : received %d bytes\n", received);
 
     while(received < buffer_size){
         if(received == 0){
