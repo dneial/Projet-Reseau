@@ -63,6 +63,8 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
                 printf("[+] Server: sending address of %d to %d: %s:%d\n", j+1, i+1,
                        inet_ntoa(source->noeud.addr.sin_addr),
                        ntohs(source->noeud.addr.sin_port));
+                printf("sizeof struct Noeud : %lu\n", sizeof(struct Noeud));
+                printf("sizeof source->noeud : %lu\n", sizeof(source->noeud));
                 send_tcp(destination->socket, &source->noeud, sizeof(struct Noeud));
             }
         }
