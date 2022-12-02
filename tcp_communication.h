@@ -8,6 +8,11 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 
+struct Noeud {
+    struct sockaddr_in addr;
+    int index;
+};
+
 int receive_tcp(int socket, void *buffer, size_t buffer_size){
     int current_size = buffer_size;
 //    printf("DEBUG : pré received \n");

@@ -105,7 +105,7 @@ void print_clients_info(struct Client *clients, int size) {
                "    In: %d\n"
                "    Out: %d\n"
                "    Address : %d\n", i, clients[i].socket, clients[i].in, clients[i].out,
-               ntohs(clients[i].addr.sin_port));
+               ntohs(clients[i].noeud.addr.sin_port));
     }
 }
 

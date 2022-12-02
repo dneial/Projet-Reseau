@@ -12,6 +12,7 @@
 #define PORT_FILE "server_port.txt"
 int INDICE= 0;
 
+
 void create_out_sockets(int *tab_sockets, int nb_sockets){
     int out_socket;
     for(int i=0; i<nb_sockets; i++){
