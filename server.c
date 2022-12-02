@@ -12,8 +12,9 @@ struct Client {
     int socket;
     int in;
     int out;
-    struct sockaddr_in addr;
+    struct Noeud noeud;
 };
+
 
 void close_sockets(struct Client *c, int size)
 {
@@ -60,9 +61,9 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
                 source = &clients[j];
                 destination = &clients[i];
                 printf("[+] Server: sending address of %d to %d: %s:%d\n", j+1, i+1,
-                       inet_ntoa(source->addr.sin_addr),
-                       ntohs(source->addr.sin_port));
-                send_tcp(destination->socket, &source->addr, sizeof(struct sockaddr_in));
+                       inet_ntoa(source->noeud.addr.sin_addr),
+                       ntohs(source->noeud.addr.sin_port));
+                send_tcp(destination->socket, &source->noeud, sizeof(struct Noeud));
             }
         }
     }
@@ -268,6 +269,7 @@ int main(int argc, char *argv[]){
 
         //on stocke la socket pour pouvoir recommuniquer avec le client plus tard
         clients[cptClient].socket = dsCv;
+        clients[cptClient].noeud.index = cptClient+1;
 
         /* affichage adresse socket client accepté :
            adresse IP et numéro de port de structure adC.
@@ -302,7 +304,7 @@ int main(int argc, char *argv[]){
             if(received>0) {
                 c_in.sin_addr = adC.sin_addr;
                 printf("[+] Server: adresse from %d: %s:%d\n", cptClient+1, inet_ntoa(c_in.sin_addr),ntohs(c_in.sin_port));
-                clients[cptClient].addr = c_in;
+                clients[cptClient].noeud.addr = c_in;
             }
             else{
                 perror("[-] Server: error receiving adresse\n");
@@ -325,8 +327,9 @@ int main(int argc, char *argv[]){
     free_matrix(&graph);
 
     printf("[+] Server: je termine\n");
-
+    sleep(120);
     return 0;
+
 }
 //
 // Created by daniel on 10/26/22.

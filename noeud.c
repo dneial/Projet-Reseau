@@ -66,11 +66,11 @@ int create_in_socket(struct sockaddr_in *addresse){
     return in_socket;
 }
 
-int establish_connections(int *tab_sockets, struct sockaddr_in *addresses, int nb_sockets){
+int establish_connections(int *tab_sockets, struct Noeud *noeuds, int nb_sockets){
     int connections = 0;
     for(int i=0; i<nb_sockets; i++){
-        printf("\n[+] Noeud %d: je me connecte à %d\n",INDICE,  ntohs(addresses[i].sin_port));
-        if (connect(tab_sockets[i], (struct sockaddr *) &addresses[i], sizeof(struct sockaddr_in)) < 0) {
+        printf("\n[+] Noeud %d: je me connecte au noeud %d @ %d\n", INDICE, noeuds[i].index, ntohs(noeuds[i].addr.sin_port));
+        if (connect(tab_sockets[i], (struct sockaddr *) &noeuds[i].addr, sizeof(struct sockaddr_in)) < 0) {
             perror("[-] Noeud : erreur connect. Retrying...\n");
             exit(1);
         }
@@ -284,7 +284,7 @@ int main(int argc, char *argv[]) {
     }
 
     int out_sockets[out];
-    struct sockaddr_in out_addresses[out];
+    struct Noeud out_noeuds[out];
     create_out_sockets(out_sockets, out);
     printf("[+] Client: creation des sockets out OK\n");
 
@@ -300,9 +300,9 @@ int main(int argc, char *argv[]) {
 
     /* receive out addresses from server and assign them to out sockets */
 
-    struct sockaddr_in out_add;
+    struct Noeud noeud;
     for(int i=0; i<out; i++){
-        int rcv = receive_tcp(server_socket, &out_add, sizeof(struct sockaddr_in));
+        int rcv = receive_tcp(server_socket, &noeud, sizeof(struct Noeud));
         if (rcv < 0){
             perror ( "[-] Client: probleme de reception");
             close(server_socket);
@@ -314,11 +314,12 @@ int main(int argc, char *argv[]) {
             close(server_socket);
             exit(1);
         }
-        out_addresses[i] = out_add;
+        out_noeuds[i] = noeud;
     }
+
     printf("[+] Client: reception des adresses out OK\n");
 
-    int connections = establish_connections(out_sockets, out_addresses, out);
+    int connections = establish_connections(out_sockets, out_noeuds, out);
     printf("[+] Noeud %d: %d connexions sortantes établies\n", INDICE, connections);
 
     int communication_sockets[in];
