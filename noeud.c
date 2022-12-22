@@ -1,9 +1,3 @@
-//
-// Created by daniel on 10/26/22.
-//
-//#include <stdio.h>
-//#include <sys/socket.h>
-//#include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <string.h>
@@ -101,9 +95,8 @@ int accept_connections(int socket, int *com_sockets, int nb_sockets){
     return accepted;
 }
 
-int send_msg(int *tab_sockets, int nb_sockets, char *msg, size_t msg_size){
+int send_msg(int *tab_sockets, int nb_sockets, void *msg, size_t msg_size){
     if(nb_sockets > 0){
-        printf("[+] Noeud %d: msg à envoyer : %s\n", INDICE, msg);
         printf("[+] Noeud %d: taille du msg à envoyer : %ld\n", INDICE, msg_size);
     }
     int sent = 0;
@@ -118,7 +111,7 @@ int send_msg(int *tab_sockets, int nb_sockets, char *msg, size_t msg_size){
 }
 
 int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
-    char *msg = malloc(msg_size);
+    void *msg = malloc(msg_size);
     int received = 0;
 
     for(int i =0; i < nb_sockets; i++){
@@ -128,6 +121,8 @@ int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
             exit(1);
         } else received++;
     }
+    int tmp = *((int*) msg);
+    printf("message reçu : %d\n", tmp );
     free(msg);
 
     return received;
@@ -153,6 +148,15 @@ void close_sockets(int *sockets, int size)
     for (int i = 0; i < size; i++)
     {
         close(sockets[i]);
+    }
+}
+
+void append_arrays(int *res, int *tab1, int *tab2, int size1, int size2){
+    for(int i=0; i<size1; i++){
+        res[i] = tab1[i];
+    }
+    for(int i=0; i<size2; i++){
+        res[size1+i] = tab2[i];
     }
 }
 
@@ -327,13 +331,15 @@ int main(int argc, char *argv[]) {
     int accepted = accept_connections(in_socket, communication_sockets, in);
     printf("[+] Noeud %d: %d connexions entrantes acceptées\n", INDICE, accepted);
 
+    int voisins[in+out];
+    append_arrays(voisins, communication_sockets, out_sockets, in,  out);
 
-    char msg[6] = "hello\0";
+    int couleur = INDICE;
 
-    int envoyes = send_msg(out_sockets,out, msg, sizeof(msg));
+    int envoyes = send_msg(out_sockets, out, &couleur, sizeof(couleur));
     printf("[+] Noeud %d: j'ai envoyé %d messages (sur %d voisins sortants)\n", INDICE, envoyes, out);
 
-    int recus = receive_msg(communication_sockets, in, sizeof(msg));
+    int recus = receive_msg(communication_sockets, in, sizeof(couleur));
     printf("[+] Noeud %d: j'ai reçu %d messages (sur %d voisins entrants)\n", INDICE, recus, in);
 
 
@@ -341,6 +347,9 @@ int main(int argc, char *argv[]) {
     printf("[+] Noeud %d: je termine\n", INDICE);
 
     sleep(180);
+
+    /*create_thread_envoie();
+    create_thread_reception();*/
 
     close_sockets(out_sockets, out);
     close_sockets(communication_sockets, in);

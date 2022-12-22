@@ -1,0 +1,65 @@
+coloration de graphe au sein d'un réseau de processus interconnectés
+
+1) envoi d'un message indiquant sa couleur (initialement son indice) à chaque voisin.
+
+
+2)
+
+
+0 si tu as pas de voisins tu prends la plus petite couleur dispo
+
+1 Sommet de plus haut degré commence (ELECTION)
+ -> choisit sa couleur (le 1ere dispo dans le tableau)
+ -> envoie à tous ses voisins
+    -> voisins reçoivent couleur et la suppriment de leur tableau
+ termine
+
+2 prochain sommet recommence algo (ELECTION)
+ -> choisit sa couleur (le 1ere dispo dans le tableau )
+  -> envoie à tous ses voisins
+     -> voisins reçoivent couleur et la suppriment de leur tableau
+
+  > 2 (0) : [0 1 2 3 4 5 6]
+    1 (1) : ['0' 1 2 3 4 5 6]
+    3 (0) : [0 '1' 2 3 4 5 6]
+    4 (1) : ['0' 1 2 3 4 5 6]
+    6 (2) : ['0' '1' 2 3 4 5 6]
+    5 (1) : ['0' 1 2 3 4 5 6]
+
+    7 (0) : [0 1 2 3 4 5 6]
+
+
+
+
+     1 ------- '2' --------  5
+     |          | \         /
+     |          |  \       /
+     |          |   \     /
+     |          |    \   /
+     |          |     \ /
+     3 -------- 4 ---- 6          7
+
+      1 ------- '2'          5
+      |          | \          \
+      |          |  \          \
+      |          |   \          \
+      |          |    \          \
+      |          |     \          \
+      3 -------- 4  --- 6          7
+
+     1 ------> '2'
+     |          ^
+     |          |
+     |          |
+     |          |
+     v          |
+     3 <------- 4 <--- 6
+
+  > 2 (0) : [0 1 2 3 4 5 6]
+    4 (1) : ['0' 1 2 3 4 5 6]
+    3 (0) : [0 '1' 2 3 4 5 6]
+    1 (1) : ['0' 1 2 3 4 5 6]
+    6 : ['0' '1' 2 3 4 5 6]
+    5 : ['0' 1 2 3 4 5 6]
+
+    7 : [0 1 2 3 4 5 6]
