@@ -48,11 +48,11 @@ coloration de graphe au sein d'un réseau de processus interconnectés
       3 -------- 4  --- 6          7
 
      1 ------> '2'
-     |          ^
-     |          |
-     |          |
-     |          |
-     v          |
+     |          ^ \
+     |          |  \
+     |          |   \
+     |          |    \
+     v          |     >
      3 <------- 4 <--- 6
 
   > 2 (0) : [0 1 2 3 4 5 6]

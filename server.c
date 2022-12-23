@@ -12,6 +12,7 @@ struct Client {
     int socket;
     int in;
     int out;
+    int is_max_degree;
     struct Noeud noeud;
 };
 
@@ -63,15 +64,17 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
                 printf("[+] Server: sending address of %d to %d: %s:%d\n", j+1, i+1,
                        inet_ntoa(source->noeud.addr.sin_addr),
                        ntohs(source->noeud.addr.sin_port));
-                printf("sizeof struct Noeud : %lu\n", sizeof(struct Noeud));
-                printf("sizeof source->noeud : %lu\n", sizeof(source->noeud));
                 send_tcp(destination->socket, &source->noeud, sizeof(struct Noeud));
             }
         }
     }
 }
 
-
+void elect_first(struct Client *clients, int nb_clients){
+    for(int i=0; i<nb_clients; i++){
+        send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
+    }
+}
 
 void load_graph(FILE *file, struct Graph *graph){
 
@@ -252,6 +255,7 @@ int main(int argc, char *argv[]){
     //tableau des adresses des sockets clients ici
 
     int cptClient = 0;
+    int max_deg = 0;
 
     while(cptClient < NB_CLIENTS){
         printf("[+] Server: j'attends la demande d'un client\n");
@@ -283,15 +287,20 @@ int main(int argc, char *argv[]){
         int out = get_nb_of_out_connections(cptClient, &graph);
         int in = get_nb_of_in_connections(cptClient, &graph);
 
-        int in_out[3];
-        in_out[0] = in;
-        in_out[1] = out;
-        in_out[2] = cptClient+1;
+        int net_info[4];
+        net_info[0] = in;
+        net_info[1] = out;
+        net_info[2] = cptClient+1;
+        net_info[3] = NB_CLIENTS;
+
+
+        clients[cptClient].is_max_degree = (in+out) > max_deg;
+        if(in+out > max_deg) max_deg = in + out;
 
         clients[cptClient].in = in;
         clients[cptClient].out = out;
 
-        int sent = send_tcp(dsCv, in_out, sizeof(int) * 3);
+        int sent = send_tcp(dsCv, net_info, sizeof(int) * 3);
         if(sent < 0){
             perror("[-] Server: error sending number of voisins");
             exit(1);
@@ -320,8 +329,9 @@ int main(int argc, char *argv[]){
     }
 
     printf("[+] Server: tous les clients sont prêts\n");
-    print_clients_info(clients, NB_CLIENTS);
+    //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
+    elect_first(clients, NB_CLIENTS);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);
@@ -329,7 +339,6 @@ int main(int argc, char *argv[]){
     free_matrix(&graph);
 
     printf("[+] Server: je termine\n");
-    sleep(120);
     return 0;
 
 }
