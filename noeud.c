@@ -110,6 +110,7 @@ int send_msg(int *tab_sockets, int nb_sockets, void *msg, size_t msg_size){
 
 int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
     void *msg = malloc(msg_size);
+    int tmp = 0;
     int received = 0;
 
     for(int i =0; i < nb_sockets; i++){
@@ -118,6 +119,8 @@ int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
             perror("[-] Noeud : problem receiving message");
             exit(1);
         } else received++;
+        tmp = *((int *) msg);
+        printf("message reçu du %d eme voisin : %d\n", i, tmp );
     }
     free(msg);
 
