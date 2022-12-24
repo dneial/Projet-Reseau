@@ -65,3 +65,25 @@ décrit dans g5:
     5 : ['0' 1 2 3 4 5 6]
 
     7 : [0 1 2 3 4 5 6]
+
+
+    idée d'optimisation :
+        - cas particuliers
+            - graphe complet : n sommets && n(n-1)/2 arêtes  ==> n couleurs, pas besoin de faire tourner l'algorithme
+            (on détecte juste si il y a n(n-1)/2 arêtes)
+
+            - graphe étoile : n sommets && n-1 arêtes ==> 2 couleurs, pas besoin de faire tourner l'algorithme
+
+            - graphe cycle : n sommets && n arêtes ==> 2(3) couleurs, pas besoin de faire tourner l'algorithme
+            ( attention tester si chaque noeud a bien 1 voisins entrant et 1 voisins sortant )
+
+            - graphe path : n sommets && n-1 arêtes ==> 2 couleurs, pas besoin de faire tourner l'algorithme
+            ( attention tester si chaque noeud a bien 1 voisins entrant et/ou 1 voisins sortant )
+
+Valeurs de retour de l'analyse du graphe :
+
+    0 si graphe complet, (n couleurs)
+    1 si graphe étoile,  (2 couleurs)
+    2 si graphe cycle,   (2 couleurs) (3 si cycle impair)
+    3 si graphe chemin,  (2 couleurs) (3 si erreur d'analyse cf return 3)
+    4 si graphe aléatoire

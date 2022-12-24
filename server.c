@@ -82,7 +82,7 @@ void load_graph(FILE *file, struct Graph *graph){
     read_headers(file, 0);
     read_graph_info(file, graph);
 
-    printf("[+] Server: l%dading graph\n", 0);
+    printf("[+] Server: loading graph\n", 0);
 
     // why god why ?
     int tableau_bizarre_qui_segv_si_pas_utilise[graph->aretes];
@@ -113,6 +113,75 @@ void print_clients_info(struct Client *clients, int size) {
                "    Address : %d\n", i, clients[i].socket, clients[i].in, clients[i].out,
                ntohs(clients[i].noeud.addr.sin_port));
     }
+}
+
+int analyseGraphType(struct Graph *graph){
+    //fonction qui analyse le type de graphe fourni
+    // 0 si graphe complet, (n couleurs)
+    // 1 si graphe étoile,  (2 couleurs)
+    // 2 si graphe cycle,   (2 couleurs) (3 si cycle impair)
+    // 3 si graphe chemin,  (2 couleurs) (3 si erreur d'analyse cf return 3)
+    // 4 si graphe aléatoire
+
+    int n = graph->sommets;
+    int m = graph->aretes;
+
+    //graphe complet : n sommets et n(n-1)/2 arêtes
+    if(m == n*(n-1)/2) return 0;
+
+    //graphe étoile ou chemin : n sommets et n-1 arêtes
+    //graphe cycle : n sommets et n arêtes
+    if(m == n-1 || m == n)
+    {
+        //graphe étoile : n sommets et n-1 arêtes et un seul sommet de degré n-1
+        //graphe chemin : n sommets et n-1 arêtes et tous les sommets de degré 2 sauf les extrémités qui ont un degré 1
+
+        int cptDeg1 = 0; //compteur de sommets de degré 1
+        int cptDeg2 = 0; //compteur de sommets de degré 2
+        int cptDegM = 0; //compteur de sommets de degré n-1
+        int centre = -1; //indice du sommet de degré n-1
+
+        for (int i = 0; i < n; i++)
+        {
+            int deg = nb_neighbours(graph, i);
+
+            switch (deg)
+            {
+                case 1:
+                    cptDeg1++;
+                    break;
+                case 2:
+                    cptDeg2++;
+                    break;
+                default:
+                    if (deg == m) {
+                        cptDegM++;
+                        centre = i;
+                    }else return 4;
+                    break;
+            }
+        }
+
+        //graphe étoile : un seul sommet de degré n-1
+        if(cptDegM == 1)
+        {
+            //on vérifie que le centre est bien le sommet de degré n-1
+            if(centre != -1)
+            {
+                //on vérifie que les autres sommets sont bien de degré 1
+                if(cptDeg1 == n-1) return 1;
+            }
+        }
+
+        //graphe cycle : tous les sommets de degré 2
+        else if(cptDeg2 == n) return 2;
+
+        //graphe chemin : tous les sommets de degré 2 sauf les extrémités qui ont un degré 1
+        else if(cptDeg1 == 2 && cptDeg2 == n-2) return 3;
+
+        //attention si GRAPHE = chemin + cycle => Ensemble peut être considéré comme graphe cehmin
+    }
+    return 4;
 }
 
 
@@ -178,6 +247,28 @@ int main(int argc, char *argv[]){
     struct Graph graph;
     load_graph(f, &graph);
     print_matrix(&graph);
+
+    //analyse du type de graphe
+    int GRAPH_TYPE = analyseGraphType(&graph);
+
+    switch (GRAPH_TYPE) {
+        case 0:
+            printf("Graphe complet\n");
+            break;
+        case 1:
+            printf("Graphe étoile\n");
+            break;
+        case 2:
+            printf("Graphe cycle\n");
+            break;
+        case 3:
+            printf("Graphe chemin\n");
+            break;
+        default:
+            printf("Graphe quelconque\n");
+            break;
+    }
+
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);
     fclose(f);
 
@@ -233,7 +324,7 @@ int main(int argc, char *argv[]){
         perror("[-] Server: getsockname failed.\n");
     else
         printf("[+] Server: mise en écoute @%s: %d\n", servAddr,
-                                                              ntohs(server.sin_port));
+               ntohs(server.sin_port));
 
     if (!network)
     {
@@ -272,7 +363,7 @@ int main(int argc, char *argv[]){
             exit(1);
         }
         printf("[+] Server: connexion acceptée from %s:%d\n", inet_ntoa(adC.sin_addr),
-                                                              ntohs(adC.sin_port));
+               ntohs(adC.sin_port));
 
         //on stocke la socket pour pouvoir recommuniquer avec le client plus tard
         clients[cptClient].socket = dsCv;
@@ -288,11 +379,12 @@ int main(int argc, char *argv[]){
         int out = get_nb_of_out_connections(cptClient, &graph);
         int in = get_nb_of_in_connections(cptClient, &graph);
 
-        int net_info[4];
+        int net_info[5];
         net_info[0] = in;
         net_info[1] = out;
         net_info[2] = cptClient+1;
         net_info[3] = NB_CLIENTS;
+        net_info[4] = GRAPH_TYPE;
 
 
         if(in+out > max_deg) {

@@ -19,6 +19,8 @@ struct Graph {
     int **matrix;
 };
 
+
+
 void read_headers(FILE *file, int print_flag){
     char *lines;
     size_t n;
@@ -98,6 +100,14 @@ void print_matrix(struct Graph *graph){
         printf("\n");
     }
     printf("------\n");
+}
+
+int nb_neighbours(struct Graph *graph, int node){
+    int nb_neighbours = 0;
+    for(int j=0; j<graph->sommets; j++){
+        if(graph->matrix[node][j]) nb_neighbours++;
+    }
+    return nb_neighbours;
 }
 
 #endif //PROJET_RESEAU_READ_GRAPH_H

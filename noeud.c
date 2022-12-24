@@ -6,6 +6,7 @@
 #define PORT_FILE "server_port.txt"
 int INDICE = 0;
 int GRAPH_SIZE = 0;
+int GRAPH_TYPE = 0;
 
 
 void create_out_sockets(int *tab_sockets, int nb_sockets){
@@ -325,7 +326,7 @@ int main(int argc, char *argv[]) {
     }
     printf("[+] Client: demande de connexion avec server reussie\n");
 
-    int net_info[4];
+    int net_info[5];
 
     int rcv = receive_tcp(server_socket, net_info, sizeof(net_info));
 
@@ -345,6 +346,7 @@ int main(int argc, char *argv[]) {
     int out = net_info[1];
     INDICE = net_info[2];
     GRAPH_SIZE = net_info[3];
+    GRAPH_TYPE = net_info[4];
 
 
     struct sockaddr_in in_addresse;
@@ -399,31 +401,75 @@ int main(int argc, char *argv[]) {
 
 
     // Reseau cree, on peut commencer l'algo
+
+    // 0 si graphe complet, (n couleurs)
+    // 1 si graphe étoile,  (2 couleurs)
+    // 2 si graphe cycle,   (2 couleurs) (3 si cycle impair)
+    // 3 si graphe chemin,  (2 couleurs) (3 si erreur d'analyse cf return 3)
+    // 4 si graphe aléatoire
+
     int couleurs[GRAPH_SIZE];
     for(int i=0; i<GRAPH_SIZE; i++){
         couleurs[i] = 1;
     }
-
     int couleur = INDICE - 1;
 
     int starts;
     receive_tcp(server_socket, &starts, sizeof(int));
 
-    int voisins[in+out];
-    append_arrays(voisins, communication_sockets, out_sockets, in,  out);
+    int voisins[in + out];
+    append_arrays(voisins, communication_sockets, out_sockets, in, out);
 
     fd_set voisin_set;
     FD_ZERO(&voisin_set);
     set_voisins(&voisin_set, communication_sockets, out_sockets, in, out);
 
-    if(starts){
+    switch (GRAPH_TYPE) {
+        case 0:
+            printf("[+] Noeud %d: le graphe est complet, algo inutile : \n", INDICE);
+            printf("[+] Noeud %d: je termine avec la couleur %d\n", INDICE, couleur);
+
+            sleep(180);
+
+            close_sockets(out_sockets, out);
+            close_sockets(communication_sockets, in);
+
+            close(server_socket);
+            close(in_socket);
+            return 0;
+            break;
+        case 1:
+            printf("[+] Noeud %d: le graphe est une étoile\n", INDICE);
+            if (starts) {
+                printf("[+] Noeud %d: je suis la racine\n", INDICE);
+                sleep(5);
+                broadcast_color(voisins, in + out, couleur);
+            } else {
+                printf("[+] Noeud %d: je suis une extrémité\n", INDICE);
+                receive_colors(&voisin_set, voisins, in + out, couleurs);
+                couleur = choose_color(couleurs);
+                //pas besoin d'informer le voisin, j'en ai qu'un et c'est la racine
+                break;
+                case 2:
+                    printf("[+] Noeud %d: le graphe est un cycle\n", INDICE);
+                break;
+                case 3:
+                    printf("[+] Noeud %d: le graphe est un chemin\n", INDICE);
+                break;
+                case 4:
+                    printf("[+] Noeud %d: le graphe est quelconque\n", INDICE);
+                break;
+            }
+    }
+
+    if (starts) {
         printf("[+] Noeud %d: je commence\n", INDICE);
         sleep(5);
-        broadcast_color(voisins, in+out, couleur);
+        broadcast_color(voisins, in + out, couleur);
     } else {
-        receive_colors(&voisin_set, voisins, in+out, couleurs);
+        receive_colors(&voisin_set, voisins, in + out, couleurs);
         couleur = choose_color(couleurs);
-        broadcast_color(voisins, in+out, couleur);
+        broadcast_color(voisins, in + out, couleur);
     }
 
     printf("[+] Noeud %d: je termine avec la couleur %d\n", INDICE, couleur);
