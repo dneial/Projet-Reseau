@@ -70,8 +70,9 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
     }
 }
 
-void elect_first(struct Client *clients, int nb_clients){
+void elect_first(struct Client *clients, int nb_clients, int max_degree){
     for(int i=0; i<nb_clients; i++){
+        clients[i].is_max_degree = (clients[i].in + clients[i].out >= max_degree);
         send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
     }
 }
@@ -294,13 +295,12 @@ int main(int argc, char *argv[]){
         net_info[3] = NB_CLIENTS;
 
 
-        clients[cptClient].is_max_degree = (in+out) > max_deg;
         if(in+out > max_deg) max_deg = in + out;
 
         clients[cptClient].in = in;
         clients[cptClient].out = out;
 
-        int sent = send_tcp(dsCv, net_info, sizeof(int) * 3);
+        int sent = send_tcp(dsCv, net_info, sizeof(net_info));
         if(sent < 0){
             perror("[-] Server: error sending number of voisins");
             exit(1);
@@ -331,7 +331,7 @@ int main(int argc, char *argv[]){
     printf("[+] Server: tous les clients sont prêts\n");
     //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
-    elect_first(clients, NB_CLIENTS);
+    elect_first(clients, NB_CLIENTS, max_deg);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);

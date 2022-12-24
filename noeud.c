@@ -4,8 +4,8 @@
 #include "tcp_communication.c"
 
 #define PORT_FILE "server_port.txt"
-int INDICE= 0;
-int GRAPH_SIZE= 0;
+int INDICE = 0;
+int GRAPH_SIZE = 0;
 
 
 void create_out_sockets(int *tab_sockets, int nb_sockets){
@@ -160,17 +160,17 @@ void append_arrays(int *res, int *tab1, int *tab2, int size1, int size2){
 }
 
 int choose_color(int *colors){
-    int color = 0;
     for(int i=0; i<GRAPH_SIZE; i++){
-        if(colors[i]) color = i;
+        if(colors[i]) return i;
     }
-    return color;
+    return -1;
 }
 
 void broadcast_color(int *tab_sockets, int nb_sockets, int color){
     int info[2];
     info[0] = color;
-
+    for(int i = 0; i<nb_sockets; i++)
+        printf("voisin %d : %d\n", i, tab_sockets[i]);
     for(int i = 0; i < nb_sockets; i++){
         info[1] = i == 0;
         printf("[+] Noeud %d: envoi de la couleur %d\n", INDICE, color);
@@ -193,6 +193,7 @@ void remove_voisin(int *voisins, int *nb_voisins, int index){
 void receive_colors(int *tab_sockets, int nb_sockets, int *colors){
     int info[2];
     int couleur;
+
     for(int i =0; i < nb_sockets; i++){
         receive_tcp(tab_sockets[i], info, sizeof(int)*2);
 
@@ -308,7 +309,7 @@ int main(int argc, char *argv[]) {
 
     int net_info[4];
 
-    int rcv = receive_tcp(server_socket, net_info, sizeof(int)*3);
+    int rcv = receive_tcp(server_socket, net_info, sizeof(net_info));
 
     if (rcv < 0){
         perror ( "[-] Client: probleme de reception");
@@ -326,7 +327,7 @@ int main(int argc, char *argv[]) {
     int in = net_info[0];
     int out = net_info[1];
     INDICE = net_info[2];
-    GRAPH_SIZE= net_info[3];
+    GRAPH_SIZE = net_info[3];
 
 
     struct sockaddr_in in_addresse;
@@ -382,7 +383,9 @@ int main(int argc, char *argv[]) {
 
     // Reseau cree, on peut commencer l'algo
     int couleurs[GRAPH_SIZE];
-    memset(couleurs, 1, GRAPH_SIZE*sizeof(int));
+    for(int i=0; i<GRAPH_SIZE; i++){
+        couleurs[i] = 1;
+    }
 
     int couleur = INDICE - 1;
 
@@ -393,9 +396,14 @@ int main(int argc, char *argv[]) {
     append_arrays(voisins, communication_sockets, out_sockets, in,  out);
 
     if(starts){
+        printf("[+] Noeud %d: je suis le premier noeud à commencer\n", INDICE);
+        sleep(5);
         broadcast_color(voisins, in+out, couleur);
     } else {
         receive_colors(voisins, in+out, couleurs);
+        for(int i=0; i<GRAPH_SIZE; i++){
+            printf("couleur %d: %d\n", i, couleurs[i]);
+        }
         couleur = choose_color(couleurs);
         broadcast_color(voisins, in+out, couleur);
     }
