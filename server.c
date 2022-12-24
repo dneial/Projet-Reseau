@@ -70,9 +70,9 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
     }
 }
 
-void elect_first(struct Client *clients, int nb_clients, int max_degree){
+void elect_first(struct Client *clients, int nb_clients, int max_index){
     for(int i=0; i<nb_clients; i++){
-        clients[i].is_max_degree = (clients[i].in + clients[i].out >= max_degree);
+        clients[i].is_max_degree = i == max_index;
         send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
     }
 }
@@ -238,7 +238,6 @@ int main(int argc, char *argv[]){
     if (!network)
     {
         write_port(ntohs(server.sin_port));
-        write_clients(graph.sommets);
     }
     else
     {
@@ -257,6 +256,7 @@ int main(int argc, char *argv[]){
 
     int cptClient = 0;
     int max_deg = 0;
+    int max_index = 0;
 
     while(cptClient < NB_CLIENTS){
         printf("[+] Server: j'attends la demande d'un client\n");
@@ -295,7 +295,11 @@ int main(int argc, char *argv[]){
         net_info[3] = NB_CLIENTS;
 
 
-        if(in+out > max_deg) max_deg = in + out;
+        if(in+out > max_deg) {
+            max_deg = in + out;
+            max_index = cptClient;
+        }
+
 
         clients[cptClient].in = in;
         clients[cptClient].out = out;
@@ -331,7 +335,7 @@ int main(int argc, char *argv[]){
     printf("[+] Server: tous les clients sont prêts\n");
     //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
-    elect_first(clients, NB_CLIENTS, max_deg);
+    elect_first(clients, NB_CLIENTS, max_index);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);

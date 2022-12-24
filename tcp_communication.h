@@ -18,10 +18,10 @@ int receive_tcp(int socket, void *buffer, size_t buffer_size){
     int current_size = buffer_size;
     //printf("DEBUG : buffer size = %ld\n", buffer_size);
     int received = recv(socket, buffer, current_size, 0);
-    //printf("DEBUG : received = %d\n", received);
+    printf("DEBUG : received = %d\n", received);
 
     while(received < buffer_size){
-      //  printf("DEBUG : while \n");
+        printf("DEBUG : while \n");
         if(received == 0){
             perror("Receive error");
             exit(1);

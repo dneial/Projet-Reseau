@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include "tcp_communication.c"
+#include "tcp_communication.h"
 
 #define PORT_FILE "server_port.txt"
 int INDICE = 0;
@@ -159,7 +159,19 @@ void append_arrays(int *res, int *tab1, int *tab2, int size1, int size2){
     }
 }
 
+void set_voisins(fd_set *set, int *tab1, int *tab2, int size1, int size2){
+    for(int i=0; i<size1; i++){
+        FD_SET(tab1[i], set);
+    }
+    for(int i=0; i<size2; i++){
+        FD_SET(tab2[i], set);
+    }
+}
+
 int choose_color(int *colors){
+    for(int i=0; i<GRAPH_SIZE; i++){
+        printf("couleur %d: %d\n", i, colors[i]);
+    }
     for(int i=0; i<GRAPH_SIZE; i++){
         if(colors[i]) return i;
     }
@@ -167,15 +179,14 @@ int choose_color(int *colors){
 }
 
 void broadcast_color(int *tab_sockets, int nb_sockets, int color){
-    int info[2];
+    int info[3];
     info[0] = color;
-    for(int i = 0; i<nb_sockets; i++)
-        printf("voisin %d : %d\n", i, tab_sockets[i]);
+    info[2] = INDICE;
+    printf("Je suis le noeud %d et je vais envoyer la couleur %d à %d voisins\n", INDICE, color, nb_sockets);
     for(int i = 0; i < nb_sockets; i++){
         info[1] = i == 0;
-        printf("[+] Noeud %d: envoi de la couleur %d\n", INDICE, color);
-        int rcv = send_tcp(tab_sockets[i], info, sizeof(int)*2);
-        if(rcv < 0){
+        int sent = send_tcp(tab_sockets[i], info, sizeof(info));
+        if(sent < 0){
             perror("[-] Noeud : problem receiving message");
             exit(1);
         }
@@ -190,19 +201,26 @@ void remove_voisin(int *voisins, int *nb_voisins, int index){
     *nb_voisins -= 1;
 }
 
-void receive_colors(int *tab_sockets, int nb_sockets, int *colors){
-    int info[2];
+void receive_colors(fd_set *set, int *tab_sockets, int nb_sockets, int *colors){
+    int info[3];
     int couleur;
 
-    for(int i =0; i < nb_sockets; i++){
-        receive_tcp(tab_sockets[i], info, sizeof(int)*2);
+    printf("[+] Noeud %d: je vais recevoir les couleurs de mes voisins\n", INDICE);
 
-        printf("receiving colors\n");
-        remove_voisin(tab_sockets, &nb_sockets, tab_sockets[i]);
-        couleur = info[0];
-        colors[couleur] = 0;
-        printf("[+] Noeud %d: j'ai reçu la couleur %d et je commence? %s\n", INDICE, info[0], info[1] ? "oui" : "non");
-        if(info[1]) return;
+    int s = select(FD_SETSIZE, set, NULL, NULL, NULL);
+    printf("select: %d\n", s);
+    for(int i =0; i < nb_sockets; i++){
+        if(FD_ISSET(tab_sockets[i], set)){
+            int rcv = receive_tcp(tab_sockets[i], info, sizeof(info));
+            if(rcv < 0){
+                perror("[-] Noeud : problem receiving message");
+                exit(1);
+            }
+            couleur = info[0];
+            colors[couleur] = 0;
+            FD_CLR(tab_sockets[i], set);
+            if(info[1]) return;
+        }
     }
 }
 
@@ -322,7 +340,6 @@ int main(int argc, char *argv[]) {
         close(server_socket);
         exit(1);
     }
-    printf("[+] Client: %d connexions entrantes et %d connexions sortantes\n", net_info[0], net_info[1]);
 
     int in = net_info[0];
     int out = net_info[1];
@@ -395,15 +412,16 @@ int main(int argc, char *argv[]) {
     int voisins[in+out];
     append_arrays(voisins, communication_sockets, out_sockets, in,  out);
 
+    fd_set voisin_set;
+    FD_ZERO(&voisin_set);
+    set_voisins(&voisin_set, communication_sockets, out_sockets, in, out);
+
     if(starts){
-        printf("[+] Noeud %d: je suis le premier noeud à commencer\n", INDICE);
+        printf("[+] Noeud %d: je commence\n", INDICE);
         sleep(5);
         broadcast_color(voisins, in+out, couleur);
     } else {
-        receive_colors(voisins, in+out, couleurs);
-        for(int i=0; i<GRAPH_SIZE; i++){
-            printf("couleur %d: %d\n", i, couleurs[i]);
-        }
+        receive_colors(&voisin_set, voisins, in+out, couleurs);
         couleur = choose_color(couleurs);
         broadcast_color(voisins, in+out, couleur);
     }
