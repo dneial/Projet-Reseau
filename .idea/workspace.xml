@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5a3ad072-fbbb-48c0-97eb-063bc96b83e7" name="Changes" comment="multiplex entrée">
+      <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
+    </list>
+    <list id="86a1920e-9f38-4e21-91cf-3f9296ed19f6" name="Changes by Sebastien" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MakefileLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
+      </map>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2Gfpxvzif4yW0wYE7G20NSxEih8" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/daniel/Documents/GitHub/Projet-Reseau&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="default" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="default" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Makefile Target.default" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5a3ad072-fbbb-48c0-97eb-063bc96b83e7" name="Changes" comment="" />
+      <created>1666789743818</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1666789743818</updated>
+      <workItem from="1666789745786" duration="113000" />
+      <workItem from="1666789869232" duration="12633000" />
+      <workItem from="1666886821553" duration="60000" />
+      <workItem from="1666886892480" duration="6089000" />
+      <workItem from="1666895248653" duration="6000" />
+      <workItem from="1666895404683" duration="1174000" />
+      <workItem from="1666943154931" duration="8000" />
+      <workItem from="1666957032892" duration="1999000" />
+      <workItem from="1667236489182" duration="9802000" />
+      <workItem from="1667300926037" duration="2097000" />
+      <workItem from="1667310337396" duration="3307000" />
+      <workItem from="1668519734267" duration="767000" />
+      <workItem from="1668520876195" duration="3000" />
+      <workItem from="1668521264361" duration="2000" />
+      <workItem from="1668521468120" duration="2000" />
+      <workItem from="1668522180102" duration="2000" />
+      <workItem from="1669113252152" duration="1822000" />
+      <workItem from="1671708443859" duration="5688000" />
+      <workItem from="1671725354589" duration="434000" />
+      <workItem from="1671794631485" duration="2991000" />
+      <workItem from="1671798253514" duration="3000" />
+      <workItem from="1671798575698" duration="9000" />
+      <workItem from="1671799341647" duration="4000" />
+      <workItem from="1671799827858" duration="2127000" />
+      <workItem from="1671878612683" duration="6907000" />
+      <workItem from="1671885938032" duration="2000" />
+      <workItem from="1671886580149" duration="4000" />
+      <workItem from="1671886924903" duration="3000" />
+      <workItem from="1671887211114" duration="2000" />
+      <workItem from="1671887997892" duration="1070000" />
+      <workItem from="1671968016380" duration="1074000" />
+    </task>
+    <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
+      <created>1666802330872</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1666802330872</updated>
+    </task>
+    <task id="LOCAL-00002" summary="j'ai une valeur bizarre pour le port des clients; c'est la même partout et pas celle reçue des clients. pq???">
+      <created>1666896505919</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1666896505919</updated>
+    </task>
+    <task id="LOCAL-00003" summary="problemes d'addresse ok!!!!!!&#10;&#10;mais j'arrive pas à faire communiquer les clients entre eux">
+      <created>1667243957772</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1667243957773</updated>
+    </task>
+    <task id="LOCAL-00004" summary="c bon">
+      <created>1667302983395</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1667302983395</updated>
+    </task>
+    <task id="LOCAL-00005" summary="segfault (cote serveur, dans la fonction read_edge_info) if nb of aretes entre 9 et 12 (inclus).&#10;sinon on peut lancer les clients avec &quot;launch_clients &lt;nb_clients&gt;&quot; et ils arrivents à transmettre des messages et de les recevoir">
+      <created>1667313632476</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1667313632476</updated>
+    </task>
+    <task id="LOCAL-00006" summary="debut algo">
+      <created>1671725726853</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1671725726853</updated>
+    </task>
+    <task id="LOCAL-00007" summary="envoi, reception et mise a jour des couleurs (pas bon)">
+      <created>1671801864601</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1671801864601</updated>
+    </task>
+    <task id="LOCAL-00008" summary="ça marche avec g5">
+      <created>1671881001040</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1671881001040</updated>
+    </task>
+    <task id="LOCAL-00009" summary="multiplex entrée">
+      <created>1671889028514</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1671889028514</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="TEXT_FILTER_SETTINGS">
+                <TextFilterSettings>
+                  <option name="MATCH_CASE" value="true" />
+                </TextFilterSettings>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée." />
+    <MESSAGE value="j'ai une valeur bizarre pour le port des clients; c'est la même partout et pas celle reçue des clients. pq???" />
+    <MESSAGE value="problemes d'addresse ok!!!!!!&#10;&#10;mais j'arrive pas à faire communiquer les clients entre eux" />
+    <MESSAGE value="c bon" />
+    <MESSAGE value="segfault (cote serveur, dans la fonction read_edge_info) if nb of aretes entre 9 et 12 (inclus).&#10;sinon on peut lancer les clients avec &quot;launch_clients &lt;nb_clients&gt;&quot; et ils arrivents à transmettre des messages et de les recevoir" />
+    <MESSAGE value="debut algo" />
+    <MESSAGE value="envoi, reception et mise a jour des couleurs (pas bon)" />
+    <MESSAGE value="ça marche avec g5" />
+    <MESSAGE value="multiplex entrée" />
+    <option name="LAST_COMMIT_MESSAGE" value="multiplex entrée" />
+  </component>
+</project>
