@@ -71,7 +71,7 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
 }
 
 void elect_first(struct Client *clients, int nb_clients, int max_index){
-    printf("[+] Server: first noeud is %d\n", max_index);
+    printf("[+] Server: first noeud is %d\n\n", max_index);
     for(int i=0; i<nb_clients; i++){
         clients[i].is_max_degree = i == max_index;
         send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
@@ -126,6 +126,7 @@ int analyseGraphType(struct Graph *graph){
 
     int n = graph->sommets;
     int m = graph->aretes;
+    printf("[debug] n = %d, m = %d\n", n, m);
 
     //graphe complet : n sommets et n(n-1)/2 arêtes
     if(m == n*(n-1)/2) return 0;
@@ -137,6 +138,7 @@ int analyseGraphType(struct Graph *graph){
         //graphe étoile : n sommets et n-1 arêtes et un seul sommet de degré n-1
         //graphe chemin : n sommets et n-1 arêtes et tous les sommets de degré 2 sauf les extrémités qui ont un degré 1
 
+        int cptDeg0 = 0;
         int cptDeg1 = 0; //compteur de sommets de degré 1
         int cptDeg2 = 0; //compteur de sommets de degré 2
         int cptDegM = 0; //compteur de sommets de degré n-1
@@ -145,9 +147,13 @@ int analyseGraphType(struct Graph *graph){
         for (int i = 0; i < n; i++)
         {
             int deg = nb_neighbours(graph, i);
+            printf("[debug] deg(%d) = %d\n", i, deg);
 
             switch (deg)
             {
+                case 0:
+                    cptDeg0++;
+                    break;
                 case 1:
                     cptDeg1++;
                     break;
@@ -170,7 +176,8 @@ int analyseGraphType(struct Graph *graph){
             if(centre != -1)
             {
                 //on vérifie que les autres sommets sont bien de degré 1
-                if(cptDeg1 == n-1) return 1;
+                //  !!!!!!WARNING!!!!!!! (matrice custom => ils sont de degré 0)
+                if(cptDeg0 == n-1) return 1;
             }
         }
 
@@ -195,7 +202,7 @@ void get_algo_result(struct Client *clients, int nb_clients){
     int cpt = 0;
     for(int i=0; i<nb_clients; i++){
         receive_tcp(clients[i].socket, &color, sizeof(int));
-        printf("[+] Server: client %d color = %d\n", i, color);
+        printf("[+] Server: noeud %d color = %d\n", i+1, color);
         if(!colors[color]){
             colors[color] = 1;
             cpt++;
@@ -458,6 +465,7 @@ int main(int argc, char *argv[]){
 
 
     printf("[+] Server: je termine\n");
+    sleep(180);
     return 0;
 
 }

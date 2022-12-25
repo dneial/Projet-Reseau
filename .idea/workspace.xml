@@ -18,12 +18,13 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a3ad072-fbbb-48c0-97eb-063bc96b83e7" name="Changes" comment="multiplex entrée">
-      <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="multiplex entrée">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
     </list>
-    <list id="86a1920e-9f38-4e21-91cf-3f9296ed19f6" name="Changes by Sebastien" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,6 +33,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -73,12 +75,12 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl$\Ubuntu\home\seb\Perso\Projet-Reseau" />
+    </key>
+  </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="default" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/Makefile" target="default" workingDirectory="" arguments="">
         <envs />

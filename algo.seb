@@ -58,12 +58,28 @@ décrit dans g5:
      3 -------- 4 ---- 5
 
   > 2 (0) : [0 1 2 3 4 5 6]
-    4 (1) : ['0' 1 2 3 4 5 6]
-    3 (0) : [0 '1' 2 3 4 5 6]
     1 (1) : ['0' 1 2 3 4 5 6]
-    6 : ['0' '1' 2 3 4 5 6]
-    5 : ['0' 1 2 3 4 5 6]
+    4 (1) : ['0' 1 2 3 4 5 6]
+    5 (1) : ['0' 1 2 3 4 5 6]
+    3 (0) : [0 '1' 2 3 4 5 6]
 
+erreur de l'algo :  4 et 5 ont a même couleur.
+
+    idée de correction :
+si deux sommets ont la même couleur, celui de plus petit degré (plus petit indice si degré égal)
+'barre' sa couleur actuelle et prend la plus petite couleur disponible dans le tableau.
+qu'il transmettra par la suite à ses voisins.
+les noeuds ne doivent donc pas s'arreter à la première couleur qu'ils reçoivent afin d'être atttentifs à un changement
+
+(Problèmes possibles :
+          - si mon voisin m'avait envoyé une couleur mais qu'il en change finalement,
+            est-que l'ancienne est de nouveau disponible ?
+
+
+
+
+
+    6 : [0 1 2 3 4 5 6]
     7 : [0 1 2 3 4 5 6]
 
 
