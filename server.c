@@ -71,6 +71,7 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
 }
 
 void elect_first(struct Client *clients, int nb_clients, int max_index){
+    printf("[+] Server: first noeud is %d\n", max_index);
     for(int i=0; i<nb_clients; i++){
         clients[i].is_max_degree = i == max_index;
         send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
@@ -183,6 +184,26 @@ int analyseGraphType(struct Graph *graph){
     }
     return 4;
 }
+
+void get_algo_result(struct Client *clients, int nb_clients){
+    int colors[nb_clients];
+    for(int i=0; i<nb_clients; i++){
+        colors[i] = 0;
+    }
+
+    int color;
+    int cpt = 0;
+    for(int i=0; i<nb_clients; i++){
+        receive_tcp(clients[i].socket, &color, sizeof(int));
+        printf("[+] Server: client %d color = %d\n", i, color);
+        if(!colors[color]){
+            colors[color] = 1;
+            cpt++;
+        }
+    }
+    printf("[+] Server: %d colors\n", cpt);
+}
+
 
 
 int main(int argc, char *argv[]){
@@ -428,11 +449,13 @@ int main(int argc, char *argv[]){
     //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
     elect_first(clients, NB_CLIENTS, max_index);
+    get_algo_result(clients, NB_CLIENTS);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);
     close(server_socket);
     free_matrix(&graph);
+
 
     printf("[+] Server: je termine\n");
     return 0;

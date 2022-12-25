@@ -433,6 +433,7 @@ int main(int argc, char *argv[]) {
         case 0:
             printf("[+] Noeud %d: le graphe est complet, algo inutile : \n", INDICE);
             printf("[+] Noeud %d: je termine avec la couleur %d\n", INDICE, couleur);
+            send_tcp(SERVER_SOCKET, &couleur, sizeof(int));
 
             sleep(180);
 
@@ -450,23 +451,23 @@ int main(int argc, char *argv[]) {
                 printf("[+] Noeud %d: je suis une extrémité\n", INDICE);
                 receive_colors(&voisin_set, voisins, in + out, couleurs);
                 couleur = choose_color(couleurs);
-                //pas besoin d'informer le voisin, j'en ai qu'un et c'est la racine
-                break;
-                case 2:
-                    printf("[+] Noeud %d: le graphe est un cycle\n", INDICE);
-                break;
-                case 3:
-                    printf("[+] Noeud %d: le graphe est un chemin\n", INDICE);
-                break;
-                case 4:
-                    printf("[+] Noeud %d: le graphe est quelconque\n", INDICE);
-                break;
             }
+                //pas besoin d'informer le voisin, j'en ai qu'un et c'est la racine
+            break;
+        case 2:
+            printf("[+] Noeud %d: le graphe est un cycle\n", INDICE);
+            break;
+        case 3:
+            printf("[+] Noeud %d: le graphe est un chemin\n", INDICE);
+            break;
+        case 4:
+            printf("[+] Noeud %d: le graphe est quelconque\n", INDICE);
+            break;
+            
     }
 
     if (starts) {
         printf("[+] Noeud %d: je commence\n", INDICE);
-        sleep(5);
         broadcast_color(voisins, in + out, couleur);
     } else {
         receive_colors(&voisin_set, voisins, in + out, couleurs);
@@ -475,6 +476,8 @@ int main(int argc, char *argv[]) {
     }
 
     printf("[+] Noeud %d: je termine avec la couleur %d\n", INDICE, couleur);
+
+    send_tcp(SERVER_SOCKET, &couleur, sizeof(int));
 
     sleep(180);
 
