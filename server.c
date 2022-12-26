@@ -203,6 +203,21 @@ void get_algo_result(struct Client *clients, int nb_clients){
     for(int i=0; i<nb_clients; i++){
         receive_tcp(clients[i].socket, &color, sizeof(int));
         printf("[+] Server: noeud %d color = %d\n", i+1, color);
+
+        //  IDEE POUR SOUS GRAPHE ISOLÉ :
+        // si noeud FIRST nous dit qu'il a fini, mais qu'il reste des noeuds non coloriés,
+        // on fait une élection parmi ceux qui n'ont pas encore envoyé leur couleur,
+        // on se retrouve avec un nouveau first qui va commencer l'algo pour le
+        // sous graphe auquel il appartient
+        //  => on peut faire ça en boucle tant qu'il reste des noeuds non coloriés
+        //  si jamais le retard vient du réseau et qu'il n'y a plus de noeuds non coloriés,
+        //  on recevra de toute façon les messages des retardataires qui vont terminer
+
+        // problème ici ?
+        // receive bloquant donc si premier noeud dans un graphe isolé
+        // on attend à l'infini
+        // soluce ? FD_SET pour réagir à chaque modif en temps réel ?
+
         if(!colors[color]){
             colors[color] = 1;
             cpt++;

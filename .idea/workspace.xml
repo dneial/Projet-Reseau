@@ -18,15 +18,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="multiplex entrée">
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="idée correction algo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
-    </list>
-    <list id="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" name="Changes by Sebastien" comment="">
-      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,44 +36,6 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/noeud.c">
-      <ranges>
-        <range start1="14" end1="14" start2="14" end2="18" changelist="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" />
-        <range start1="104" end1="105" start2="108" end2="109" changelist="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" />
-        <range start1="119" end1="120" start2="123" end2="125" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="225" end1="227" start2="230" end2="233" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="228" end1="230" start2="234" end2="243" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="232" end1="233" start2="245" end2="246" changelist="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" />
-        <range start1="235" end1="236" start2="248" end2="249" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="240" end1="241" start2="253" end2="256" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="243" end1="244" start2="258" end2="261" changelist="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" />
-        <range start1="250" end1="250" start2="267" end2="269" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="252" end1="254" start2="271" end2="273" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="258" end1="259" start2="277" end2="278" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="260" end1="265" start2="279" end2="284" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="266" end1="270" start2="285" end2="290" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="276" end1="278" start2="296" end2="298" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="281" end1="281" start2="301" end2="302" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="283" end1="283" start2="304" end2="315" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="294" end1="294" start2="326" end2="327" changelist="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" />
-        <range start1="420" end1="420" start2="453" end2="456" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="451" end1="452" start2="487" end2="490" changelist="d3f1fe04-c107-49e8-b2c1-3cbfee28c8f8" />
-        <range start1="463" end1="464" start2="501" end2="502" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="466" end1="468" start2="504" end2="507" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="487" end1="490" start2="526" end2="533" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="495" end1="495" start2="538" end2="541" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="511" end1="512" start2="557" end2="558" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="515" end1="516" start2="561" end2="562" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="524" end1="525" start2="570" end2="572" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="528" end1="529" start2="575" end2="576" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="530" end1="531" start2="577" end2="580" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="542" end1="543" start2="591" end2="593" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="544" end1="545" start2="594" end2="595" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="546" end1="547" start2="596" end2="599" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-      </ranges>
-    </file>
   </component>
   <component name="MakefileLocalSettings">
     <option name="projectSyncType">
@@ -96,38 +55,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "last_opened_file_path": "/home/daniel/Documents/GitHub/pr2/Projet-Reseau",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "structure.view.defaults.are.configured": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/daniel/Documents/GitHub/Projet-Reseau&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="\\wsl$\Ubuntu\home\seb\Perso\Projet-Reseau" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="default" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/Makefile" target="default" workingDirectory="" arguments="">
         <envs />
@@ -143,7 +96,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="multiplex entrée" />
+      <changelist id="5a3ad072-fbbb-48c0-97eb-063bc96b83e7" name="Changes" comment="" />
       <created>1666789743818</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -179,7 +132,6 @@
       <workItem from="1671887211114" duration="2000" />
       <workItem from="1671887997892" duration="1070000" />
       <workItem from="1671968016380" duration="1074000" />
-      <workItem from="1672067145187" duration="10278000" />
     </task>
     <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
       <created>1666802330872</created>
@@ -279,9 +231,5 @@
     <MESSAGE value="ça marche avec g5" />
     <MESSAGE value="multiplex entrée" />
     <option name="LAST_COMMIT_MESSAGE" value="multiplex entrée" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

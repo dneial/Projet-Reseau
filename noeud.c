@@ -13,9 +13,18 @@ int IN_SOCKET;
 int MAX_FD;
 
 struct Map{
-        int socket;
-        int indice;
+    int socket;
+    int indice;
+    int etat;
 };
+
+int* mapGetSockets(struct Map* map, int mapSize){
+    int *sockets = malloc(sizeof(int)*mapSize);
+    for(int i = 0; i < mapSize; i++){
+        sockets[i] = map[i].socket;
+    }
+    return sockets;
+}
 
 
 void close_sockets(int *sockets, int size)
@@ -123,6 +132,7 @@ int accept_connections(struct Map *tab_voisins, int *com_sockets, int nb_sockets
             MAX_FD = MAX_FD > dsCv ? MAX_FD : dsCv;
             tab_voisins[out+i].socket = dsCv;
             tab_voisins[out+i].indice = indice;
+            tab_voisins[out+i].etat = 0;
             com_sockets[i] = dsCv;
             accepted++;
         }
@@ -246,7 +256,7 @@ int get_prochain(int *map, int *sockets, int nb_sockets){
     return socket_prochain;
 }
 
-int broadcast_color(struct Map *tab_voisins, int *tab_sockets, int nb_sockets, int color){
+int broadcast_color(int *map, int *tab_sockets, int nb_sockets, int color){
     int info[4];
     info[0] = color;
     info[2] = INDICE;
@@ -273,7 +283,6 @@ int receive_colors(fd_set *set, int *tab_sockets, int *voisins_restants, int *nb
     int info[4];
     int couleur;
     int last_set = -1;
-    // qsdqsd
 
     int nb_voisins = *nb_restants;
 
@@ -305,12 +314,161 @@ int receive_colors(fd_set *set, int *tab_sockets, int *voisins_restants, int *nb
 void inform_parent(int parent_socket){
     int msg = 1;
     send_tcp(parent_socket, &msg, sizeof(int));
+    printf("[+] Noeud %d: j'ai informé mon parent\n", INDICE);
 }
 
-void attend_fils(int fils_socket){
+void attend_fils(int fils_pos, struct Map *tab_voisins, int degre){
     int msg;
-    receive_tcp(fils_socket, &msg, sizeof(int));
+    receive_tcp(tab_voisins[fils_pos].socket, &msg, sizeof(int));
+    tab_voisins[fils_pos].etat = 1;
 }
+/////////////////////////////////////////
+
+
+    //reçoit les couleurs des voisins, met à jour le tableau des couleurs disponibles et l'etat des voisins
+int receive_colors2(fd_set *set, struct Map *tab_voisins, int degre, int *colors){
+    int info[4];
+    int couleur;
+
+    for(int n=0; n<degre; n++){
+
+        for(int i=0; i<degre; i++){
+            FD_SET(tab_voisins[i].socket, set);
+        }
+
+        select(MAX_FD+1, set, NULL, NULL, NULL);
+        for(int i = 0; i < degre; i++){
+            printf("socket: %d\n", tab_voisins[i].socket);
+            if(FD_ISSET(tab_voisins[i].socket, set)){
+
+                receive_tcp(tab_voisins[i].socket, info, sizeof(info)); //reception couleur
+                if(info[0] != -1) {
+                    couleur = info[0];
+                    colors[couleur] = 0;
+                    tab_voisins[i].etat = 1; //maj tableau
+                    printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d\n", INDICE, couleur, info[2]);
+                }
+                printf("[+] Noeud %d: %s", INDICE,
+                       info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
+
+                if(info[1]) return tab_voisins[i].socket; //signal départ
+            }
+        }
+    }
+    return -1;
+}
+
+
+    //transmet notre couleur personelle à tous les voisins non encore coloriés
+    //retourne la position (dans tab_voisin) du prochain voisin à colorier
+int broadcast_color2(struct Map *tab_voisins, int degre, int color){
+    int info[4];
+    info[0] = color;
+    info[2] = INDICE;
+    //pthread_t threads[degre];
+    int prochain = get_prochain2(tab_voisins, degre);
+
+    if(prochain == -1) {
+        printf("[+] Noeud %d: il n'y a plus de voisins incolores\n", INDICE);
+        return -1;
+    }
+    printf("[+] Noeud %d: le prochain est le noeud %d\n",INDICE, tab_voisins[prochain].indice);
+
+    for (int i = 0; i < degre; i++) {
+        if (tab_voisins[i].etat != 1) { //parmi les voisins non coloriés
+            info[1] = i == prochain; //si le voisin est le prochain à faire tourner l'algorithme
+            info[3] = tab_voisins[i].socket;
+            //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
+            printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n",INDICE, color, tab_voisins[i].indice,
+                   tab_voisins[i].socket);
+            send_tcp(tab_voisins[i].socket, info, sizeof(info));
+            //pthread_create(&threads[i], NULL, send_color, (void *) &info);
+            //pthread_join(threads[i], NULL);
+        }
+    }
+    return prochain;
+
+}
+
+
+    //renvoie la position dans le tab_voisins, du prochain noeud à colorier
+    //(choisit le voisin non colorié avec le plus petit indice)
+int get_prochain2(struct Map *tab_voisins, int degre){
+    int prochain = -1;
+    int indice_prochain = GRAPH_SIZE+1;
+
+    //PROBLEME ICI :
+    //JE NE SAIS PAS SI UN FILS EN A DÉJA COLORIÉ UN AUTRE
+    //DONC QUAND J'ENVOIE UN MESSAGE À L'AUTRE IL AURA PEUT-ÊTRE DÉJÀ TERMINÉ
+    //ET CA VA ME BLOQUER JUSQU'À CE QUE SON TERMINAL FERME ?
+
+    //  idée 1 : signal de départ = une liste de noeuds que je veux colorier moi même
+    // + comme ça mes fils ne colorieront pas les noeuds de ma liste
+    // - point négatif : ils doivent eux même envoyer leur liste perso + la mienne à leurs fils
+    //ça peut faire des gros messages pas pratiques à envoyer
+
+    //  idée 2 : dans l'autre sens :
+    // + quand ils ont fini mes fils me disent qui à été colorié par eux et leurs fils
+    // (+/-) je traite le gros message que chez le parent = je réduis le nombre de messages à envoyer
+    //  - point négatif : toujours gros messages à envoyer
+
+    //  idée 3 : mieux !!
+    // A chaque fois qu'un fils m'informe qu'il a fini, je check si les restants
+    // m'ont envoyé leur couleur entre temps
+    //  => ça implique qu'on envoie sa couleur à tous nos voisins
+    //  et pas uniquement ceux qui n'ont pas été traités.
+    // problème : il faut pas rester bloquer dans la reception si on a pas reçu de couleur
+    //  => Est-ce que FD_ISSET() est bloquant ?
+
+
+
+    for(int i=0; i<degre; i++){
+        if(tab_voisins[i].etat == 0 && tab_voisins[i].indice < indice_prochain) {
+            prochain = i;
+            indice_prochain = tab_voisins[i].indice;
+        }
+        //printf("\t[DEBUG] prochain = %d ; indice_prochain = %d ; i = %d\n",prochain, tab_voisins[prochain].indice, i );
+    }
+    //printf("\t[DEBUG] fin choix prochain = %d\n",prochain);
+    return prochain;
+}
+
+
+    //envoie au prochain voisin à colorier le signal de départ de l'algorithme
+    //attend son message de fin de traitement et recommence avec un autre jusqu'à ce que tous aient été coloriés
+void boucle_fils(struct Map *tab_voisins,int degre, int fils) {
+
+    //attendre le signal de fin du premier fils si j'en ai un
+    if (fils > 0) {
+        attend_fils(fils, tab_voisins, degre);
+        printf("[+] Noeud %d: le fils %d a fini de colorier\n\n",INDICE, tab_voisins[fils].indice);
+
+
+        //IDEE 3 : check si les autres fils ont fini entre temps, un genre de :
+        //updateAutreFils(tab_voisins, degre);
+
+
+
+        int info[4];
+        info[0] = -1; //pour que le fils capte direct que c'est un signal de son parent
+        info[1] = 1;
+        info[2] = INDICE;
+        info[3] = tab_voisins[fils].socket; // ? sert pas du coup ?
+
+        while ((fils = get_prochain2(tab_voisins, degre)) != -1) {
+            printf("[+] Noeud %d: envoi du signal de départ au prochain (noeud %d)\n",INDICE, tab_voisins[fils].indice);
+            send_tcp(tab_voisins[fils].socket, &info, sizeof(info));
+
+            attend_fils(fils, tab_voisins, degre);
+            printf("[+] Noeud %d: le fils %d a fini de colorier\n\n",INDICE, tab_voisins[fils].indice);
+        }
+        printf("[+] Noeud %d: tous mes fils ont fini de colorier\n",INDICE);
+    }
+}
+
+
+
+/////////////////////////////////////////
 
 
 int main(int argc, char *argv[]) {
@@ -383,7 +541,7 @@ int main(int argc, char *argv[]) {
         server_port = read_server_port();
     }
 
-    
+
 
     SERVER_SOCKET = socket(AF_INET, SOCK_STREAM, 0);
     printf("server socket is %d\n", SERVER_SOCKET);
@@ -486,12 +644,13 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
         //sockets_map[out_sockets[i]] = noeud.index;
-        tab_voisins[i]->indice = noeud.index;
-        tab_voisins[i]->socket = out_sockets[i];
+        tab_voisins[i].indice = noeud.index;
+        tab_voisins[i].socket = out_sockets[i];
+        tab_voisins[i].etat = 0;
         out_noeuds[i] = noeud;
     }
 
- 
+
 
     printf("[+] Client: reception des adresses out OK\n");
 
@@ -501,12 +660,12 @@ int main(int argc, char *argv[]) {
     int communication_sockets[in];
     int accepted = accept_connections(tab_voisins, communication_sockets, in, out);
     printf("[+] Noeud %d: %d connexions entrantes acceptées\n", INDICE, accepted);
-    
-    for(int i=0; i<degre; i++){
-        //printf("sockets_map[%d] = %d\n", i, sockets_map[i]);
-        printf("tab_voisins[%d] = %d\n, i, tab_voisins[i] ");
-    }
-    
+
+//    for(int i=0; i<degre; i++){
+//        //printf("sockets_map[%d] = %d\n", i, sockets_map[i]);
+//        printf("tab_voisins[%d] = %d\n", i, tab_voisins[i]);
+//    }
+
     // Reseau cree, on peut commencer l'algo
 
     // 0 si graphe complet, (n couleurs)
@@ -531,8 +690,8 @@ int main(int argc, char *argv[]) {
     int voisins_restants[degre]; //voisins restants à colorier
     append_arrays(voisins, out_sockets, communication_sockets, out, in);
     append_arrays(voisins_restants, voisins, NULL, degre, 0);
- 
-    fd_set voisin_set, set_copy;
+
+    fd_set voisin_set;
     FD_ZERO(&voisin_set);
     set_voisins(&voisin_set, communication_sockets, out_sockets, in, out);
 
@@ -569,14 +728,14 @@ int main(int argc, char *argv[]) {
             if (starts) {
                 printf("[+] Noeud %d: je suis le premier\n", INDICE);
                 fils = broadcast_color(sockets_map, voisins_restants, nb_restants, couleur);
-                attend_fils(fils);
+                //attend_fils(fils);
 
             } else {
                 printf("[+] Noeud %d: je suis un noeud intermédiaire\n", INDICE);
                 parent = receive_colors(&voisin_set, voisins, voisins_restants, &nb_restants, couleurs);
                 couleur = choose_color(couleurs);
                 fils = broadcast_color(sockets_map, voisins_restants, nb_restants, couleur);
-                attend_fils(fils);
+                //attend_fils(fils);
                 inform_parent(parent);
             }
 
@@ -585,20 +744,26 @@ int main(int argc, char *argv[]) {
             printf("[+] Noeud %d: le graphe est un chemin\n", INDICE);
             break;
         case 4:
-            printf("[+] Noeud %d: le graphe est quelconque\n", INDICE);
+            printf("[+] Noeud %d: le graphe est quelconque\n\n", INDICE);
 
-            if (starts) {
+            if (degre==0){
+                printf("[+] Noeud %d: je suis un noeud isolé\n", INDICE);
+                couleur = 0;
+            } else if (starts) {
                 printf("[+] Noeud %d: je commence\n", INDICE);
-                fils = broadcast_color(sockets_map, voisins, degre, couleur);
-                attend_fils(fils);
-            } else {
-                parent = receive_colors(&voisin_set, voisins, voisins_restants, &nb_restants, couleurs);
+
                 couleur = choose_color(couleurs);
-                fils = broadcast_color(sockets_map, voisins_restants, nb_restants, couleur);
-                attend_fils(fils);
+                printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
+
+                fils = broadcast_color2(tab_voisins, degre, couleur);
+                boucle_fils(tab_voisins, degre, fils);
+            } else {
+                parent = receive_colors2(&voisin_set, tab_voisins, degre, couleurs);
+                couleur = choose_color(couleurs);
+                fils = broadcast_color2(tab_voisins, degre, couleur);
+                boucle_fils(tab_voisins, degre, fils);
                 inform_parent(parent);
             }
-
             break;
 
     }
@@ -606,6 +771,7 @@ int main(int argc, char *argv[]) {
     printf("[+] Noeud %d: je termine avec la couleur %d\n", INDICE, couleur);
 
     send_tcp(SERVER_SOCKET, &couleur, sizeof(int));
+    printf("[+] Noeud %d: j'ai envoyé ma couleur au serveur\n", INDICE);
 
     sleep(180);
 
