@@ -71,7 +71,7 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
 }
 
 void elect_first(struct Client *clients, int nb_clients, int max_index){
-    printf("[+] Server: first noeud is %d\n\n", max_index);
+    printf("[+] Server: first noeud is %d\n\n", max_index+1);
     for(int i=0; i<nb_clients; i++){
         clients[i].is_max_degree = i == max_index;
         send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
@@ -129,7 +129,7 @@ int analyseGraphType(struct Graph *graph){
     printf("[debug] n = %d, m = %d\n", n, m);
 
     //graphe complet : n sommets et n(n-1)/2 arêtes
-    if(m == n*(n-1)/2) return 0;
+    if(m == n*(n-1)/2) return 4;
 
     //graphe étoile ou chemin : n sommets et n-1 arêtes
     //graphe cycle : n sommets et n arêtes

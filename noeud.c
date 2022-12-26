@@ -10,6 +10,7 @@ int GRAPH_SIZE = 0;
 int GRAPH_TYPE = 0;
 int SERVER_SOCKET;
 int IN_SOCKET;
+int MAX_FD;
 
 
 
@@ -36,6 +37,7 @@ void create_out_sockets(int *tab_sockets, int nb_sockets){
             printf("[-] Client : pb creation socket sortie\n");
             noeud_exit(tab_sockets, i);
         };
+        MAX_FD = MAX_FD > out_socket ? MAX_FD : out_socket;
         tab_sockets[i] = out_socket;
     }
 }
@@ -69,6 +71,8 @@ void create_in_socket(struct sockaddr_in *addresse){
         exit(1);
     };
 
+    MAX_FD = IN_SOCKET;
+
     addresse->sin_family = AF_INET;
     addresse->sin_addr.s_addr = INADDR_ANY;
     addresse->sin_port = 0;
@@ -91,16 +95,19 @@ int establish_connections(int *tab_sockets, struct Noeud *noeuds, int nb_sockets
             perror("[-] Noeud : erreur connect.\n");
             noeud_exit(tab_sockets, i);
         }
+        send_tcp(tab_sockets[i], &INDICE, sizeof(int));
         connections++;
     }
     printf("\n");
     return connections;
 }
 
-int accept_connections(int *com_sockets, int nb_sockets){
+int accept_connections(int *all, int *com_sockets, int nb_sockets){
     struct sockaddr_in adC ; // obtenir adresse client accepté
     socklen_t lgC = sizeof (struct sockaddr_in);
     int accepted = 0;
+    int indice;
+
     for(int i=0; i<nb_sockets; i++){
         int dsCv = accept(IN_SOCKET,(struct sockaddr *) &adC, &lgC);
         if (dsCv < 0){
@@ -108,6 +115,9 @@ int accept_connections(int *com_sockets, int nb_sockets){
             noeud_exit(com_sockets, i);
         }
         else {
+            receive_tcp(dsCv, &indice, sizeof(int));
+            MAX_FD = MAX_FD > dsCv ? MAX_FD : dsCv;
+            all[dsCv] = indice;
             com_sockets[i] = dsCv;
             accepted++;
         }
@@ -162,6 +172,19 @@ int read_server_port(){
     return port;
 }
 
+void remove_from_array(int *tab, int *size, int element){
+    int index = -1;
+    for(int i=0; i<*size; i++){
+        if(tab[i] == element){
+            index = i;
+            break;
+        }
+    }
+    for(int i=index; i<*size-1; i++){
+        tab[i] = tab[i+1];
+    }
+    *size = *size - 1;
+}
 
 void append_arrays(int *res, int *tab1, int *tab2, int size1, int size2){
     for(int i=0; i<size1; i++){
@@ -173,18 +196,21 @@ void append_arrays(int *res, int *tab1, int *tab2, int size1, int size2){
 }
 
 void set_voisins(fd_set *set, int *tab1, int *tab2, int size1, int size2){
-    for(int i=0; i<size1; i++){
-        FD_SET(tab1[i], set);
+    if(tab1 != NULL){
+        for(int i=0; i<size1; i++){
+            FD_SET(tab1[i], set);
+        }
     }
-    for(int i=0; i<size2; i++){
-        FD_SET(tab2[i], set);
+
+    if(tab2 != NULL){
+        for(int i=0; i<size2; i++){
+            FD_SET(tab2[i], set);
+        }
     }
 }
 
+
 int choose_color(int *colors){
-    for(int i=0; i<GRAPH_SIZE; i++){
-        printf("couleur %d: %d\n", i, colors[i]);
-    }
     for(int i=0; i<GRAPH_SIZE; i++){
         if(colors[i]) return i;
     }
@@ -193,41 +219,60 @@ int choose_color(int *colors){
 
 void *send_color(void *arg){
     int *info = (int *) arg;
-    printf("thread sending color: %d\n", info[0]);
     send_tcp(info[3], info, sizeof(int)*4);
     pthread_exit(NULL);
 }
 
-void broadcast_color(int *tab_sockets, int nb_sockets, int color){
+int get_min_index(int *sockets, int nb_sockets){
+    int min = sockets[0];
+    for(int i=1; i<nb_sockets; i++){
+        if(sockets[i] < min) min = sockets[i];
+    }
+    return min;
+}
+
+void broadcast_color(int *map, int *tab_sockets, int nb_sockets, int color){
     int info[4];
     info[0] = color;
     info[2] = INDICE;
     pthread_t threads[nb_sockets];
+    int min = get_min_index(tab_sockets, nb_sockets);
+
 
     for(int i=0; i<nb_sockets; i++){
-        info[1] = i == 0;
+        info[1] = tab_sockets[i] == min;
         info[3] = tab_sockets[i];
-        pthread_create(&threads[i], NULL, send_color, (void *) &info);
-        pthread_join(threads[i], NULL);
+        printf("envoi de la couleur %d au voisin %d @ %d\n", color, map[tab_sockets[i]], tab_sockets[i]);
+        send_tcp(tab_sockets[i], info, sizeof(info));
+        //pthread_create(&threads[i], NULL, send_color, (void *) &info);
+        //pthread_join(threads[i], NULL);
     }
 }
 
-void receive_colors(fd_set *set, int *tab_sockets, int nb_sockets, int *colors){
+void receive_colors(fd_set *set, fd_set *set_copy, int *tab_sockets, int *nb_sockets, int *colors){
     int info[3];
     int couleur;
+    int last_set = -1;
 
-    printf("[+] Noeud %d: je vais recevoir les couleurs de mes voisins\n", INDICE);
+    int nb_messages = *nb_sockets;
 
-    select(FD_SETSIZE, set, NULL, NULL, NULL);
-    for(int i =0; i < nb_sockets; i++){
-        if(FD_ISSET(tab_sockets[i], set)){
-            receive_tcp(tab_sockets[i], info, sizeof(info));
-            couleur = info[0];
-            colors[couleur] = 0;
-            FD_CLR(tab_sockets[i], set);
-            printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d\n", INDICE, couleur, info[2]);
-            printf("[+] Noeud %d: %s", INDICE, info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
-            if(info[1]) return;
+    for(int n=0; n<nb_messages; n++){
+        *set_copy = *set;
+        if(last_set != -1){
+            FD_CLR(last_set, set_copy);
+        }
+        select(MAX_FD+1, set_copy, NULL, NULL, NULL);
+        for(int i =0; i < *nb_sockets; i++){
+            if(FD_ISSET(tab_sockets[i], set_copy)){
+                last_set = tab_sockets[i];
+                receive_tcp(tab_sockets[i], info, sizeof(info));
+                couleur = info[0];
+                colors[couleur] = 0;
+                printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d\n", INDICE, couleur, info[2]);
+                printf("[+] Noeud %d: %s", INDICE, info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
+                remove_from_array(tab_sockets, nb_sockets, tab_sockets[i]);
+                if(info[1]) return;
+            }
         }
     }
 }
@@ -301,12 +346,17 @@ int main(int argc, char *argv[]) {
         server_port = read_server_port();
     }
 
+    
+
     SERVER_SOCKET = socket(AF_INET, SOCK_STREAM, 0);
+    printf("server socket is %d\n", SERVER_SOCKET);
 
     if (SERVER_SOCKET == -1){
         printf("[-] Client: problème création socket\n");
         exit(1);
     }
+
+    MAX_FD = SERVER_SOCKET;
     printf("[+] Client: création de la socket OK\n");
 
     /* contient adresse socket serveur */
@@ -361,6 +411,9 @@ int main(int argc, char *argv[]) {
         mise_en_ecoute(&in_addresse, in);
     }
 
+    int sockets_map[GRAPH_SIZE+4];
+    memset(sockets_map, -1, sizeof(sockets_map));
+
     int out_sockets[out];
     struct Noeud out_noeuds[out];
     create_out_sockets(out_sockets, out);
@@ -392,8 +445,11 @@ int main(int argc, char *argv[]) {
             noeud_exit(out_sockets, out);
             exit(1);
         }
+        sockets_map[out_sockets[i]] = noeud.index;
         out_noeuds[i] = noeud;
     }
+
+ 
 
     printf("[+] Client: reception des adresses out OK\n");
 
@@ -401,10 +457,13 @@ int main(int argc, char *argv[]) {
     printf("[+] Noeud %d: %d connexions sortantes établies\n", INDICE, connections);
 
     int communication_sockets[in];
-    int accepted = accept_connections(communication_sockets, in);
+    int accepted = accept_connections(sockets_map, communication_sockets, in);
     printf("[+] Noeud %d: %d connexions entrantes acceptées\n", INDICE, accepted);
-
-
+    
+    for(int i=0; i<GRAPH_SIZE+4; i++){
+        printf("sockets_map[%d] = %d\n", i, sockets_map[i]);
+    }
+    
     // Reseau cree, on peut commencer l'algo
 
     // 0 si graphe complet, (n couleurs)
@@ -422,10 +481,11 @@ int main(int argc, char *argv[]) {
     int starts;
     receive_tcp(SERVER_SOCKET, &starts, sizeof(int));
 
-    int voisins[in + out];
+    int degre = in+out;
+    int voisins[degre];
     append_arrays(voisins, communication_sockets, out_sockets, in, out);
-
-    fd_set voisin_set;
+ 
+    fd_set voisin_set, set_copy;
     FD_ZERO(&voisin_set);
     set_voisins(&voisin_set, communication_sockets, out_sockets, in, out);
 
@@ -437,7 +497,7 @@ int main(int argc, char *argv[]) {
 
             sleep(180);
 
-            noeud_exit(voisins, in + out);
+            noeud_exit(voisins, degre);
 
             return 0;
             break;
@@ -445,12 +505,11 @@ int main(int argc, char *argv[]) {
             printf("[+] Noeud %d: le graphe est une étoile\n", INDICE);
             if (starts) {
                 printf("[+] Noeud %d: je suis la racine\n", INDICE);
-                sleep(5);
-                broadcast_color(voisins, in + out, couleur);
+                broadcast_color(sockets_map, voisins, degre, couleur);
 
             } else {
                 printf("[+] Noeud %d: je suis une extrémité\n", INDICE);
-                receive_colors(&voisin_set, voisins, in + out, couleurs);
+                receive_colors(&voisin_set, &set_copy, voisins, &degre, couleurs);
                 couleur = choose_color(couleurs);
             }
             //pas besoin d'informer le voisin, j'en ai qu'un et c'est la racine
@@ -459,14 +518,13 @@ int main(int argc, char *argv[]) {
             printf("[+] Noeud %d: le graphe est un cycle\n", INDICE);
             if (starts) {
                 printf("[+] Noeud %d: je suis le premier\n", INDICE);
-                sleep(5);
-                broadcast_color(voisins, in + out, couleur);
+                broadcast_color(sockets_map, voisins, degre, couleur);
 
             } else {
                 printf("[+] Noeud %d: je suis un noeud intermédiaire\n", INDICE);
-                receive_colors(&voisin_set, voisins, in + out, couleurs);
+                receive_colors(&voisin_set, &set_copy, voisins, &degre, couleurs);
                 couleur = choose_color(couleurs);
-                broadcast_color(voisins, in + out, couleur);
+                broadcast_color(sockets_map, voisins, degre, couleur);
             }
 
             break;
@@ -478,11 +536,11 @@ int main(int argc, char *argv[]) {
 
             if (starts) {
                 printf("[+] Noeud %d: je commence\n", INDICE);
-                broadcast_color(voisins, in + out, couleur);
+                broadcast_color(sockets_map, voisins, degre, couleur);
             } else {
-                receive_colors(&voisin_set, voisins, in + out, couleurs);
+                receive_colors(&voisin_set, &set_copy, voisins, &degre, couleurs);
                 couleur = choose_color(couleurs);
-                broadcast_color(voisins, in + out, couleur);
+                broadcast_color(sockets_map, voisins, degre, couleur);
             }
 
             break;
