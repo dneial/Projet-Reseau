@@ -29,15 +29,15 @@ coloration de graphe au sein d'un réseau de processus interconnectés
     7 (0) : [0 1 2 3 4 5 6]
 
 
-
-
-     1 ------- '2' --------  5
-     |          | \         /
-     |          |  \       /
-     |          |   \     /
-     |          |    \   /
-     |          |     \ /
-     3 -------- 4 ---- 6          7
+     6          7
+     |          |
+     1 ------- '2'
+     |          | \
+     |          |  \
+     |          |   \
+     |          |    \
+     |          |     \
+     3          4 ---- 5
 
       1 ------- '2'          5
       |          | \          \
@@ -50,18 +50,19 @@ coloration de graphe au sein d'un réseau de processus interconnectés
 décrit dans g5:
 
      1 -------  2
+     |          |\
      |          | \
      |          |  \
      |          |   \
      |          |    \
-     |          |     \
-     3 -------- 4 ---- 5
+     3          4 --- 5 ----- 6
 
   > 2 (0) : [0 1 2 3 4 5 6]
     1 (1) : ['0' 1 2 3 4 5 6]
-    4 (1) : ['0' 1 2 3 4 5 6]
-    5 (1) : ['0' 1 2 3 4 5 6]
     3 (0) : [0 '1' 2 3 4 5 6]
+    4 (1) : ['0' 1 2 3 4 5 6]
+    5 (2) : ['0' '1' 2 3 4 5 6]
+    6 (0) : [0 1 '2' 3 4 5 6]
 
 erreur de l'algo :  4 et 5 ont a même couleur.
 
@@ -103,3 +104,47 @@ Valeurs de retour de l'analyse du graphe :
     2 si graphe cycle,   (2 couleurs) (3 si cycle impair)
     3 si graphe chemin,  (2 couleurs) (3 si erreur d'analyse cf return 3)
     4 si graphe aléatoire
+
+
+
+    pseudo code algo séquentiel
+
+
+    (first)
+    attribue couleur
+    envoie couleur à voisins
+    boucle sur nombre voisins
+        définit prochain >
+        attend fin prochain
+    fin boucle
+    fin
+
+
+    (pas first)
+    do
+        recevoir couleur ( maj tableau [voisin, état(colorié, pas colorié)])
+    while ( !signal départ)
+    attribue couleur
+    envoie couleur à voisins (qui sont pas encore coloriés)
+    boucle sur nombre voisins (qui sont pas encore coloriés)
+        définit prochain
+        attend fin prochain
+    fin boucle
+    signal fin au parent
+    fin
+
+
+    [définit prochain]
+
+
+
+
+    0 [socket , 1]
+    1 [socket , 2]
+    2 [socket , 3]
+
+Struct Map{
+    int socket;
+    int indice;
+}
+

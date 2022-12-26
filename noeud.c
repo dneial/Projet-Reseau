@@ -12,6 +12,10 @@ int SERVER_SOCKET;
 int IN_SOCKET;
 int MAX_FD;
 
+struct Map{
+        int socket;
+        int indice;
+};
 
 
 void close_sockets(int *sockets, int size)
@@ -102,7 +106,7 @@ int establish_connections(int *tab_sockets, struct Noeud *noeuds, int nb_sockets
     return connections;
 }
 
-int accept_connections(int *all, int *com_sockets, int nb_sockets){
+int accept_connections(struct Map *tab_voisins, int *com_sockets, int nb_sockets, int out){
     struct sockaddr_in adC ; // obtenir adresse client accepté
     socklen_t lgC = sizeof (struct sockaddr_in);
     int accepted = 0;
@@ -239,7 +243,7 @@ int get_prochain(int *map, int *sockets, int nb_sockets){
         }
     }
 
-    return min;
+    return socket_prochain;
 }
 
 int broadcast_color(struct Map *tab_voisins, int *tab_sockets, int nb_sockets, int color){
@@ -252,7 +256,9 @@ int broadcast_color(struct Map *tab_voisins, int *tab_sockets, int nb_sockets, i
     printf("prochain socket : %d\n prochain indice : %d\n", prochain, map[prochain]);
 
     for(int i=0; i<nb_sockets; i++){
-        info[1] = map[tab_sockets[i]] == min;
+        info[1] = tab_sockets[i] == prochain;
+
+        printf("socket %d est la prochaine ? %d\n", tab_sockets[i], info[1]);
         info[3] = tab_sockets[i];
         printf("envoi de la couleur %d au voisin %d @ %d\n", color, map[tab_sockets[i]], tab_sockets[i]);
         send_tcp(tab_sockets[i], info, sizeof(info));
@@ -318,6 +324,7 @@ int main(int argc, char *argv[]) {
     int network = 0;
     char server_ip[16];
     int server_port;
+
 
     if (argc > 1){
         if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--verbose") == 0){
@@ -478,7 +485,9 @@ int main(int argc, char *argv[]) {
             noeud_exit(out_sockets, out);
             exit(1);
         }
-        sockets_map[out_sockets[i]] = noeud.index;
+        //sockets_map[out_sockets[i]] = noeud.index;
+        tab_voisins[i]->indice = noeud.index;
+        tab_voisins[i]->socket = out_sockets[i];
         out_noeuds[i] = noeud;
     }
 
