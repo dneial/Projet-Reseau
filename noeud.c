@@ -253,6 +253,7 @@ void receive_colors(fd_set *set, fd_set *set_copy, int *tab_sockets, int *nb_soc
     int info[3];
     int couleur;
     int last_set = -1;
+    // qsdqsd
 
     int nb_messages = *nb_sockets;
 
