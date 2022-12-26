@@ -223,11 +223,13 @@ void *send_color(void *arg){
     pthread_exit(NULL);
 }
 
-int get_min_index(int *sockets, int nb_sockets){
-    int min = sockets[0];
+int get_min_index(int *map, int *sockets, int nb_sockets){
+    int min = map[sockets[0]];
+
     for(int i=1; i<nb_sockets; i++){
-        if(sockets[i] < min) min = sockets[i];
+        if(map[sockets[i]] < min) min = map[sockets[i]];
     }
+
     return min;
 }
 
@@ -236,11 +238,10 @@ void broadcast_color(int *map, int *tab_sockets, int nb_sockets, int color){
     info[0] = color;
     info[2] = INDICE;
     pthread_t threads[nb_sockets];
-    int min = get_min_index(tab_sockets, nb_sockets);
-
+    int min = get_min_index(map, tab_sockets, nb_sockets);
 
     for(int i=0; i<nb_sockets; i++){
-        info[1] = tab_sockets[i] == min;
+        info[1] = map[tab_sockets[i]] == min;
         info[3] = tab_sockets[i];
         printf("envoi de la couleur %d au voisin %d @ %d\n", color, map[tab_sockets[i]], tab_sockets[i]);
         send_tcp(tab_sockets[i], info, sizeof(info));
@@ -258,12 +259,14 @@ void receive_colors(fd_set *set, fd_set *set_copy, int *tab_sockets, int *nb_soc
     int nb_messages = *nb_sockets;
 
     for(int n=0; n<nb_messages; n++){
+        printf("%d eme fois que je passe dans la boucle et j'ai %d voisins\n", n, *nb_sockets);
         *set_copy = *set;
         if(last_set != -1){
             FD_CLR(last_set, set_copy);
         }
         select(MAX_FD+1, set_copy, NULL, NULL, NULL);
-        for(int i =0; i < *nb_sockets; i++){
+        for(int i = 0; i < *nb_sockets; i++){
+            printf("inner boucle\n");
             if(FD_ISSET(tab_sockets[i], set_copy)){
                 last_set = tab_sockets[i];
                 receive_tcp(tab_sockets[i], info, sizeof(info));
