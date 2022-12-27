@@ -234,7 +234,7 @@ int choose_color(int *colors){
 
 void *send_color(void *arg){
     int *info = (int *) arg;
-    send_tcp(info[3], info, sizeof(int)*4);
+    send_tcp(info[3], info, sizeof(int)*3);
     pthread_exit(NULL);
 }
 
@@ -329,6 +329,7 @@ void attend_fils(int fils_pos, struct Map *tab_voisins, int degre){
 int receive_colors2(fd_set *set, struct Map *tab_voisins, int degre, int *colors){
     int info[4];
     int couleur;
+    int parent = -1;
 
     for(int n=0; n<degre; n++){
 
@@ -336,12 +337,11 @@ int receive_colors2(fd_set *set, struct Map *tab_voisins, int degre, int *colors
             FD_SET(tab_voisins[i].socket, set);
         }
 
-        select(MAX_FD+1, set, NULL, NULL, NULL);
+        printf("nb de messages: %d\n", select(MAX_FD+1, set, NULL, NULL, NULL));
         for(int i = 0; i < degre; i++){
-            printf("socket: %d\n", tab_voisins[i].socket);
             if(FD_ISSET(tab_voisins[i].socket, set)){
-
-                receive_tcp(tab_voisins[i].socket, info, sizeof(info)); //reception couleur
+                printf("socket is set: %d\n", tab_voisins[i].socket);
+                receive_tcp(tab_voisins[i].socket, info, sizeof(int)*3); //reception couleur
                 if(info[0] != -1) {
                     couleur = info[0];
                     colors[couleur] = 0;
@@ -351,11 +351,12 @@ int receive_colors2(fd_set *set, struct Map *tab_voisins, int degre, int *colors
                 printf("[+] Noeud %d: %s", INDICE,
                        info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
 
-                if(info[1]) return tab_voisins[i].socket; //signal départ
+                if(info[1]) parent = tab_voisins[i].socket; //signal départ
             }
         }
+        if(parent != -1) return parent;
     }
-    return -1;
+    return parent;
 }
 
 
@@ -365,7 +366,7 @@ int broadcast_color2(struct Map *tab_voisins, int degre, int color){
     int info[4];
     info[0] = color;
     info[2] = INDICE;
-    //pthread_t threads[degre];
+    pthread_t threads[degre];
     int prochain = get_prochain2(tab_voisins, degre);
 
     if(prochain == -1) {
@@ -377,13 +378,16 @@ int broadcast_color2(struct Map *tab_voisins, int degre, int color){
     for (int i = 0; i < degre; i++) {
         if (tab_voisins[i].etat != 1) { //parmi les voisins non coloriés
             info[1] = i == prochain; //si le voisin est le prochain à faire tourner l'algorithme
-            info[3] = tab_voisins[i].socket;
+
+
+            //  info a la socket car c'est l'arg de la fonction des threads, mais on l'envoie pas
+            info[3] = tab_voisins[i].socket; //
+
             //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
             printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n",INDICE, color, tab_voisins[i].indice,
                    tab_voisins[i].socket);
-            send_tcp(tab_voisins[i].socket, info, sizeof(info));
-            //pthread_create(&threads[i], NULL, send_color, (void *) &info);
-            //pthread_join(threads[i], NULL);
+            pthread_create(&threads[i], NULL, send_color, (void *) &info);
+            pthread_join(threads[i], NULL);
         }
     }
     return prochain;
@@ -456,11 +460,11 @@ void boucle_fils(struct Map *tab_voisins,int degre, int fils) {
         info[3] = tab_voisins[fils].socket; // ? sert pas du coup ?
 
         while ((fils = get_prochain2(tab_voisins, degre)) != -1) {
-            printf("[+] Noeud %d: envoi du signal de départ au prochain (noeud %d)\n",INDICE, tab_voisins[fils].indice);
+            printf("[+] Noeud %d: envoi du signal de départ au prochain (noeud %d)\n", INDICE, tab_voisins[fils].indice);
             send_tcp(tab_voisins[fils].socket, &info, sizeof(info));
 
             attend_fils(fils, tab_voisins, degre);
-            printf("[+] Noeud %d: le fils %d a fini de colorier\n\n",INDICE, tab_voisins[fils].indice);
+            printf("[+] Noeud %d: le fils %d a fini de colorier\n\n", INDICE, tab_voisins[fils].indice);
         }
         printf("[+] Noeud %d: tous mes fils ont fini de colorier\n",INDICE);
     }
