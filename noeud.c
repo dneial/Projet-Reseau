@@ -220,14 +220,21 @@ void *send_color(void *arg){
 }
 
 void inform_parent(int parent_socket){
-    int msg = 1;
-    send_tcp(parent_socket, &msg, sizeof(int));
+    int info[3];
+    info[0] = -1;
+    info[1] = 0;
+    info[2] = INDICE;
+    send_tcp(parent_socket, info, sizeof(info));
     printf("[+] Noeud %d: j'ai informé mon parent\n", INDICE);
 }
 
 void attend_fils(int fils_pos, struct Map *tab_voisins, int degre){
-    int msg;
-    receive_tcp(tab_voisins[fils_pos].socket, &msg, sizeof(int));
+    int info[3];
+    receive_tcp(tab_voisins[fils_pos].socket, info, sizeof(info));
+
+    fprintf(stderr, "[-] Noeud %d : j'ai reçu ma couleur de la part du voisin %d\n", INDICE, info[2]);
+    perror("");
+
     tab_voisins[fils_pos].etat = 1;
 }
 
@@ -258,7 +265,7 @@ int get_prochain(struct Map *tab_voisins, int degre){
     // m'ont envoyé leur couleur entre temps
     //  => ça implique qu'on envoie sa couleur à tous nos voisins
     //  et pas uniquement ceux qui n'ont pas été traités.
-    // problème : il faut pas rester bloquer dans la reception si on a pas reçu de couleur
+    // problème : il faut pas rester bloqué dans la reception si on a pas reçu de couleur
     //  => Est-ce que FD_ISSET() est bloquant ?
 
 
@@ -293,6 +300,8 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
             if(FD_ISSET(tab_voisins[i].socket, set)){
                 printf("socket is set: %d\n", tab_voisins[i].socket);
                 receive_tcp(tab_voisins[i].socket, info, sizeof(int)*3); //reception couleur
+
+                //perror("[-] Noeud %d : j'ai reçu ma couleur de la part du voisin %d", INDICE, info[2])
                 if(info[0] != -1) {
                     couleur = info[0];
                     colors[couleur] = 0;
@@ -640,6 +649,7 @@ int main(int argc, char *argv[]) {
             } else {
                 parent = receive_colors(&voisin_set, tab_voisins, degre, couleurs);
                 couleur = choose_color(couleurs);
+                printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
                 fils = broadcast_color(tab_voisins, degre, couleur);
                 boucle_fils(tab_voisins, degre, fils);
                 inform_parent(parent);
