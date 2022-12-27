@@ -49,13 +49,17 @@ coloration de graphe au sein d'un réseau de processus interconnectés
 
 décrit dans g5:
 
-     1 -------  2
+     6 -------- 7
+     |          |
+     1 -------- 2
      |          |\
      |          | \
      |          |  \
      |          |   \
      |          |    \
-     3          4 --- 5 ----- 6
+     3          4 --- 5
+
+
 
   > 2 (0) : [0 1 2 3 4 5 6]
     1 (1) : ['0' 1 2 3 4 5 6]

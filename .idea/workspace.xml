@@ -20,9 +20,18 @@
   <component name="ChangeListManager">
     <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="envoi des messages par threads + correction multiplex:&#10;plusieurs messages peuvent être reçues en même temps; donc il faut pas return toute de suite après le message du parent - on traite tous les sockets où s'est passé un événement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/serveur" beforeDir="false" afterPath="$PROJECT_DIR$/bin/serveur" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph_files/g5.col" beforeDir="false" afterPath="$PROJECT_DIR$/graph_files/g5.col" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/server.o" beforeDir="false" afterPath="$PROJECT_DIR$/obj/server.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
+    </list>
+    <list id="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" name="Changes by Sebastien" comment="">
+      <change beforePath="$PROJECT_DIR$/graph_files/g5.col" beforeDir="false" afterPath="$PROJECT_DIR$/graph_files/g5.col" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +49,31 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/noeud.c">
+      <ranges>
+        <range start1="222" end1="224" start2="222" end2="227" changelist="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" />
+        <range start1="228" end1="230" start2="231" end2="237" changelist="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" />
+        <range start1="260" end1="261" start2="267" end2="268" changelist="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" />
+        <range start1="295" end1="295" start2="302" end2="304" changelist="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" />
+        <range start1="324" end1="327" start2="333" end2="335" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="329" end1="331" start2="337" end2="339" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="332" end1="335" start2="340" end2="342" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="336" end1="342" start2="343" end2="350" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="355" end1="356" start2="363" end2="364" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="581" end1="581" start2="589" end2="590" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="642" end1="642" start2="651" end2="652" changelist="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/graph_files/g5.col">
+      <ranges>
+        <range start1="0" end1="1" start2="0" end2="1" changelist="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" />
+        <range start1="3" end1="3" start2="3" end2="4" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="5" end1="5" start2="6" end2="7" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="6" end1="6" start2="8" end2="9" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+      </ranges>
+    </file>
   </component>
   <component name="MakefileLocalSettings">
     <option name="projectSyncType">
@@ -59,26 +93,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/daniel/Documents/GitHub/Projet-Reseau&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "last_opened_file_path": "/home/daniel/Documents/GitHub/Projet-Reseau",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "structure.view.defaults.are.configured": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="\\wsl$\Ubuntu\home\seb\Perso\Projet-Reseau" />

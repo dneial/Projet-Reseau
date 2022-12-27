@@ -322,24 +322,23 @@ int broadcast_color(struct Map *tab_voisins, int degre, int color){
 
     if(prochain == -1) {
         printf("[+] Noeud %d: il n'y a plus de voisins incolores\n", INDICE);
-        return -1;
-    }
-    printf("[+] Noeud %d: le prochain est le noeud %d\n",INDICE, tab_voisins[prochain].indice);
+        //return -1;
+    }else printf("[+] Noeud %d: le prochain est le noeud %d\n",INDICE, tab_voisins[prochain].indice);
 
     for (int i = 0; i < degre; i++) {
-        if (tab_voisins[i].etat != 1) { //parmi les voisins non coloriés
-            info[1] = i == prochain; //si le voisin est le prochain à faire tourner l'algorithme
+        //if (tab_voisins[i].etat != 1) { //parmi les voisins non coloriés
+        info[1] = i == prochain; //si le voisin est le prochain à faire tourner l'algorithme
 
+        //  info a la socket car c'est l'arg de la fonction des threads, mais on l'envoie pas
+        info[3] = tab_voisins[i].socket; //
 
-            //  info a la socket car c'est l'arg de la fonction des threads, mais on l'envoie pas
-            info[3] = tab_voisins[i].socket; //
-
-            //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
-            printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n",INDICE, color, tab_voisins[i].indice,
-                   tab_voisins[i].socket);
-            pthread_create(&threads[i], NULL, send_color, (void *) &info);
-            pthread_join(threads[i], NULL);
-        }
+        //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
+        printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n",INDICE, color, tab_voisins[i].indice,
+               tab_voisins[i].socket);
+        send_tcp(tab_voisins[i].socket, info, sizeof(int)*3);
+        //pthread_create(&threads[i], NULL, send_color, (void *) &info);
+        //pthread_join(threads[i], NULL);
+        //}
     }
     return prochain;
 
@@ -353,7 +352,7 @@ void boucle_fils(struct Map *tab_voisins, int degre, int fils) {
     //attendre le signal de fin du premier fils si j'en ai un
     if (fils > 0) {
         attend_fils(fils, tab_voisins, degre);
-        printf("[+] Noeud %d: le fils %d a fini de colorier\n\n",INDICE, tab_voisins[fils].indice);
+        printf("[+] Noeud %d: le fils %d a fini de colorier\n\n", INDICE, tab_voisins[fils].indice);
 
 
         //IDEE 3 : check si les autres fils ont fini entre temps, un genre de :
@@ -579,6 +578,7 @@ int main(int argc, char *argv[]) {
     for(int i=0; i<degre; i++){
         printf("socket: %d voisin: %d\n", tab_voisins[i].socket, tab_voisins[i].indice);
     }
+
     switch (GRAPH_TYPE) {
         case 0:
             printf("[+] Noeud %d: le graphe est complet, algo inutile : \n", INDICE);
