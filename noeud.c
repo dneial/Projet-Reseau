@@ -285,12 +285,10 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
     int parent = -1;
 
     for(int n=0; n<degre; n++){
-
         for(int i=0; i<degre; i++){
             FD_SET(tab_voisins[i].socket, set);
         }
-
-        select(MAX_FD+1, set, NULL, NULL, NULL);
+        printf("%d messages\n", select(MAX_FD+1, set, NULL, NULL, NULL));
         for(int i = 0; i < degre; i++){
             if(FD_ISSET(tab_voisins[i].socket, set)){
                 printf("socket is set: %d\n", tab_voisins[i].socket);
@@ -493,10 +491,7 @@ int main(int argc, char *argv[]) {
     char* server_ip = malloc(16);
     int server_port;
 
-    printf("pointer of server_port is %p\n", &server_port);
     parse_args(argc, argv, &verbose, &network, server_ip, &server_port);
-
-    printf("parsed args:\n verbose: %d\n network: %d\n server_ip: %s\n server_port: %d\n", verbose, network, server_ip, server_port);
 
     connect_to_server(server_ip, server_port);
 
@@ -581,6 +576,9 @@ int main(int argc, char *argv[]) {
     int parent = -1;
     int fils = -1;
 
+    for(int i=0; i<degre; i++){
+        printf("socket: %d voisin: %d\n", tab_voisins[i].socket, tab_voisins[i].indice);
+    }
     switch (GRAPH_TYPE) {
         case 0:
             printf("[+] Noeud %d: le graphe est complet, algo inutile : \n", INDICE);
