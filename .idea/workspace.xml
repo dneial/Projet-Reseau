@@ -18,7 +18,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="idée correction algo">
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="envoi des messages par threads + correction multiplex:&#10;plusieurs messages peuvent être reçues en même temps; donc il faut pas return toute de suite après le message du parent - on traite tous les sockets où s'est passé un événement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
@@ -79,11 +79,17 @@
       <recent name="\\wsl$\Ubuntu\home\seb\Perso\Projet-Reseau" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+  <component name="RunManager" selected="Makefile Target.bin/noeud">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="bin/noeud" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="bin/noeud" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
     </configuration>
     <configuration name="default" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/Makefile" target="default" workingDirectory="" arguments="">
@@ -93,6 +99,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Makefile Target.bin/noeud" />
         <item itemvalue="Makefile Target.default" />
       </list>
     </recent_temporary>
@@ -136,7 +143,10 @@
       <workItem from="1671887211114" duration="2000" />
       <workItem from="1671887997892" duration="1070000" />
       <workItem from="1671968016380" duration="1074000" />
-      <workItem from="1672133456546" duration="2253000" />
+      <workItem from="1672133456546" duration="4061000" />
+      <workItem from="1672138232824" duration="3000" />
+      <workItem from="1672139136077" duration="1328000" />
+      <workItem from="1672147947084" duration="1099000" />
     </task>
     <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
       <created>1666802330872</created>
@@ -201,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1671889028514</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="envoi des messages par threads + correction multiplex:&#10;plusieurs messages peuvent être reçues en même temps; donc il faut pas return toute de suite après le message du parent - on traite tous les sockets où s'est passé un événement">
+      <created>1672136122625</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1672136122625</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,6 +252,7 @@
     <MESSAGE value="envoi, reception et mise a jour des couleurs (pas bon)" />
     <MESSAGE value="ça marche avec g5" />
     <MESSAGE value="multiplex entrée" />
-    <option name="LAST_COMMIT_MESSAGE" value="multiplex entrée" />
+    <MESSAGE value="envoi des messages par threads + correction multiplex:&#10;plusieurs messages peuvent être reçues en même temps; donc il faut pas return toute de suite après le message du parent - on traite tous les sockets où s'est passé un événement" />
+    <option name="LAST_COMMIT_MESSAGE" value="envoi des messages par threads + correction multiplex:&#10;plusieurs messages peuvent être reçues en même temps; donc il faut pas return toute de suite après le message du parent - on traite tous les sockets où s'est passé un événement" />
   </component>
 </project>
