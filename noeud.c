@@ -18,6 +18,15 @@ struct Map{
     int etat;
 };
 
+struct ThreadArgs {
+    fd_set *voisin_set;
+    struct Map *tab_voisins;
+    int *degre;
+    int *color;
+    int *colors;
+
+};
+
 int* get_sockets_from_map(struct Map* map, int mapSize){
     int *sockets = malloc(sizeof(int)*mapSize);
     for(int i = 0; i < mapSize; i++){
@@ -353,6 +362,38 @@ int broadcast_color(struct Map *tab_voisins, int degre, int color){
 
 }
 
+void * keep_listening(void *t_args){
+    struct ThreadArgs *args = (struct ThreadArgs *) t_args;
+    int info[3];
+    int *degre = args->degre;
+    struct Map *tab_voisins = args->tab_voisins;
+    int *colors = args->colors;
+    int *color = args->color;
+    fd_set *set = args->voisin_set;
+
+    for(int i = 0; i < *degre; i++){
+        for(int i=0; i<*degre; i++){
+            FD_SET(tab_voisins[i].socket, set);
+        }
+        for(int i = 0; i < *degre; i++){
+            if(FD_ISSET(tab_voisins[i].socket, set)){
+                receive_tcp(tab_voisins[i].socket, info, sizeof(int)*3); //reception couleur
+                if(info[0] != -1) {
+                    printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d in thread\n", INDICE, info[0], info[2]);
+                    colors[info[0]] = 0;
+                    if(!colors[*color]){
+                        *color = choose_color(colors);
+                        printf("[+] Noeud %d: j'ai changé de couleur à %d\n", INDICE, *color);
+                        broadcast_color(tab_voisins, *degre, *color);
+                        pthread_exit(NULL);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+}
 
     //envoie au prochain voisin à colorier le signal de départ de l'algorithme
     //attend son message de fin de traitement et recommence avec un autre jusqu'à ce que tous aient été coloriés
@@ -566,16 +607,10 @@ int main(int argc, char *argv[]) {
     }
     int couleur = INDICE - 1;
 
+    printf("[+] Noeud %d: En attente du signal de démarrage du serveur\n", INDICE);
     int starts;
     receive_tcp(SERVER_SOCKET, &starts, sizeof(int));
 
-/*
-    int nb_restants = degre;
-
-    int voisins[degre]; //tous es voisins
-    int voisins_restants[degre]; //voisins restants à colorier
-    append_arrays(voisins, out_sockets, communication_sockets, out, in);
-    append_arrays(voisins_restants, voisins, NULL, degre, 0);*/
 
     fd_set voisin_set;
     FD_ZERO(&voisin_set);
@@ -583,6 +618,18 @@ int main(int argc, char *argv[]) {
 
     int parent = -1;
     int fils = -1;
+
+
+
+    pthread_t listening_thread;
+
+    struct ThreadArgs t_args;
+    t_args.voisin_set = &voisin_set;
+    t_args.tab_voisins = tab_voisins;
+    t_args.degre = &degre;
+    t_args.colors = couleurs;
+    t_args.color = &couleur;
+
 
     for(int i=0; i<degre; i++){
         printf("socket: %d voisin: %d\n", tab_voisins[i].socket, tab_voisins[i].indice);
@@ -648,11 +695,14 @@ int main(int argc, char *argv[]) {
                 boucle_fils(tab_voisins, degre, fils);
             } else {
                 parent = receive_colors(&voisin_set, tab_voisins, degre, couleurs);
+                pthread_create(&listening_thread, NULL, keep_listening, (void *) &t_args);
                 couleur = choose_color(couleurs);
                 printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
                 fils = broadcast_color(tab_voisins, degre, couleur);
                 boucle_fils(tab_voisins, degre, fils);
+                pthread_join(listening_thread, NULL);
                 inform_parent(parent);
+
             }
             break;
 
