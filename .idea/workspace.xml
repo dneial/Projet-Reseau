@@ -76,7 +76,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
     &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -155,6 +155,8 @@
       <workItem from="1672139136077" duration="1328000" />
       <workItem from="1672147947084" duration="1099000" />
       <workItem from="1672229440483" duration="4841000" />
+      <workItem from="1672312576162" duration="1073000" />
+      <workItem from="1672313989807" duration="3000" />
     </task>
     <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
       <created>1666802330872</created>
@@ -278,5 +280,9 @@
     <MESSAGE value="boss" />
     <MESSAGE value="Changes by Sebastien" />
     <option name="LAST_COMMIT_MESSAGE" value="Changes by Sebastien" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

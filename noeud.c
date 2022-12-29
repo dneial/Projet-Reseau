@@ -307,7 +307,6 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
         printf("%d messages\n", select(MAX_FD+1, set, NULL, NULL, NULL));
         for(int i = 0; i < degre; i++){
             if(FD_ISSET(tab_voisins[i].socket, set)){
-                printf("socket is set: %d\n", tab_voisins[i].socket);
                 receive_tcp(tab_voisins[i].socket, info, sizeof(int)*3); //reception couleur
 
                 //perror("[-] Noeud %d : j'ai reçu ma couleur de la part du voisin %d", INDICE, info[2])
@@ -353,16 +352,16 @@ int broadcast_color(struct Map *tab_voisins, int degre, int color){
         //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
         printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n",INDICE, color, tab_voisins[i].indice,
                tab_voisins[i].socket);
-        send_tcp(tab_voisins[i].socket, info, sizeof(int)*3);
-        //pthread_create(&threads[i], NULL, send_color, (void *) &info);
-        //pthread_join(threads[i], NULL);
+        //send_tcp(tab_voisins[i].socket, info, sizeof(int)*3);
+        pthread_create(&threads[i], NULL, send_color, (void *) &info);
+        pthread_join(threads[i], NULL);
         //}
     }
     return prochain;
 
 }
 
-void * keep_listening(void *t_args){
+void* keep_listening(void *t_args){
     struct ThreadArgs *args = (struct ThreadArgs *) t_args;
     int info[3];
     int *degre = args->degre;
@@ -375,8 +374,11 @@ void * keep_listening(void *t_args){
         for(int i=0; i<*degre; i++){
             FD_SET(tab_voisins[i].socket, set);
         }
+        printf("waiting for select in thread\n");
+        select(MAX_FD+1, set, NULL, NULL, NULL);
         for(int i = 0; i < *degre; i++){
             if(FD_ISSET(tab_voisins[i].socket, set)){
+                printf("receiving from %d in thread\n", tab_voisins[i].indice);
                 receive_tcp(tab_voisins[i].socket, info, sizeof(int)*3); //reception couleur
                 if(info[0] != -1) {
                     printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d in thread\n", INDICE, info[0], info[2]);
@@ -386,13 +388,12 @@ void * keep_listening(void *t_args){
                         printf("[+] Noeud %d: j'ai changé de couleur à %d\n", INDICE, *color);
                         broadcast_color(tab_voisins, *degre, *color);
                         pthread_exit(NULL);
-                        return;
                     }
                 }
             }
         }
     }
-
+    return NULL;
 }
 
     //envoie au prochain voisin à colorier le signal de départ de l'algorithme
@@ -700,9 +701,8 @@ int main(int argc, char *argv[]) {
                 printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
                 fils = broadcast_color(tab_voisins, degre, couleur);
                 boucle_fils(tab_voisins, degre, fils);
-                pthread_join(listening_thread, NULL);
+                //pthread_join(listening_thread, NULL);
                 inform_parent(parent);
-
             }
             break;
 
