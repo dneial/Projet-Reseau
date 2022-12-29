@@ -30,7 +30,7 @@ else
       echo "[2] Launching clients"
       for(( c=1; c<="$nb_clients"; c++))
       do
-  	      gnome-terminal --tab -- "$file"
+  	      gnome-terminal --tab --title="client $c" -- "$file"
       done
     fi
 fi

@@ -152,3 +152,69 @@ Struct Map{
     int indice;
 }
 
+
+g7 : 11 sommets http://graphonline.ru/fr/?graph=hgqNSUQWDQNqweHA
+
+
+probleme rencontré : 2 sommets voisins ont la même couleur
+
+exemple :
+
+        1--4
+       / \
+      /   \
+     2     |  (problème de réseau
+      \   /  sur cette arrête (1,3) :
+       \  \  3 n'a pas encore reçu
+        \ /   la couleur de 1)
+         3
+
+   >1 (0) : [0 1 2 3 4 ]
+    2 (1) : ['0' 1 2 3 4 ]
+    3 (0) : [0 '1' 2 3 4 ] -> 3 n'a pas supprimé 0 de son tableau
+    4 (1) : ['0' 1 2 3 4 ]
+
+    idée ecoute en continu :
+quand j'ai attribué ma couleur,
+je continue à écouter et si je reçois ma couleur de la part d'un voisin,
+un de nous change et recommence l'algo
+
+    changements que ça implique :
+    - on doit se souvenir de la couleur de chaque voisin pour pouvoir la rendre disponible
+      en cas de changement venant de ce dernier
+    - je dois pouvoir différencier certains messages ?
+     ( si je reçois ma nouvelle couleur de la part d'un voisin qui n'a pas encore réalisé
+     que j'ai changé ? et qui va devoir changer aussi du coup)
+
+propositions :
+ > dater les messages, celui qui à envoyé en premier garde la couleur
+    -> les parents sont aventagés ? du moins je crois
+
+ > faire cette résolution après l'envoi au serveur
+    -> permet de résoudre sur une base de coloration stable?
+    -> le servur doit gérer les changements de couleur et recompter les couleurs à la fin
+
+
+
+//PROBLEME ICI :
+    //JE NE SAIS PAS SI UN FILS EN A DÉJA COLORIÉ UN AUTRE
+    //DONC QUAND J'ENVOIE UN MESSAGE À L'AUTRE IL AURA PEUT-ÊTRE DÉJÀ TERMINÉ
+    //ET CA VA ME BLOQUER JUSQU'À CE QUE SON TERMINAL FERME ?
+
+    //  idée 1 : signal de départ = une liste de noeuds que je veux colorier moi même
+    // + comme ça mes fils ne colorieront pas les noeuds de ma liste
+    // - point négatif : ils doivent eux même envoyer leur liste perso + la mienne à leurs fils
+    //ça peut faire des gros messages pas pratiques à envoyer
+
+    //  idée 2 : dans l'autre sens :
+    // + quand ils ont fini mes fils me disent qui à été colorié par eux et leurs fils
+    // (+/-) je traite le gros message que chez le parent = je réduis le nombre de messages à envoyer
+    //  - point négatif : toujours gros messages à envoyer
+
+    //  idée 3 : mieux !!
+    // A chaque fois qu'un fils m'informe qu'il a fini, je check si les restants
+    // m'ont envoyé leur couleur entre temps
+    //  => ça implique qu'on envoie sa couleur à tous nos voisins
+    //  et pas uniquement ceux qui n'ont pas été traités.
+    // problème : il faut pas rester bloqué dans la reception si on a pas reçu de couleur
+    //  => Est-ce que FD_ISSET() est bloquant ?

@@ -18,13 +18,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="boss">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="fusion boss+changesbysebastien">
+      <change beforePath="$PROJECT_DIR$/launch_clients.sh" beforeDir="false" afterPath="$PROJECT_DIR$/launch_clients.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
     </list>
-    <list id="e38fe1c6-8423-475f-b9b0-c80dc2d21e59" name="Changes by Sebastien" comment="Changes by Sebastien" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

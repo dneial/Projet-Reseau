@@ -15,9 +15,9 @@ else
     if [ "$ARG1" = "-n" ] || [ "$ARG1" = "--network" ]
     then
         echo "[3] Launching server in network mode"
-        gnome-terminal --tab -- "$file" "$graphe" "$ARG1" "$ARG2" "$ip"
+        gnome-terminal --tab --title="server" -- "$file" "$graphe" "$ARG1" "$ARG2" "$ip"
     else
         echo "[3] Launching server "
-        gnome-terminal --tab -- "$file" "$graphe"
+        gnome-terminal --tab --title="server" -- "$file" "$graphe"
     fi
 fi
