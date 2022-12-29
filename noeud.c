@@ -237,14 +237,56 @@ void inform_parent(int parent_socket){
     printf("[+] Noeud %d: j'ai informé mon parent\n", INDICE);
 }
 
-void attend_fils(int fils_pos, struct Map *tab_voisins, int degre, int couleur){
+int resolve_snd(struct Map *tab_voisins, int degre, int fils_pos, int *info_vois, int *colors){
+    printf("[!] Noeud %d: phase de résolution avec noeud %d\n", INDICE, info_vois[2]);
+    int info_res[3];
+    info_res[0] = info_vois[0]; // couleur
+    info_res[1] = degre; //j'utilise ce canal pour le degré on verra bien
+    info_res[2] = INDICE; // indice
+
+    send_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
+    receive_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
+
+    //les deux voisins entrent en même temps dans la phase de résolution, ils vont faire la même chose en même temps:
+    if(info_res[0] == info_vois[0]){
+        if(info_res[1] < degre || (info_res[1] == degre && info_res[2] > INDICE)){
+            printf("[+] Noeud %d: je garde ma couleur\n", INDICE);
+            receive_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
+            //receive pour la nouvelle couleur du voisin
+            printf("[+] Noeud %d: j'ai reçu de %d la couleur %d\n", INDICE, info_vois[2], info_res[0]);
+        }
+        else if(info_res[1] > info_vois[1]){
+            colors[info_res[0]] = 0;
+            printf("[!] Noeud %d: je dois changer de couleur\n", INDICE);
+            return 1;
+        }
+    }
+
+    if(info_res[0] != info_vois[0]){
+        printf("[+] Noeud %d: voisin %d à changé de couleur, résolution terminée\n", INDICE, info_vois[2]);
+        return 0;
+    } else {
+        printf("[-] Noeud %d: voisin %d n'a pas changé Erreur \n", INDICE, info_vois[2]);
+        return -1;
+    }
+}
+
+int attend_fils(int fils_pos, struct Map *tab_voisins, int degre, int couleur, int *colors){
     int info[3];
     receive_tcp(tab_voisins[fils_pos].socket, info, sizeof(info));
+    int res;
+    if(info[0] == couleur || info[0] > -1){
+    //si je reçois ma couleur ou un signal de départ en retard il risque d'y avoir conflit
 
-    if(info[0] == couleur) fprintf(stderr, "[-] Noeud %d : j'ai reçu ma couleur de la part du voisin %d\n", INDICE, info[2]);
-//    perror("");
+        fprintf(stderr, "[-] Noeud %d : j'ai reçu ma propre couleur de la part du voisin %d (couleur %d)\n", INDICE, info[2], info[0]);
+         //doit entrer en phase de résolution
+         //je dois joindre le voisin en question
+         //test1 : envoyer mon degré, celui qui a le plus grand degré garde la couleur
+        res = resolve_snd(tab_voisins, degre, fils_pos, info,colors);
+    }
 
     tab_voisins[fils_pos].etat = 1;
+    return res; //renvoie 1 si on doit changer de couleur, o sinon
 }
 
 
@@ -253,31 +295,6 @@ void attend_fils(int fils_pos, struct Map *tab_voisins, int degre, int couleur){
 int get_prochain(struct Map *tab_voisins, int degre){
     int prochain = -1;
     int indice_prochain = GRAPH_SIZE+1;
-
-    //PROBLEME ICI :
-    //JE NE SAIS PAS SI UN FILS EN A DÉJA COLORIÉ UN AUTRE
-    //DONC QUAND J'ENVOIE UN MESSAGE À L'AUTRE IL AURA PEUT-ÊTRE DÉJÀ TERMINÉ
-    //ET CA VA ME BLOQUER JUSQU'À CE QUE SON TERMINAL FERME ?
-
-    //  idée 1 : signal de départ = une liste de noeuds que je veux colorier moi même
-    // + comme ça mes fils ne colorieront pas les noeuds de ma liste
-    // - point négatif : ils doivent eux même envoyer leur liste perso + la mienne à leurs fils
-    //ça peut faire des gros messages pas pratiques à envoyer
-
-    //  idée 2 : dans l'autre sens :
-    // + quand ils ont fini mes fils me disent qui à été colorié par eux et leurs fils
-    // (+/-) je traite le gros message que chez le parent = je réduis le nombre de messages à envoyer
-    //  - point négatif : toujours gros messages à envoyer
-
-    //  idée 3 : mieux !!
-    // A chaque fois qu'un fils m'informe qu'il a fini, je check si les restants
-    // m'ont envoyé leur couleur entre temps
-    //  => ça implique qu'on envoie sa couleur à tous nos voisins
-    //  et pas uniquement ceux qui n'ont pas été traités.
-    // problème : il faut pas rester bloqué dans la reception si on a pas reçu de couleur
-    //  => Est-ce que FD_ISSET() est bloquant ?
-
-
 
     for(int i=0; i<degre; i++){
         if(tab_voisins[i].etat == 0 && tab_voisins[i].indice < indice_prochain) {
@@ -328,7 +345,7 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
 }
 
 
-    //transmet notre couleur personelle à tous les voisins non encore coloriés
+    //transmet notre couleur personelle à tous les voisins
     //retourne la position (dans tab_voisin) du prochain voisin à colorier
 int broadcast_color(struct Map *tab_voisins, int degre, int color){
     int info[4];
@@ -398,33 +415,34 @@ void* keep_listening(void *t_args){
 
     //envoie au prochain voisin à colorier le signal de départ de l'algorithme
     //attend son message de fin de traitement et recommence avec un autre jusqu'à ce que tous aient été coloriés
-void boucle_fils(struct Map *tab_voisins, int degre, int fils, int couleur) {
+int boucle_fils(struct Map *tab_voisins, int degre, int fils, int couleur, int *colors) {
 
     //attendre le signal de fin du premier fils si j'en ai un
     if (fils > 0) {
-        attend_fils(fils, tab_voisins, degre, couleur);
-        printf("[+] Noeud %d: le fils %d a fini de colorier\n\n", INDICE, tab_voisins[fils].indice);
+        if(attend_fils(fils, tab_voisins, degre, couleur, colors)){
+            return 1;
+        }else {
 
-
-        //IDEE 3 : check si les autres fils ont fini entre temps, un genre de :
-        //updateAutreFils(tab_voisins, degre);
-
-
-
-        int info[3];
-        info[0] = -1; //pour que le fils capte direct que c'est un signal de son parent
-        info[1] = 1;
-        info[2] = INDICE;
-
-        while ((fils = get_prochain(tab_voisins, degre)) != -1) {
-            printf("[+] Noeud %d: envoi du signal de départ au prochain (noeud %d)\n", INDICE, tab_voisins[fils].indice);
-            send_tcp(tab_voisins[fils].socket, &info, sizeof(info));
-
-            attend_fils(fils, tab_voisins, degre, couleur);
             printf("[+] Noeud %d: le fils %d a fini de colorier\n\n", INDICE, tab_voisins[fils].indice);
+
+            int info[3];
+            info[0] = -1; //pour que le fils capte direct que c'est un signal de son parent
+            info[1] = 1;
+            info[2] = INDICE;
+
+            while ((fils = get_prochain(tab_voisins, degre)) != -1) {
+                printf("[+] Noeud %d: envoi du signal de départ au prochain (noeud %d)\n", INDICE,
+                       tab_voisins[fils].indice);
+                send_tcp(tab_voisins[fils].socket, &info, sizeof(info));
+
+                if (attend_fils(fils, tab_voisins, degre, couleur, colors)) {
+                    return 1;
+                } else printf("[+] Noeud %d: le fils %d a fini de colorier\n\n", INDICE, tab_voisins[fils].indice);
+            }
+            printf("[+] Noeud %d: tous mes fils ont fini de colorier\n", INDICE);
         }
-        printf("[+] Noeud %d: tous mes fils ont fini de colorier\n",INDICE);
     }
+    return 0;
 }
 
 void parse_args(int argc, char *argv[], int *verbose, int *network, char *server_ip, int *server_port){
@@ -693,14 +711,17 @@ int main(int argc, char *argv[]) {
                 couleur = choose_color(couleurs);
                 printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
                 fils = broadcast_color(tab_voisins, degre, couleur);
-                boucle_fils(tab_voisins, degre, fils, couleur);
+                boucle_fils(tab_voisins, degre, fils, couleur, couleurs);
             } else {
                 parent = receive_colors(&voisin_set, tab_voisins, degre, couleurs);
                 pthread_create(&listening_thread, NULL, keep_listening, (void *) &t_args);
                 couleur = choose_color(couleurs);
-                printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
-                fils = broadcast_color(tab_voisins, degre, couleur);
-                boucle_fils(tab_voisins, degre, fils, couleur);
+                do {
+                    printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
+                    fils = broadcast_color(tab_voisins, degre, couleur);
+                }
+                while(boucle_fils(tab_voisins, degre, fils, couleur, couleurs));
+
                 //pthread_join(listening_thread, NULL);
                 inform_parent(parent);
             }
