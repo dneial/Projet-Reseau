@@ -34,9 +34,11 @@ int maj_couleurs(struct Map *tab_voisins, int degre, int voisin, int *couleurs, 
     //je peux la rendre de nouveau dispo
     if(cpt == 1){
         couleurs[old_color] = 1;
+        fprintf(stderr, "\n################\n[?2] Old color = %d\ncolors[%d] = %d\n################\n", old_color, old_color, couleurs[old_color]);
         return 1;
     }
     couleurs[couleur] = 0;
+    fprintf(stderr, "\n################\n[?3] new color = %d\ncolors[%d] = %d\n################\n", couleur, couleur, couleurs[couleur]);
     return 0;
 }
 
@@ -220,34 +222,42 @@ void inform_parent(int parent_socket){
 int resolve_snd(struct Map *tab_voisins, int degre, int fils_pos, int *info_vois, int *colors){
     printf("[!] Noeud %d: phase de résolution avec noeud %d\n", INDICE, info_vois[2]);
     int info_res[3];
-    info_res[0] = info_vois[0]; // couleur
+    info_res[0] = info_vois[0]; // couleur en commun
     info_res[1] = degre; //j'utilise ce canal pour le degré
     info_res[2] = INDICE; // indice
+//
+//    int info_new_res[3];
 
+    fprintf(stderr, "\n################\n[AVANT SEND] Old color = %d\n colors[%d] = %d \n################\n", info_vois[0], info_vois[0], colors[info_vois[0]]);
     send_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
-    receive_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
 
+    receive_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
+    fprintf(stderr, "\n################\n[APRES RECEIVE] color = %d\n colors[%d] = %d \n################\n", info_res[0], info_res[0], colors[info_res[0]]);
     //les deux voisins entrent en même temps dans la phase de résolution, ils vont faire la même chose en même temps:
     if(info_res[0] == info_vois[0]){
+        fprintf(stderr, "[-] Noeud %d: les deux voisins ont la même couleur\n", INDICE);
         if(info_res[1] < degre || (info_res[1] == degre && info_res[2] > INDICE)){
             printf("[+] Noeud %d: je garde ma couleur\n", INDICE);
             receive_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
-            //receive pour la nouvelle couleur du voisin
+            //receive pour la nouvelle couleur du voisin qui va repasser par le broadcast
             printf("[+] Noeud %d: j'ai reçu de %d la couleur %d\n", INDICE, info_vois[2], info_res[0]);
         }
         else if(info_res[1] > info_vois[1]){
             colors[info_res[0]] = 0;
             printf("[!] Noeud %d: je dois changer de couleur\n", INDICE);
+            printf("[!] colors[%d]= %d\n", info_res[0], colors[info_res[0]]);
             return 1;
         }
     }
 
     if(info_res[0] != info_vois[0]){
         printf("[+] Noeud %d: voisin %d à changé de couleur, résolution terminée\n", INDICE, info_vois[2]);
+        maj_couleurs(tab_voisins, degre,fils_pos, colors, info_res[0]);
         return 0;
     } else {
         printf("[-] Noeud %d: voisin %d n'a pas changé Erreur \n", INDICE, info_vois[2]);
-        return -1;
+        colors[info_res[0]] = 0;
+        return 1;
     }
 }
 
@@ -311,6 +321,8 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
                 {
                     printf("[+] Noeud %d: mon voisin %d à changé de couleur (%d)\n", INDICE, info[2], couleur);
                     maj_couleurs(tab_voisins, degre,i, colors, couleur);
+                    fprintf(stderr, "\n################\n[?4] Noeud %d: colors[%d] = %d\n################\n", INDICE, couleur, colors[couleur]);
+//                    colors[couleur] = 0;
                 } else {
                     colors[couleur] = 0;
                     tab_voisins[i].etat = 1; //maj tableau
@@ -344,11 +356,14 @@ int broadcast_color(struct Map *tab_voisins, int degre, int color){
 
     for (int i = 0; i < degre; i++) {
         info[1] = i == prochain; //si le voisin est le prochain à faire tourner l'algorithme
-
-        //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
-        printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n", INDICE, color, tab_voisins[i].indice,
-               tab_voisins[i].socket);
-        send_tcp(tab_voisins[i].socket, info, sizeof(int) * 3);
+        if(INDICE == 2 && tab_voisins[i].indice == 5) {
+            printf("[-] Noeud %d: je ne transmet pas ma couleur à mon voisin %d\n", INDICE, tab_voisins[i].indice);
+        }else {
+            //printf("socket %d est la prochaine ? %d\n", tab_voisins[i], info[1]);
+            printf("[+] Noeud %d: envoi de la couleur %d au voisin %d @ %d\n", INDICE, color, tab_voisins[i].indice,
+                   tab_voisins[i].socket);
+            send_tcp(tab_voisins[i].socket, info, sizeof(int) * 3);
+        }
     }
     return prochain;
 }
@@ -627,7 +642,7 @@ int main(int argc, char *argv[]) {
     send_tcp(SERVER_SOCKET, &couleur, sizeof(int));
     printf("[+] Noeud %d: j'ai envoyé ma couleur au serveur\n", INDICE);
 
-    sleep(180);
+    sleep(5000);
 
     noeud_exit(get_sockets_from_map(tab_voisins, degre), degre);
 }

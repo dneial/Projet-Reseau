@@ -18,18 +18,19 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="pause dej !">
-      <change afterPath="$PROJECT_DIR$/graph_files/dsjc250.5.col" afterDir="false" />
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="tout nettoyé normalement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/serveur" beforeDir="false" afterPath="$PROJECT_DIR$/bin/serveur" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/server.o" beforeDir="false" afterPath="$PROJECT_DIR$/obj/server.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
     </list>
     <list id="a5a242d1-1ea4-4592-b86c-27819289fd2e" name="Changes by daniel" comment="Changes by daniel">
+      <change afterPath="$PROJECT_DIR$/s" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/read_graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/read_graph.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,59 +51,27 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/server.c">
-      <ranges>
-        <range start1="3" end1="3" start2="3" end2="5" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="73" end1="76" start2="75" end2="76" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="77" end1="78" start2="77" end2="107" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="82" end1="83" start2="111" end2="112" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="87" end1="87" start2="116" end2="117" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="94" end1="95" start2="124" end2="125" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="130" end1="135" start2="160" end2="161" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="137" end1="138" start2="163" end2="163" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="140" end1="201" start2="165" end2="167" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="203" end1="204" start2="169" end2="170" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="214" end1="229" start2="180" end2="184" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="305" end1="322" start2="260" end2="261" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="338" end1="341" start2="277" end2="277" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="397" end1="398" start2="333" end2="333" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="439" end1="440" start2="374" end2="374" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="445" end1="446" start2="379" end2="379" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="455" end1="455" start2="388" end2="389" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="456" end1="457" start2="390" end2="390" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="464" end1="465" start2="397" end2="399" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="479" end1="480" start2="413" end2="413" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="482" end1="484" start2="415" end2="417" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-      </ranges>
-    </file>
     <file path="$PROJECT_DIR$/noeud.c">
       <ranges>
-        <range start1="21" end1="30" start2="21" end2="21" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="183" end1="214" start2="174" end2="174" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="244" end1="250" start2="204" end2="204" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="264" end1="265" start2="218" end2="219" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="325" end1="326" start2="279" end2="279" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="327" end1="328" start2="280" end2="280" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="350" end1="352" start2="302" end2="302" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="361" end1="362" start2="311" end2="312" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="379" end1="380" start2="329" end2="330" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="382" end1="383" start2="332" end2="332" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="391" end1="400" start2="340" end2="341" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="401" end1="412" start2="342" end2="346" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="414" end1="415" start2="348" end2="348" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="417" end1="451" start2="350" end2="350" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="466" end1="467" start2="365" end2="366" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="496" end1="497" start2="395" end2="395" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="662" end1="663" start2="560" end2="561" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="664" end1="665" start2="562" end2="563" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="667" end1="668" start2="565" end2="566" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="682" end1="693" start2="580" end2="580" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="698" end1="703" start2="585" end2="589" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="704" end1="705" start2="590" end2="591" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="706" end1="746" start2="592" end2="595" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="747" end1="767" start2="596" end2="614" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="768" end1="773" start2="615" end2="617" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="784" end1="784" start2="628" end2="629" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="26" end1="26" start2="26" end2="28" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="34" end1="34" start2="36" end2="37" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="37" end1="37" start2="40" end2="41" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="199" end1="200" start2="203" end2="207" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="217" end1="218" start2="224" end2="225" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="220" end1="220" start2="227" end2="229" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="221" end1="221" start2="230" end2="231" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="222" end1="222" start2="232" end2="233" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="223" end1="224" start2="234" end2="235" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="226" end1="226" start2="237" end2="238" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="229" end1="230" start2="241" end2="242" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="235" end1="235" start2="247" end2="248" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="241" end1="241" start2="254" end2="255" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="244" end1="245" start2="258" end2="260" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="304" end1="305" start2="319" end2="320" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="308" end1="308" start2="323" end2="325" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="317" end1="318" start2="334" end2="335" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="341" end1="346" start2="358" end2="366" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="624" end1="625" start2="644" end2="645" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
       </ranges>
     </file>
   </component>
