@@ -8,6 +8,7 @@
 #define PORT_FILE "server_port.txt"
 #define NB_OF_CLIENTS_FILE "clients.txt"
 
+
 struct Client {
     int socket;
     int in;
@@ -185,15 +186,15 @@ int analyseGraphType(struct Graph *graph){
             {
                 //on vérifie que les autres sommets sont bien de degré 1
                 //  !!!!!!WARNING!!!!!!! (matrice custom => ils sont de degré 0)
-                if(cptDeg0 == n-1) return 1;
+                if(cptDeg0 == n-1) return 4;
             }
         }
 
         //graphe cycle : tous les sommets de degré 2
-        else if(cptDeg2 == n) return 2;
+        else if(cptDeg2 == n) return 4;
 
         //graphe chemin : tous les sommets de degré 2 sauf les extrémités qui ont un degré 1
-        else if(cptDeg1 == 2 && cptDeg2 == n-2) return 3;
+        else if(cptDeg1 == 2 && cptDeg2 == n-2) return 4;
 
         //attention si GRAPHE = chemin + cycle => Ensemble peut être considéré comme graphe cehmin
     }

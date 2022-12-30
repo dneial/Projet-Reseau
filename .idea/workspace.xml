@@ -18,16 +18,21 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer">
-      <change afterPath="$PROJECT_DIR$/graph_files/2505" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="debug qui à l'air pas trop mal">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/serveur" beforeDir="false" afterPath="$PROJECT_DIR$/bin/serveur" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/server.o" beforeDir="false" afterPath="$PROJECT_DIR$/obj/server.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
     </list>
     <list id="a5a242d1-1ea4-4592-b86c-27819289fd2e" name="Changes by daniel" comment="">
+      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph_files/g5.col" beforeDir="false" afterPath="$PROJECT_DIR$/graph_files/g5.col" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,19 +52,46 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/algo.seb">
+      <ranges>
+        <range start1="51" end1="53" start2="51" end2="51" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="196" end1="196" start2="194" end2="218" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/server.c">
+      <ranges>
+        <range start1="10" end1="10" start2="10" end2="11" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="72" end1="73" start2="73" end2="74" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="74" end1="76" start2="75" end2="82" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="77" end1="77" start2="83" end2="84" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="78" end1="79" start2="85" end2="86" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="181" end1="182" start2="188" end2="189" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="186" end1="187" start2="193" end2="194" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="189" end1="190" start2="196" end2="197" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="475" end1="476" start2="482" end2="483" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+      </ranges>
+    </file>
     <file path="$PROJECT_DIR$/noeud.c">
       <ranges>
-        <range start1="276" end1="278" start2="276" end2="278" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="280" end1="281" start2="280" end2="282" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="329" end1="335" start2="330" end2="336" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="363" end1="364" start2="364" end2="372" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="365" end1="367" start2="373" end2="375" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="368" end1="375" start2="376" end2="384" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="421" end1="421" start2="430" end2="431" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="428" end1="429" start2="438" end2="439" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="433" end1="433" start2="443" end2="444" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="710" end1="714" start2="721" end2="727" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="716" end1="719" start2="729" end2="732" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="13" end1="13" start2="13" end2="14" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="18" end1="18" start2="19" end2="20" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="29" end1="29" start2="31" end2="49" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="218" end1="219" start2="238" end2="239" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="221" end1="221" start2="241" end2="242" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="278" end1="279" start2="299" end2="300" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="280" end1="284" start2="301" end2="306" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="313" end1="314" start2="335" end2="336" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="331" end1="334" start2="353" end2="363" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="335" end1="339" start2="364" end2="368" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="347" end1="349" start2="376" end2="378" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="423" end1="425" start2="452" end2="454" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="428" end1="429" start2="457" end2="458" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="442" end1="443" start2="471" end2="471" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="632" end1="634" start2="660" end2="672" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="636" end1="642" start2="674" end2="674" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="679" end1="713" start2="711" end2="745" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="725" end1="726" start2="757" end2="758" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="734" end1="735" start2="766" end2="767" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
       </ranges>
     </file>
   </component>
@@ -81,38 +113,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "last_opened_file_path": "/home/daniel/Documents/GitHub/Projet-Reseau",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "terminal",
-    "structure.view.defaults.are.configured": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/daniel/Documents/GitHub/Projet-Reseau&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="\\wsl$\Ubuntu\home\seb\Perso\Projet-Reseau" />
     </key>
   </component>
   <component name="RunManager" selected="Makefile Target.bin/noeud">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="bin/noeud" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/Makefile" target="bin/noeud" workingDirectory="" arguments="">
         <envs />
@@ -180,7 +207,8 @@
       <workItem from="1672229440483" duration="4841000" />
       <workItem from="1672312576162" duration="1073000" />
       <workItem from="1672313989807" duration="3000" />
-      <workItem from="1672405212080" duration="4432000" />
+      <workItem from="1672405212080" duration="8105000" />
+      <workItem from="1672414439727" duration="664000" />
     </task>
     <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
       <created>1666802330872</created>
@@ -273,7 +301,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672357423860</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="debug qui à l'air pas trop mal">
+      <created>1672409956188</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1672409956188</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -337,7 +372,8 @@
     <MESSAGE value="boss" />
     <MESSAGE value="Changes by Sebastien" />
     <MESSAGE value="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer" />
-    <option name="LAST_COMMIT_MESSAGE" value="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer" />
+    <MESSAGE value="debug qui à l'air pas trop mal" />
+    <option name="LAST_COMMIT_MESSAGE" value="debug qui à l'air pas trop mal" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

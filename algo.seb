@@ -191,3 +191,28 @@ propositions :
  > faire cette résolution après l'envoi au serveur ?
     -> permet de résoudre sur une base de coloration stable?
     -> le serveur doit gérer les changements de couleur et recompter les couleurs à la fin
+
+      4
+      |
+1-----2-----3
+      |
+      5
+
+
+1 01000
+2 10111
+3 01000
+4 01000
+5 01000
+
+1 01000
+2 00111
+3 00000
+4 00000
+5 00000
+
+1 00000
+2 10111
+3 00000
+4 00000
+5 00000

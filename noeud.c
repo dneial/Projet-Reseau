@@ -11,11 +11,13 @@ int GRAPH_TYPE = 0;
 int SERVER_SOCKET;
 int IN_SOCKET;
 int MAX_FD;
+int NB_COLOR;
 
 struct Map{
     int socket;
     int indice;
     int etat;
+    int couleur;
 };
 
 struct ThreadArgs {
@@ -26,6 +28,24 @@ struct ThreadArgs {
     int *colors;
 
 };
+
+int maj_couleurs(struct Map *tab_voisins, int degre, int voisin, int *couleurs, int couleur){
+    int i;
+    int cpt = 0;
+    int old_color = tab_voisins[voisin].couleur;
+    for(i = 0; i < degre; i++){
+        if(tab_voisins[i].couleur == old_color) cpt++;
+    }
+
+    //si la couleur n'éait attribuée qu'au voisin qui change
+    //je peux la rendre de nouveau dispo
+    if(cpt == 1){
+        couleurs[old_color] = 1;
+        return 1;
+    }
+    couleurs[couleur] = 0;
+    return 0;
+}
 
 int* get_sockets_from_map(struct Map* map, int mapSize){
     int *sockets = malloc(sizeof(int)*mapSize);
@@ -219,6 +239,7 @@ int choose_color(int *colors){
     for(int i=0; i<NB_COLOR; i++){
         if(colors[i]) return i;
     }
+    printf("[-] Noeud %d: no color available.\n",INDICE);
     return -1;
 }
 
@@ -276,12 +297,13 @@ int attend_fils(int fils_pos, struct Map *tab_voisins, int degre, int couleur, i
     receive_tcp(tab_voisins[fils_pos].socket, info, sizeof(info));
     int res = 0;
     if(info[0] == couleur){
-    //si je reçois ma couleur ou un signal de départ en retard il risque d'y avoir conflit
+        //si je reçois ma couleur ou un signal de départ en retard il risque d'y avoir conflit
 
-        fprintf(stderr, "[-] Noeud %d : j'ai reçu ma propre couleur de la part du voisin %d (couleur %d)\n", INDICE, info[2], info[0]);
-         //doit entrer en phase de résolution
-         //je dois joindre le voisin en question
-         //test1 : envoyer mon degré, celui qui a le plus grand degré garde la couleur
+        fprintf(stderr, "[-] Noeud %d : j'ai reçu ma propre couleur de la part du voisin %d (couleur %d)\n",
+                INDICE, info[2], info[0]);
+        //doit entrer en phase de résolution
+        //je dois joindre le voisin en question
+        //test1 : envoyer mon degré, celui qui a le plus grand degré garde la couleur
         res = resolve_snd(tab_voisins, degre, fils_pos, info,colors);
     }
 
@@ -311,7 +333,7 @@ int get_prochain(struct Map *tab_voisins, int degre){
 /////////////////////////////////////////
 
 
-    //reçoit les couleurs des voisins, met à jour le tableau des couleurs disponibles et l'etat des voisins
+//reçoit les couleurs des voisins, met à jour le tableau des couleurs disponibles et l'etat des voisins
 int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors){
     int info[4];
     int couleur;
@@ -329,14 +351,21 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
                 //perror("[-] Noeud %d : j'ai reçu ma couleur de la part du voisin %d", INDICE, info[2])
 
                 couleur = info[0];
-                colors[couleur] = 0;
-                tab_voisins[i].etat = 1; //maj tableau
-                printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d\n", INDICE, couleur, info[2]);
 
-                printf("[+] Noeud %d: %s", INDICE,
-                       info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
+                if( tab_voisins[i].etat == 1)
+                {
+                    printf("[+] Noeud %d: mon voisin %d à changé de couleur (%d)\n", INDICE, info[2], couleur);
+                    maj_couleurs(tab_voisins, degre,i, colors, couleur);
+                } else {
+                    colors[couleur] = 0;
+                    tab_voisins[i].etat = 1; //maj tableau
+                    tab_voisin[i].couleur = couleur;
+                    printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d\n", INDICE, couleur, info[2]);
 
-                if(info[1]) parent = tab_voisins[i].socket; //signal départ
+                    printf("[+] Noeud %d: %s", INDICE,
+                           info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
+                }
+                if (info[1]) parent = tab_voisins[i].socket; //signal départ
             }
         }
         if(parent != -1) return parent;
@@ -345,8 +374,8 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
 }
 
 
-    //transmet notre couleur personelle à tous les voisins
-    //retourne la position (dans tab_voisin) du prochain voisin à colorier
+//transmet notre couleur personelle à tous les voisins
+//retourne la position (dans tab_voisin) du prochain voisin à colorier
 int broadcast_color(struct Map *tab_voisins, int degre, int color){
     int info[4];
     info[0] = color;
@@ -421,12 +450,12 @@ void* keep_listening(void *t_args){
     return NULL;
 }
 
-    //envoie au prochain voisin à colorier le signal de départ de l'algorithme
-    //attend son message de fin de traitement et recommence avec un autre jusqu'à ce que tous aient été coloriés
+//envoie au prochain voisin à colorier le signal de départ de l'algorithme
+//attend son message de fin de traitement et recommence avec un autre jusqu'à ce que tous aient été coloriés
 int boucle_fils(struct Map *tab_voisins, int degre, int fils, int couleur, int *colors) {
 
     //attendre le signal de fin du premier fils si j'en ai un
-    if (fils > 0) {
+    if (fils >= 0) {
         printf("j'attends mon premier fils\n");
         if(attend_fils(fils, tab_voisins, degre, couleur, colors)){
             return 1;
@@ -440,7 +469,6 @@ int boucle_fils(struct Map *tab_voisins, int degre, int fils, int couleur, int *
             info[2] = INDICE;
 
             while ((fils = get_prochain(tab_voisins, degre)) != -1) {
-                //if(INDICE == 2 && tab_voisins[fils].indice == 5) info[0] = couleur;
                 printf("[+] Noeud %d: envoi du signal de départ au prochain (noeud %d)\n", INDICE,
                        tab_voisins[fils].indice);
                 send_tcp(tab_voisins[fils].socket, &info, sizeof(info));
@@ -630,16 +658,20 @@ int main(int argc, char *argv[]) {
     // 3 si graphe chemin,  (2 couleurs) (3 si erreur d'analyse cf return 3)
     // 4 si graphe aléatoire
 
-    int couleurs[GRAPH_SIZE];
-    for(int i=0; i<GRAPH_SIZE; i++){
-        couleurs[i] = 1;
-    }
     int couleur = INDICE - 1;
 
     printf("[+] Noeud %d: En attente du signal de démarrage du serveur\n", INDICE);
-    int starts;
-    receive_tcp(SERVER_SOCKET, &starts, sizeof(int));
 
+    int start_info[3];
+    receive_tcp(SERVER_SOCKET, start_info, sizeof(start_info));
+    int starts = start_info[0];
+    NB_COLOR = start_info[2];
+
+    int couleurs[NB_COLOR];
+
+    for(int i=0; i<NB_COLOR; i++){
+        couleurs[i] = 1;
+    }
 
     fd_set voisin_set;
     FD_ZERO(&voisin_set);
@@ -677,40 +709,40 @@ int main(int argc, char *argv[]) {
 
             return 0;
             break;
-        case 1:
-            printf("[+] Noeud %d: le graphe est une étoile\n", INDICE);
-            if (starts) {
-                printf("[+] Noeud %d: je suis la racine\n", INDICE);
-                broadcast_color(tab_voisins, degre, couleur);
-
-            } else {
-                printf("[+] Noeud %d: je suis une extrémité\n", INDICE);
-                receive_colors(&voisin_set, tab_voisins, degre, couleurs);
-                couleur = choose_color(couleurs);
-            }
-            //pas besoin d'informer le voisin, j'en ai qu'un et c'est la racine
-            break;
-        case 2:
-            printf("[+] Noeud %d: le graphe est un cycle\n", INDICE);
-            if (starts) {
-                printf("[+] Noeud %d: je suis le premier\n", INDICE);
-                fils = broadcast_color(tab_voisins, degre, couleur);
-                //attend_fils(fils);
-
-            } else {
-                printf("[+] Noeud %d: je suis un noeud intermédiaire\n", INDICE);
-                parent = receive_colors(&voisin_set, tab_voisins, degre, couleurs);
-                couleur = choose_color(couleurs);
-                fils = broadcast_color(tab_voisins, degre, couleur);
-                //attend_fils(fils);
-                inform_parent(parent);
-            }
-
-            break;
-        case 3:
-            printf("[+] Noeud %d: le graphe est un chemin\n", INDICE);
-            break;
-        case 4:
+//        case 1:
+//            printf("[+] Noeud %d: le graphe est une étoile\n", INDICE);
+//            if (starts) {
+//                printf("[+] Noeud %d: je suis la racine\n", INDICE);
+//                broadcast_color(tab_voisins, degre, couleur);
+//
+//            } else {
+//                printf("[+] Noeud %d: je suis une extrémité\n", INDICE);
+//                receive_colors(&voisin_set, tab_voisins, degre, couleurs);
+//                couleur = choose_color(couleurs);
+//            }
+//            //pas besoin d'informer le voisin, j'en ai qu'un et c'est la racine
+//            break;
+//        case 2:
+//            printf("[+] Noeud %d: le graphe est un cycle\n", INDICE);
+//            if (starts) {
+//                printf("[+] Noeud %d: je suis le premier\n", INDICE);
+//                fils = broadcast_color(tab_voisins, degre, couleur);
+//                //attend_fils(fils);
+//
+//            } else {
+//                printf("[+] Noeud %d: je suis un noeud intermédiaire\n", INDICE);
+//                parent = receive_colors(&voisin_set, tab_voisins, degre, couleurs);
+//                couleur = choose_color(couleurs);
+//                fils = broadcast_color(tab_voisins, degre, couleur);
+//                //attend_fils(fils);
+//                inform_parent(parent);
+//            }
+//
+//            break;
+//        case 3:
+//            printf("[+] Noeud %d: le graphe est un chemin\n", INDICE);
+//            break;
+        default:
             printf("[+] Noeud %d: le graphe est quelconque\n\n", INDICE);
 
             if (degre==0){
@@ -723,7 +755,7 @@ int main(int argc, char *argv[]) {
                     printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
                     fils = broadcast_color(tab_voisins, degre, couleur);
                 }
-                while(boucle_fils(tab_voisins, degre, fils, couleur, couleurs));
+                while(boucle_fils(tab_voisins, degre, fils, couleur, couleurs) || couleur == -1);
             } else {
                 parent = receive_colors(&voisin_set, tab_voisins, degre, couleurs);
                 //pthread_create(&listening_thread, NULL, keep_listening, (void *) &t_args);
