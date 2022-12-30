@@ -1,6 +1,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
+#include <ctype.h>
 #include "read_graph.h"
 #include "tcp_communication.h"
 
@@ -71,16 +73,43 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
     }
 }
 
-void elect_first(struct Client *clients, int nb_clients, int max_index, int max_deg){
-    printf("[+] Server: first noeud is %d\n\n", max_index+1);
-    printf("[+] Server: appuyez sur entrée pour commencer l'algorithme ou entrez une valeur de k: ");
+int elect_first(struct Client *clients, int nb_clients, int max_index, int max_deg){
     int k = max_deg + 1;
-    scanf("%d", &k);
+    char buffer[10];
+
+
+    printf("[+] Server: first noeud is %d\n\n", max_index+1);
+    printf("[+] Server: appuyez sur entrée pour commencer l'algorithme ou entrez une valeur de k avec k > %d: ",
+           k);
+
+//    scanf("%d", &k);
+
+
+    char *tmp = fgets(buffer, 10, stdin);
+
+    if( buffer[0] != '\n'){
+
+
+        int length = strlen (buffer);
+        for (int i = 0; i < length-1; i++){
+            if (!isdigit(buffer[i])) {
+                printf("Entered input[i]=%d is not a number\n", buffer[i]);
+                break;
+            }
+        }
+        k = atoi(buffer);
+        if(k < max_deg + 1){
+            printf("[+] Server: la valeur de k entrée est trop petite: k = %d", k);
+            close_sockets(clients, nb_clients);
+            exit(1);
+        }
+        printf("k = %d\n", k);
+    }
 
     int info[2];
     info[1] = k;
 
-    for(int i=0; i<nb_clients; i++){
+    for(int i = 0; i < nb_clients; i++){
         info[0] = i == max_index;
         clients[i].is_max_degree = i == max_index;
         send_tcp(clients[i].socket, info, sizeof(info));
@@ -93,7 +122,7 @@ void load_graph(FILE *file, struct Graph *graph){
     read_headers(file, 0);
     read_graph_info(file, graph);
 
-    printf("[+] Server: loading graph\n", 0);
+    printf("[+] Server: l%dading graph\n", 0);
 
     // why god why ?
     int tableau_bizarre_qui_segv_si_pas_utilise[graph->aretes];
@@ -129,77 +158,13 @@ void print_clients_info(struct Client *clients, int size) {
 int analyseGraphType(struct Graph *graph){
     //fonction qui analyse le type de graphe fourni
     // 0 si graphe complet, (n couleurs)
-    // 1 si graphe étoile,  (2 couleurs)
-    // 2 si graphe cycle,   (2 couleurs) (3 si cycle impair)
-    // 3 si graphe chemin,  (2 couleurs) (3 si erreur d'analyse cf return 3)
-    // 4 si graphe aléatoire
-
+    // 1 sinon
     int n = graph->sommets;
     int m = graph->aretes;
-    printf("[debug] n = %d, m = %d\n", n, m);
 
     //graphe complet : n sommets et n(n-1)/2 arêtes
-    if(m == n*(n-1)/2) return 4;
-
-    //graphe étoile ou chemin : n sommets et n-1 arêtes
-    //graphe cycle : n sommets et n arêtes
-    if(m == n-1 || m == n)
-    {
-        //graphe étoile : n sommets et n-1 arêtes et un seul sommet de degré n-1
-        //graphe chemin : n sommets et n-1 arêtes et tous les sommets de degré 2 sauf les extrémités qui ont un degré 1
-
-        int cptDeg0 = 0;
-        int cptDeg1 = 0; //compteur de sommets de degré 1
-        int cptDeg2 = 0; //compteur de sommets de degré 2
-        int cptDegM = 0; //compteur de sommets de degré n-1
-        int centre = -1; //indice du sommet de degré n-1
-
-        for (int i = 0; i < n; i++)
-        {
-            int deg = nb_neighbours(graph, i);
-            printf("[debug] deg(%d) = %d\n", i, deg);
-
-            switch (deg)
-            {
-                case 0:
-                    cptDeg0++;
-                    break;
-                case 1:
-                    cptDeg1++;
-                    break;
-                case 2:
-                    cptDeg2++;
-                    break;
-                default:
-                    if (deg == m) {
-                        cptDegM++;
-                        centre = i;
-                    }else return 4;
-                    break;
-            }
-        }
-
-        //graphe étoile : un seul sommet de degré n-1
-        if(cptDegM == 1)
-        {
-            //on vérifie que le centre est bien le sommet de degré n-1
-            if(centre != -1)
-            {
-                //on vérifie que les autres sommets sont bien de degré 1
-                //  !!!!!!WARNING!!!!!!! (matrice custom => ils sont de degré 0)
-                if(cptDeg0 == n-1) return 4;
-            }
-        }
-
-        //graphe cycle : tous les sommets de degré 2
-        else if(cptDeg2 == n) return 4;
-
-        //graphe chemin : tous les sommets de degré 2 sauf les extrémités qui ont un degré 1
-        else if(cptDeg1 == 2 && cptDeg2 == n-2) return 4;
-
-        //attention si GRAPHE = chemin + cycle => Ensemble peut être considéré comme graphe cehmin
-    }
-    return 4;
+    if(m == n*(n-1)/2) return 0;
+    else return 1;
 }
 
 void get_algo_result(struct Client *clients, int nb_clients, int k){
@@ -213,21 +178,10 @@ void get_algo_result(struct Client *clients, int nb_clients, int k){
     for(int i=0; i<nb_clients; i++){
         receive_tcp(clients[i].socket, &color, sizeof(int));
         printf("[+] Server: noeud %d color = %d\n", i+1, color);
-
-        //  IDEE POUR SOUS GRAPHE ISOLÉ :
-        // si noeud FIRST nous dit qu'il a fini, mais qu'il reste des noeuds non coloriés,
-        // on fait une élection parmi ceux qui n'ont pas encore envoyé leur couleur,
-        // on se retrouve avec un nouveau first qui va commencer l'algo pour le
-        // sous graphe auquel il appartient
-        //  => on peut faire ça en boucle tant qu'il reste des noeuds non coloriés
-        //  si jamais le retard vient du réseau et qu'il n'y a plus de noeuds non coloriés,
-        //  on recevra de toute façon les messages des retardataires qui vont terminer
-
-        // problème ici ?
-        // receive bloquant donc si premier noeud dans un graphe isolé
-        // on attend à l'infini
-        // soluce ? FD_SET pour réagir à chaque modif en temps réel ?
-
+        if(color == -1){
+            printf("[+] Server: Le graphe n'est pas k-colorable (k=%d)", k);
+            exit(1);
+        }
         if(!colors[color]){
             colors[color] = 1;
             cpt++;
@@ -304,23 +258,7 @@ int main(int argc, char *argv[]){
     //analyse du type de graphe
     int GRAPH_TYPE = analyseGraphType(&graph);
 
-    switch (GRAPH_TYPE) {
-        case 0:
-            printf("Graphe complet\n");
-            break;
-        case 1:
-            printf("Graphe étoile\n");
-            break;
-        case 2:
-            printf("Graphe cycle\n");
-            break;
-        case 3:
-            printf("Graphe chemin\n");
-            break;
-        default:
-            printf("Graphe quelconque\n");
-            break;
-    }
+    printf("[+] Server: %s", GRAPH_TYPE == 0 ? "graphe complet\n" : "graphe quelconque\n");
 
     printf("Graph: %d sommets and %d arêtes\n", graph.sommets, graph.aretes);
     fclose(f);
@@ -337,9 +275,6 @@ int main(int argc, char *argv[]){
         perror("[-] Server: probleme creation socket");
         exit(1);
     }
-
-    printf("[+] Server: création de la socket : ok\n");
-
 
     /* nommage socket
        Elle aura une ou des IP de la machine sur laquelle
@@ -396,7 +331,6 @@ int main(int argc, char *argv[]){
        connectée au client à utiliser pour
        communiquer avec lui.*/
 
-    //tableau des adresses des sockets clients ici
 
     int cptClient = 0;
     int max_deg = 0;
@@ -439,12 +373,10 @@ int main(int argc, char *argv[]){
         net_info[3] = NB_CLIENTS;
         net_info[4] = GRAPH_TYPE;
 
-
         if(in+out > max_deg) {
             max_deg = in + out;
             max_index = cptClient;
         }
-
 
         clients[cptClient].in = in;
         clients[cptClient].out = out;
@@ -454,8 +386,8 @@ int main(int argc, char *argv[]){
             perror("[-] Server: error sending number of voisins");
             exit(1);
         }
-        // rcv adresses des sockets d'entrée du client i
 
+        // rcv adresses des sockets d'entrée du client i
         struct sockaddr_in c_in;
 
         if(in > 0){
@@ -479,7 +411,6 @@ int main(int argc, char *argv[]){
     }
 
     printf("[+] Server: tous les clients sont prêts\n");
-    //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
 
     int k = elect_first(clients, NB_CLIENTS, max_index, max_deg);
