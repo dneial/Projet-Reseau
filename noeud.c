@@ -24,6 +24,8 @@ int maj_couleurs(struct Map *tab_voisins, int degre, int voisin, int *couleurs, 
     int i;
     int cpt = 0;
     int old_color = tab_voisins[voisin].couleur;
+    fprintf(stderr, "\n################\n[?1] Old color = %d\ncolors[%d] = %d\n################\n", old_color, old_color, couleurs[old_color]);
+
     for(i = 0; i < degre; i++){
         if(tab_voisins[i].couleur == old_color) cpt++;
     }
@@ -197,7 +199,10 @@ void set_voisins(fd_set *set, struct Map *tab_sockets, int nb_sockets){
 
 int choose_color(int *colors){
     for(int i=0; i<NB_COLOR; i++){
-        if(colors[i]) return i;
+        if(colors[i]) {
+            colors[i] = 0;
+            return i;
+        }
     }
     printf("[-] Noeud %d: no color available.\n",INDICE);
     return -1;
@@ -302,7 +307,7 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
 
                 couleur = info[0];
 
-                if( tab_voisins[i].etat == 1)
+                if(tab_voisins[i].etat == 1 && tab_voisins[i].couleur != couleur)
                 {
                     printf("[+] Noeud %d: mon voisin %d à changé de couleur (%d)\n", INDICE, info[2], couleur);
                     maj_couleurs(tab_voisins, degre,i, colors, couleur);
@@ -315,7 +320,7 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
                     printf("[+] Noeud %d: %s", INDICE,
                            info[1] ? "je suis le prochain\n" : "j'attends mes autres voisins\n");
                 }
-                if (info[1]) parent = tab_voisins[i].socket; //signal départ
+                if (info[1] && parent == -1) parent = tab_voisins[i].socket; //signal départ
             }
         }
         if(parent != -1) return parent;

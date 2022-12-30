@@ -64,7 +64,7 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
             if(graph->matrix[i][j]){
                 source = &clients[j];
                 destination = &clients[i];
-                printf("[+] Server: sending address of %d to %d: %s:%d\n", j+1, i+1,
+                printf("[+] Server: sending address of %d to %d: %s:%d\n", j + 1, i + 1,
                        inet_ntoa(source->noeud.addr.sin_addr),
                        ntohs(source->noeud.addr.sin_port));
                 send_tcp(destination->socket, &source->noeud, sizeof(struct Noeud));
@@ -169,27 +169,50 @@ int analyseGraphType(struct Graph *graph){
 
 void get_algo_result(struct Client *clients, int nb_clients, int k){
     int colors[nb_clients];
+
     for(int i=0; i<nb_clients; i++){
         colors[i] = 0;
     }
+    int color_map[nb_clients];
+    memset(&color_map, -1, nb_clients);
 
     int color;
     int cpt = 0;
+    int msgs = 0;
+
+    fd_set clients_set, copy;
+    for(int i=0; i<nb_clients; i++) {
+        FD_SET(clients[i].socket, &clients_set);
+    }
+
+    while(msgs < nb_clients){
+        copy = clients_set;
+        select(clients[nb_clients-1].socket + 1, &copy, NULL, NULL, NULL);
+        for(int i=0; i<nb_clients; i++){
+            if(FD_ISSET(clients[i].socket, &copy)){
+                receive_tcp(clients[i].socket, &color, sizeof(int));
+                if(color_map[i] == -1){
+                    msgs++;
+                    printf("[+] Server: noeud %d color = %d\n", i+1, color);
+                }
+                if(color == -1){
+                    printf("[+] Server: Le graphe n'est pas k-colorable (k=%d)\n", k);
+                    exit(1);
+                }
+                color_map[i] = color;
+
+                if(!colors[color]){
+                    colors[color] = 1;
+                    cpt++;
+                }
+            }
+        }
+    }
     for(int i=0; i<nb_clients; i++){
-        receive_tcp(clients[i].socket, &color, sizeof(int));
-        printf("[+] Server: noeud %d color = %d\n", i+1, color);
-        if(color == -1){
-            printf("[+] Server: Le graphe n'est pas k-colorable (k=%d)", k);
-            exit(1);
-        }
-        if(!colors[color]){
-            colors[color] = 1;
-            cpt++;
-        }
+        printf("Noeud %d: color = %d\n", i+1, color_map[i]);
     }
     printf("[+] Server: %d colors\n", cpt);
 }
-
 
 
 int main(int argc, char *argv[]){

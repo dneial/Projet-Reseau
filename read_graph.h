@@ -88,6 +88,7 @@ void read_graph(FILE *file, struct Graph *graph){
         read_edge_info(file, &e);
         if(!graph->matrix[e.v2-1][e.v1-1]) graph->matrix[e.v1-1][e.v2-1] = 1;
     }
+    for(int i=0; i<graph->sommets; i++) graph->matrix[i][i] = 0;
 }
 
 void print_matrix(struct Graph *graph){
