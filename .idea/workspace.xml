@@ -18,8 +18,15 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="fusion boss+changesbysebastien">
-      <change beforePath="$PROJECT_DIR$/launch_clients.sh" beforeDir="false" afterPath="$PROJECT_DIR$/launch_clients.sh" afterDir="false" />
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer">
+      <change afterPath="$PROJECT_DIR$/graph_files/2505" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
+    </list>
+    <list id="a5a242d1-1ea4-4592-b86c-27819289fd2e" name="Changes by daniel" comment="">
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,10 +41,27 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="cleanup" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/noeud.c">
+      <ranges>
+        <range start1="276" end1="278" start2="276" end2="278" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="280" end1="281" start2="280" end2="282" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
+        <range start1="329" end1="335" start2="330" end2="336" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="363" end1="364" start2="364" end2="372" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="365" end1="367" start2="373" end2="375" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="368" end1="375" start2="376" end2="384" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="421" end1="421" start2="430" end2="431" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="428" end1="429" start2="438" end2="439" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="433" end1="433" start2="443" end2="444" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="710" end1="714" start2="721" end2="727" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="716" end1="719" start2="729" end2="732" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+      </ranges>
+    </file>
   </component>
   <component name="MakefileLocalSettings">
     <option name="projectSyncType">
@@ -57,36 +81,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/daniel/Documents/GitHub/Projet-Reseau&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "last_opened_file_path": "/home/daniel/Documents/GitHub/Projet-Reseau",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "terminal",
+    "structure.view.defaults.are.configured": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="\\wsl$\Ubuntu\home\seb\Perso\Projet-Reseau" />
     </key>
   </component>
   <component name="RunManager" selected="Makefile Target.bin/noeud">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="bin/noeud" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
@@ -103,6 +127,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Makefile Target.default" />
+        <item itemvalue="Makefile Target.bin/noeud" />
         <item itemvalue="Makefile Target.bin/noeud" />
         <item itemvalue="Makefile Target.default" />
       </list>
@@ -154,6 +180,7 @@
       <workItem from="1672229440483" duration="4841000" />
       <workItem from="1672312576162" duration="1073000" />
       <workItem from="1672313989807" duration="3000" />
+      <workItem from="1672405212080" duration="4432000" />
     </task>
     <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
       <created>1666802330872</created>
@@ -239,7 +266,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672160413894</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer">
+      <created>1672357423860</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1672357423860</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -251,12 +285,38 @@
         <entry key="MAIN">
           <value>
             <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
               <option name="TEXT_FILTER_SETTINGS">
                 <TextFilterSettings>
                   <option name="MATCH_CASE" value="true" />
                 </TextFilterSettings>
               </option>
             </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/Seb" />
+                </option>
+              </RecentGroup>
+            </list>
           </value>
         </entry>
       </map>
@@ -276,7 +336,8 @@
     <MESSAGE value="envoi des messages par threads + correction multiplex:&#10;plusieurs messages peuvent être reçues en même temps; donc il faut pas return toute de suite après le message du parent - on traite tous les sockets où s'est passé un événement" />
     <MESSAGE value="boss" />
     <MESSAGE value="Changes by Sebastien" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changes by Sebastien" />
+    <MESSAGE value="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer" />
+    <option name="LAST_COMMIT_MESSAGE" value="du n'importe quoi qui ne marche pas visiblement, au moins les terminaux seront plus faciles à repérer" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
