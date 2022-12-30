@@ -85,6 +85,7 @@ void elect_first(struct Client *clients, int nb_clients, int max_index, int max_
         clients[i].is_max_degree = i == max_index;
         send_tcp(clients[i].socket, info, sizeof(info));
     }
+    return k;
 }
 
 void load_graph(FILE *file, struct Graph *graph){
@@ -201,7 +202,7 @@ int analyseGraphType(struct Graph *graph){
     return 4;
 }
 
-void get_algo_result(struct Client *clients, int nb_clients){
+void get_algo_result(struct Client *clients, int nb_clients, int k){
     int colors[nb_clients];
     for(int i=0; i<nb_clients; i++){
         colors[i] = 0;
@@ -462,7 +463,8 @@ int main(int argc, char *argv[]){
             int received = receive_tcp(dsCv, &c_in, sizeof(struct sockaddr_in));
             if(received>0) {
                 c_in.sin_addr = adC.sin_addr;
-                printf("[+] Server: adresse from %d: %s:%d\n", cptClient+1, inet_ntoa(c_in.sin_addr),ntohs(c_in.sin_port));
+                printf("[+] Server: adresse from %d: %s:%d\n", cptClient+1, inet_ntoa(c_in.sin_addr),
+                                                                    ntohs(c_in.sin_port));
                 clients[cptClient].noeud.addr = c_in;
             }
             else{
@@ -480,8 +482,8 @@ int main(int argc, char *argv[]){
     //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
 
-    elect_first(clients, NB_CLIENTS, max_index, max_deg);
-    get_algo_result(clients, NB_CLIENTS);
+    int k = elect_first(clients, NB_CLIENTS, max_index, max_deg);
+    get_algo_result(clients, NB_CLIENTS, k);
 
     /*fermeture socket demandes */
     close_sockets(clients, NB_CLIENTS);

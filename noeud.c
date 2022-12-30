@@ -20,15 +20,6 @@ struct Map{
     int couleur;
 };
 
-struct ThreadArgs {
-    fd_set *voisin_set;
-    struct Map *tab_voisins;
-    int *degre;
-    int *color;
-    int *colors;
-
-};
-
 int maj_couleurs(struct Map *tab_voisins, int degre, int voisin, int *couleurs, int couleur){
     int i;
     int cpt = 0;
@@ -182,37 +173,6 @@ int accept_connections(struct Map *tab_voisins, int nb_sockets, int out){
     return accepted;
 }
 
-int send_msg(int *tab_sockets, int nb_sockets, void *msg, size_t msg_size){
-    int sent = 0;
-    for(int i=0; i<nb_sockets; i++){
-        int s = send_tcp(tab_sockets[i], msg, msg_size);
-        if(s < 0){
-            perror("[-] Noeud : problem sending message.");
-        }
-        else sent++;
-    }
-    return sent;
-}
-
-int receive_msg(int *tab_sockets, int nb_sockets, size_t msg_size){
-    void *msg = malloc(msg_size);
-    int tmp = 0;
-    int received = 0;
-
-    for(int i =0; i < nb_sockets; i++){
-        int rcv = receive_tcp(tab_sockets[i], msg, msg_size);
-        if(rcv < 0){
-            perror("[-] Noeud : problem receiving message");
-            exit(1);
-        } else received++;
-        tmp = *((int *) msg);
-        printf("message reçu du %d eme voisin : %d\n", i, tmp );
-    }
-    free(msg);
-
-    return received;
-}
-
 int read_server_port(){
     FILE *f = fopen(PORT_FILE, "r");
     if(f == NULL) {
@@ -243,12 +203,6 @@ int choose_color(int *colors){
     return -1;
 }
 
-void *send_color(void *arg){
-    int *info = (int *) arg;
-    send_tcp(info[3], info, sizeof(int)*3);
-    pthread_exit(NULL);
-}
-
 void inform_parent(int parent_socket){
     int info[3];
     info[0] = -1;
@@ -262,7 +216,7 @@ int resolve_snd(struct Map *tab_voisins, int degre, int fils_pos, int *info_vois
     printf("[!] Noeud %d: phase de résolution avec noeud %d\n", INDICE, info_vois[2]);
     int info_res[3];
     info_res[0] = info_vois[0]; // couleur
-    info_res[1] = degre; //j'utilise ce canal pour le degré on verra bien
+    info_res[1] = degre; //j'utilise ce canal pour le degré
     info_res[2] = INDICE; // indice
 
     send_tcp(tab_voisins[fils_pos].socket, info_res, sizeof(info_res));
@@ -377,10 +331,9 @@ int receive_colors(fd_set *set, struct Map *tab_voisins, int degre, int *colors)
 //transmet notre couleur personelle à tous les voisins
 //retourne la position (dans tab_voisin) du prochain voisin à colorier
 int broadcast_color(struct Map *tab_voisins, int degre, int color){
-    int info[4];
+    int info[3];
     info[0] = color;
     info[2] = INDICE;
-    pthread_t threads[degre];
     int prochain = get_prochain(tab_voisins, degre);
 
     if(prochain == -1) {
@@ -415,40 +368,6 @@ int broadcast_color(struct Map *tab_voisins, int degre, int color){
 
 }
 
-void* keep_listening(void *t_args){
-    struct ThreadArgs *args = (struct ThreadArgs *) t_args;
-    int info[3];
-    int *degre = args->degre;
-    struct Map *tab_voisins = args->tab_voisins;
-    int *colors = args->colors;
-    int *color = args->color;
-    fd_set *set = args->voisin_set;
-
-    for(int i = 0; i < *degre; i++){
-        for(int i=0; i<*degre; i++){
-            FD_SET(tab_voisins[i].socket, set);
-        }
-        printf("waiting for select in thread\n");
-        select(MAX_FD+1, set, NULL, NULL, NULL);
-        for(int i = 0; i < *degre; i++){
-            if(FD_ISSET(tab_voisins[i].socket, set)){
-                printf("receiving from %d in thread\n", tab_voisins[i].indice);
-                receive_tcp(tab_voisins[i].socket, info, sizeof(int)*3); //reception couleur
-                if(info[0] != -1) {
-                    printf("[+] Noeud %d: j'ai reçu la couleur %d de mon voisin %d in thread\n", INDICE, info[0], info[2]);
-                    colors[info[0]] = 0;
-                    if(!colors[*color]){
-                        *color = choose_color(colors);
-                        printf("[+] Noeud %d: j'ai changé de couleur à %d\n", INDICE, *color);
-                        broadcast_color(tab_voisins, *degre, *color);
-                        pthread_exit(NULL);
-                    }
-                }
-            }
-        }
-    }
-    return NULL;
-}
 
 //envoie au prochain voisin à colorier le signal de départ de l'algorithme
 //attend son message de fin de traitement et recommence avec un autre jusqu'à ce que tous aient été coloriés
