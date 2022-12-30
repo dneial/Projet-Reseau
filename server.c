@@ -70,13 +70,19 @@ void distribute_addresses(struct Client *clients, struct Graph *graph){
     }
 }
 
-void elect_first(struct Client *clients, int nb_clients, int max_index){
+void elect_first(struct Client *clients, int nb_clients, int max_index, int max_deg){
     printf("[+] Server: first noeud is %d\n\n", max_index+1);
-    printf("appuyez sur entrée pour commencer l'algorithme");
-    fgetc(stdin);
+    printf("[+] Server: appuyez sur entrée pour commencer l'algorithme ou entrez une valeur de k: ");
+    int k = max_deg + 1;
+    scanf("%d", &k);
+
+    int info[2];
+    info[1] = k;
+
     for(int i=0; i<nb_clients; i++){
+        info[0] = i == max_index;
         clients[i].is_max_degree = i == max_index;
-        send_tcp(clients[i].socket, &clients[i].is_max_degree, sizeof(int));
+        send_tcp(clients[i].socket, info, sizeof(info));
     }
 }
 
@@ -473,7 +479,7 @@ int main(int argc, char *argv[]){
     //print_clients_info(clients, NB_CLIENTS);
     distribute_addresses(clients, &graph);
 
-    elect_first(clients, NB_CLIENTS, max_index);
+    elect_first(clients, NB_CLIENTS, max_index, max_deg);
     get_algo_result(clients, NB_CLIENTS);
 
     /*fermeture socket demandes */

@@ -216,7 +216,7 @@ void set_voisins(fd_set *set, struct Map *tab_sockets, int nb_sockets){
 }
 
 int choose_color(int *colors){
-    for(int i=0; i<GRAPH_SIZE; i++){
+    for(int i=0; i<NB_COLOR; i++){
         if(colors[i]) return i;
     }
     return -1;
@@ -732,7 +732,7 @@ int main(int argc, char *argv[]) {
                     printf("[+] Noeud %d: je choisis la couleur %d\n", INDICE, couleur);
                     fils = broadcast_color(tab_voisins, degre, couleur);
                 }
-                while(boucle_fils(tab_voisins, degre, fils, couleur, couleurs));
+                while(boucle_fils(tab_voisins, degre, fils, couleur, couleurs) || couleur == -1);
 
                 //pthread_join(listening_thread, NULL);
                 inform_parent(parent);

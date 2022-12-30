@@ -49,8 +49,6 @@ coloration de graphe au sein d'un réseau de processus interconnectés
 
 décrit dans g5:
 
-     6 -------- 7
-     |          |
      1 -------- 2
      |          |\
      |          | \
