@@ -20,18 +20,18 @@
   <component name="ChangeListManager">
     <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="tout nettoyé normalement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/serveur" beforeDir="false" afterPath="$PROJECT_DIR$/bin/serveur" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph_files/2505" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/server.o" beforeDir="false" afterPath="$PROJECT_DIR$/obj/server.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/s" beforeDir="false" afterPath="$PROJECT_DIR$/s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
     </list>
-    <list id="a5a242d1-1ea4-4592-b86c-27819289fd2e" name="Changes by daniel" comment="Changes by daniel">
-      <change afterPath="$PROJECT_DIR$/s" afterDir="false" />
+    <list id="a5a242d1-1ea4-4592-b86c-27819289fd2e" name="Changes by daniel" comment="Changes by daniel" />
+    <list id="932f0753-09d2-4308-96e6-dd5be4b0ba9a" name="Changes by Sebastien" comment="">
       <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/read_graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/read_graph.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +41,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
@@ -53,25 +52,16 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/noeud.c">
       <ranges>
-        <range start1="26" end1="26" start2="26" end2="28" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="34" end1="34" start2="36" end2="37" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="37" end1="37" start2="40" end2="41" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="199" end1="200" start2="203" end2="207" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="217" end1="218" start2="224" end2="225" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="220" end1="220" start2="227" end2="229" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="221" end1="221" start2="230" end2="231" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="222" end1="222" start2="232" end2="233" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="223" end1="224" start2="234" end2="235" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="226" end1="226" start2="237" end2="238" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="229" end1="230" start2="241" end2="242" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="235" end1="235" start2="247" end2="248" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="241" end1="241" start2="254" end2="255" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="244" end1="245" start2="258" end2="260" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="304" end1="305" start2="319" end2="320" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="308" end1="308" start2="323" end2="325" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="317" end1="318" start2="334" end2="335" changelist="a5a242d1-1ea4-4592-b86c-27819289fd2e" />
-        <range start1="341" end1="346" start2="358" end2="366" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="624" end1="625" start2="644" end2="645" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="26" end1="27" start2="26" end2="27" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
+        <range start1="92" end1="92" start2="92" end2="93" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
+        <range start1="172" end1="172" start2="173" end2="174" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
+        <range start1="240" end1="241" start2="242" end2="243" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="243" end1="243" start2="245" end2="246" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
+        <range start1="267" end1="267" start2="270" end2="273" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
+        <range start1="275" end1="276" start2="281" end2="282" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="278" end1="279" start2="284" end2="284" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="358" end1="366" start2="363" end2="367" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
+        <range start1="394" end1="394" start2="395" end2="396" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
       </ranges>
     </file>
   </component>

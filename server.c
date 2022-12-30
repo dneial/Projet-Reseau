@@ -191,10 +191,8 @@ void get_algo_result(struct Client *clients, int nb_clients, int k){
         for(int i=0; i<nb_clients; i++){
             if(FD_ISSET(clients[i].socket, &copy)){
                 receive_tcp(clients[i].socket, &color, sizeof(int));
-                if(color_map[i] == -1){
-                    msgs++;
-                    printf("[+] Server: noeud %d color = %d\n", i+1, color);
-                }
+                printf("[+] Server: noeud %d color = %d\n", i+1, color);
+                msgs++;
                 if(color == -1){
                     printf("[+] Server: Le graphe n'est pas k-colorable (k=%d)\n", k);
                     exit(1);
