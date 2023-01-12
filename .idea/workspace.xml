@@ -18,21 +18,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="tout nettoyé normalement">
+    <list default="true" id="99625859-22b8-4ed0-ba90-1183b2e18eaa" name="Changes" comment="bug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/noeud" beforeDir="false" afterPath="$PROJECT_DIR$/bin/noeud" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/serveur" beforeDir="false" afterPath="$PROJECT_DIR$/bin/serveur" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph_files/2505" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/obj/server.o" beforeDir="false" afterPath="$PROJECT_DIR$/obj/server.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/s" beforeDir="false" afterPath="$PROJECT_DIR$/s" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/algo.seb" beforeDir="false" afterPath="$PROJECT_DIR$/algo.seb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_port.txt" beforeDir="false" afterPath="$PROJECT_DIR$/server_port.txt" afterDir="false" />
     </list>
     <list id="a5a242d1-1ea4-4592-b86c-27819289fd2e" name="Changes by daniel" comment="Changes by daniel" />
-    <list id="932f0753-09d2-4308-96e6-dd5be4b0ba9a" name="Changes by Sebastien" comment="">
-      <change beforePath="$PROJECT_DIR$/noeud.c" beforeDir="false" afterPath="$PROJECT_DIR$/noeud.c" afterDir="false" />
-    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,6 +32,10 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/../Projet-Reseau\exportToHTML" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
@@ -48,22 +43,6 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/noeud.c">
-      <ranges>
-        <range start1="26" end1="27" start2="26" end2="27" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
-        <range start1="92" end1="92" start2="92" end2="93" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
-        <range start1="172" end1="172" start2="173" end2="174" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
-        <range start1="240" end1="241" start2="242" end2="243" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="243" end1="243" start2="245" end2="246" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
-        <range start1="267" end1="267" start2="270" end2="273" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
-        <range start1="275" end1="276" start2="281" end2="282" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="278" end1="279" start2="284" end2="284" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="358" end1="366" start2="363" end2="367" changelist="99625859-22b8-4ed0-ba90-1183b2e18eaa" />
-        <range start1="394" end1="394" start2="395" end2="396" changelist="932f0753-09d2-4308-96e6-dd5be4b0ba9a" />
-      </ranges>
-    </file>
   </component>
   <component name="MakefileLocalSettings">
     <option name="projectSyncType">
@@ -93,7 +72,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/daniel/Documents/GitHub/Projet-Reseau&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Users/Sebastien/Downloads/ProgRepartiProject-main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -180,6 +159,8 @@
       <workItem from="1672405212080" duration="8105000" />
       <workItem from="1672414439727" duration="807000" />
       <workItem from="1672418808601" duration="5946000" />
+      <workItem from="1673530351341" duration="52000" />
+      <workItem from="1673531334567" duration="801000" />
     </task>
     <task id="LOCAL-00001" summary="serveur et client V2:&#10;- server s'assigne un port tout reseul. Il écrit le numéro de port dans un fichier pour que le client le lise.&#10;- lors de la connexion d'un client, le serveur lui envoi le nombre de sockets de sortie et d'entrée qu'il doit avoir ( par rapport qu fichier de graphe lu ).&#10;&#10;- Le client reçoi ce message et crée ses sockets. Il a un tableau pour les sockets de sortie (et un deuxième pour ses adresses) et la même chose pour les sockets d'entrée.">
       <created>1666802330872</created>
