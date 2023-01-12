@@ -1,3 +1,3 @@
 obj
-*.txt
-*.out
+server_port.txt
+workspace.xml
